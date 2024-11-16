@@ -1,9 +1,6 @@
-import { client } from "./discord/client";
-import { Environment } from "./environments";
-import { fetchBazaar } from "./flipper/bazaarloop";
+import { DiscordBot } from "./discord/client";
+import { BotEnvironment } from "./environments";
 
-// TODO: write wrapper for env so you dont have to memorize ENVS
-// process.env.DISCORD_PUBLIC_KEY
+const bot = new DiscordBot();
 
-client.login(Environment.DISCORD_TOKEN);
-fetchBazaar();
+bot.client.login(BotEnvironment.DISCORD_TOKEN);

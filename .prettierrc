@@ -1,7 +1,8 @@
 {
 	"arrowParens": "always",
 	"bracketSpacing": true,
-	"printWidth": 160,
+	"bracketSameLine": true,
+	"printWidth": 240,
 	"semi": true,
 	"tabWidth": 4,
 	"trailingComma": "all",
