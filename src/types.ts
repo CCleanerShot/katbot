@@ -5,7 +5,20 @@ export namespace RequestTypes {
 	export type Auctions = typeof RequestConst.auctions;
 	export type AuctionItem = typeof RequestConst.auctionsItem;
 	export type AuctionEnded = typeof RequestConst.auctionsEnded;
-	export type AuctionEndedItem = typeof RequestConst.auctionsEndedItem;
+	export type AuctionEndedItem = {
+		auction_id: string;
+		seller: string;
+		seller_profile: string;
+		buyer: string;
+		buyer_profile: string;
+		timestamp: number;
+		price: number;
+		bin: boolean;
+		item_bytes: string;
+		item_name?: string; // Dynamically extracted
+		highest_bid_amount?: number; // Dynamically extracted
+		starting_bid?: number; // Optional if needed
+	};	
 }
 
 /**
@@ -45,14 +58,18 @@ export namespace RequestConst {
 		auctions: [] as RequestTypes.AuctionEndedItem[],
 	};
 	export const auctionsEndedItem = {
-		auction_id: "a21f2ced497c456193f9b3d7be2adf61" as string,
-		seller: "79d32d29ad224d2286559f7141db6d31" as string,
-		seller_profile: "64b6177e09ad4a47aa4df95954d1a451" as string,
-		buyer: "ee309ca8378548018fe3d093cf387dfa" as string,
-		buyer_profile: "728dc90b7cd0442c9ca7d12c4c07ef2f" as string,
-		timestamp: 1731767591394 as number,
-		price: 2000000 as number,
-		bin: true as boolean,
-		item_bytes: "a large string" as string,
+		auction_id: "a21f2ced497c456193f9b3d7be2adf61",
+		seller: "79d32d29ad224d2286559f7141db6d31",
+		seller_profile: "64b6177e09ad4a47aa4df95954d1a451",
+		buyer: "ee309ca8378548018fe3d093cf387dfa",
+		buyer_profile: "728dc90b7cd0442c9ca7d12c4c07ef2f",
+		timestamp: 1731767591394,
+		price: 2000000,
+		bin: true,
+		item_bytes: "a large string",
+		// Add the optional fields for consistency
+		//item_name: "Azure Bluet",
+		//highest_bid_amount: 7607533,
+		//starting_bid: 1,
 	} as const;
 }
