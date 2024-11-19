@@ -18,7 +18,7 @@
 		"module": "CommonJS"
 	},
 	"scripts": {
-		"clean": "rm -rf ./dist",
+		"clean": "",
 		"build": "npm run clean && npx tsc",
 		"start": "npm run build && node ./dist/index.js"
 	}
