@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "node:path";
 import { Client, Collection, Events, GatewayIntentBits, REST, Routes, TextChannel } from "discord.js";
-import { BotEnvironment } from "../environments";
+import { BotEnvironment } from "../environment";
 import { utils } from "../utils";
 
 export class DiscordBot {

@@ -35,22 +35,25 @@ export type Database = {
             }
             auction_prices: {
                 Row: {
+                    average_price: number
                     date_sold: string
                     id: string
                     item_id: string
-                    price: number
+                    total_sold: number
                 }
                 Insert: {
+                    average_price: number
                     date_sold: string
                     id?: string
                     item_id: string
-                    price: number
+                    total_sold: number
                 }
                 Update: {
+                    average_price?: number
                     date_sold?: string
                     id?: string
                     item_id?: string
-                    price?: number
+                    total_sold?: number
                 }
                 Relationships: [
                     {

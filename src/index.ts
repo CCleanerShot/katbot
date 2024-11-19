@@ -1,5 +1,5 @@
 import { DiscordBot } from "./discord/client";
-import { BotEnvironment } from "./environments";
+import { BotEnvironment } from "./environment";
 import { hypixelController } from "./flipper/auction";
 
 const bot = new DiscordBot();

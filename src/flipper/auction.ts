@@ -1,5 +1,5 @@
 import nbt from "prismarine-nbt";
-import { BotEnvironment } from "../environments";
+import { BotEnvironment } from "../environment";
 import { utils } from "../utils";
 import { FinishedAuctions, OngoingAuctionItem, OngoingAuctions } from "../classes";
 

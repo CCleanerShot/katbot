@@ -66,10 +66,13 @@ export class FinishedAuctions {
     /** handles adding only new items to the database, as well as adding new prices for each found item */
     public async SaveDataToDatabase() {
         const currentItems = await supabaseClient.client.from("auction_items").select("*");
-        const toAdd = this.parsedData.filter(d => currentItems.data?.find(item => item.name == d.name && item.tier == d.tier && item.category == d.category))
+        const newItems = this.parsedData.filter(d => currentItems.data?.find(item => item.name != d.name && item.tier != d.tier && item.category != d.category))
 
-        await supabaseClient.client.from("auction_items").insert(toAdd);
+        const response = await supabaseClient.client.from("auction_items").insert(newItems);
 
+        // const pricesToOverride = await supabaseClient.client.from("auction_prices").select("*").contains("average_price", 1)
+        // const pricesToAdd = this.parsedData
+        // await supabaseClient.client.from("auction_prices").update({}
         // const withID: HypixelAuctionItemWithID[] = toAdd.map(d => new HypixelAuctionItemWithID(d.bin));
         // await supabaseClient.client.from("auction_prices").insert(withID)
     }

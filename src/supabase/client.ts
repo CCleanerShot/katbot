@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import { BotEnvironment } from '../environments';
+import { BotEnvironment } from '../environment';
 import { Database } from './types';
 
 class CustomSupabaseClient {
