@@ -21,57 +21,6 @@ export class FinishedAuctions {
 		this.auctions = params.auctions;
 	}
 
-	/** parses the raw data from the /auctions route, and sets the parsedData to the selected data from the Buffer (converted to NBT) */
-	public async ParseRawData(): Promise<void> {
-		const results: HypixelAuctionItem[] = [];
-
-		for (let i = 0; i < this.auctions.length; i++) {
-			const auction = this.auctions[i];
-			const data = Buffer.from(auction.item_bytes, "base64");
-			const nestedData = ((await nbt.parse(data)).parsed.value as any)!.i!.value!.value![0].tag.value;
-
-			const price: number = auction.price;
-
-			// either its an outlier sell, or the item is so worthless it doesnt matter
-			if (price < 100000) {
-				continue;
-			}
-
-			const bin: boolean = auction.bin;
-			const name: string = utils.RemoveSpecialText(nestedData.display.value.Name.value);
-			const lore: string = nestedData.display.value.Lore.value.value;
-
-			// the last item in the array contains the rarity and item type
-			const lastLine = utils.RemoveSpecialText(lore[lore.length - 1]).trim();
-
-			//// cut off from the first space
-			const cutIndex = lastLine.indexOf(" ");
-
-			let rarity = "";
-			let category = "";
-
-			if (cutIndex === -1) {
-				rarity = lastLine;
-			} else {
-				category = lastLine.slice(cutIndex);
-				rarity = lastLine.slice(0, cutIndex + 1);
-			}
-
-			results.push(
-				new HypixelAuctionItem({
-					bin,
-					name,
-					category,
-					price,
-					created_at: auction.timestamp,
-					tier: rarity,
-				}),
-			);
-		}
-
-		this.parsedData = results;
-	}
-
 	/** handles adding only new items to the database, as well as adding new prices for each found item */
 	public async SaveDataToDatabase() {
 		function createDictFromArray<K>(obj: K[], nameLocation: (obj: K) => string): Record<string, K> {

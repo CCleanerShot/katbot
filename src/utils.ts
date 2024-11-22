@@ -1,3 +1,4 @@
+import { TextChannel } from "discord.js";
 import { readFileSync, writeFile } from "node:fs";
 import type { FinishedAuctionItem } from "./classes";
 
@@ -39,6 +40,14 @@ class CustomUtils {
 
 		result = text.replace(/§.[a]?/g, "");
 		return result;
+	}
+
+	async SendBulkText(textChannel: TextChannel, message: string) {
+		const chunks = message.match(/[\s\S]{1,2000}/g) || [];
+
+		for (const chunk of chunks) {
+			await textChannel.send(chunk);
+		}
 	}
 }
 
