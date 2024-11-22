@@ -25,6 +25,12 @@ class HypixelController {
 
 		const [names, tiers] = results.reduce(
 			(pV, cV) => {
+				// ignore here if its too old
+				console.log(cV.end - Date.now());
+				if (cV.end - Date.now() > 60000 * myConfig.MINIMUM_MINUTES_FOR_SALE) {
+					return pV;
+				}
+
 				pV[0].push(cV.item_name.trim()); // for some reason, not trimmed
 				pV[1].push(cV.tier.trim()); // for some reason, not trimmed
 				return pV;
@@ -56,21 +62,22 @@ class HypixelController {
 			{} as Record<string, OngoingAuctionItem>
 		);
 
-		let discordResponse = "";
+		let discordResponse = "(Item Name, Rarity, Auction, Average, Ending)";
 		for (const item of pricesResponse.data) {
 			if (item.auction_prices.length === 0) {
 				continue;
 			}
 
 			// should work, if an error, client fetch is altered/wrong, or dict creation is wrong
-			const pItem = resultsDict[item.name];
+			const { end, item_bytes, highest_bid_amount, item_name, tier } = resultsDict[item.name];
 
 			const filterPrice = myConfig.MINIMUM_PRICE_FOR_SALE;
 			const avgPrice = item.auction_prices[0].average_price;
-			const { Count, Damage, id, tag } = await myUtils.NBTParse(pItem.item_bytes);
+			const secondsLeft = end - Date.now() / 1000;
+			const { Count, Damage, id, tag } = await myUtils.NBTParse(item_bytes);
 
-			if (pItem.highest_bid_amount / Count + filterPrice < avgPrice) {
-				discordResponse += `(Item Name, Rarity, Auction, Average) ${pItem.item_name} | ${pItem.tier} | ${pItem.highest_bid_amount} | ${avgPrice}`;
+			if (highest_bid_amount / Count.value + filterPrice < avgPrice) {
+				discordResponse += `${item_name} **|** ${tier} **|** ${highest_bid_amount} **|** ${avgPrice} **|** ${secondsLeft}s`;
 				discordResponse += "\n";
 			}
 		}
@@ -82,7 +89,7 @@ class HypixelController {
 	async GetOngoingAuctions(): Promise<OngoingAuctionItem[]> {
 		const ROUTE = "/v2/skyblock/auctions";
 
-		const amountOfPages = 40;
+		const amountOfPages = 50;
 
 		const allResults: OngoingAuctionItem[] = [];
 		for (let i = 0; i < amountOfPages; i++) {
@@ -97,7 +104,9 @@ class HypixelController {
 			await myUtils.Sleep(10);
 
 			// meaning we are at the end of the pages
-			if (results.auctions.length < 1000) break;
+			if (results.auctions.length < 1000) {
+				break;
+			}
 		}
 
 		return allResults;
@@ -133,8 +142,8 @@ class HypixelController {
 				continue;
 			}
 
-			const name: string = myUtils.RemoveSpecialText(tag.display.value.Name.value);
-			const lore: string = tag.display.value.Lore.value.value;
+			const name: string = myUtils.RemoveSpecialText(tag.value.display.value.Name.value);
+			const lore: string = tag.value.display.value.Lore.value.value;
 
 			// console.log("- - - - - - - - - - - - -");
 

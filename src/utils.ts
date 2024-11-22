@@ -17,9 +17,10 @@ class CustomUtils {
 	}
 
 	async NBTParse(stringValue: string) {
+		type NBTValue = { value: any };
 		const data = Buffer.from(stringValue, "base64");
 		const nestedData = ((await nbt.parse(data)).parsed.value as any)!.i!.value!.value![0];
-		return nestedData as { id: any; Count: any; tag: any; Damage: any };
+		return nestedData as { id: NBTValue; Count: NBTValue; tag: NBTValue; Damage: NBTValue };
 	}
 
 	ReadAuctionData(): FinishedAuctionItem[] {
