@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import path from "node:path";
 import { Client, Collection, Events, GatewayIntentBits, REST, Routes, TextChannel } from "discord.js";
 import { BotEnvironment } from "../environment";
@@ -8,17 +8,23 @@ export class DiscordBot {
 	client: Client;
 	commands: Collection<string, any>;
 	constructor() {
-		this.client = new Client({ intents: [GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageTyping, GatewayIntentBits.GuildPresences] });
+		this.client = new Client({
+			intents: [
+				GatewayIntentBits.MessageContent,
+				GatewayIntentBits.GuildMessages,
+				GatewayIntentBits.GuildMessageTyping,
+				GatewayIntentBits.GuildPresences,
+			],
+		});
 		this.commands = new Collection();
 		this.client.once(Events.ClientReady, async () => {
 			const guilds = await this.client.guilds.fetch();
 
-			guilds.forEach(async (g) => {
-				if (g.id == "530645640280277003") {
-					const channel: TextChannel = (await this.client.channels.fetch("532127696751165441")) as TextChannel;
-					// await channel.send("ramojusd");
+			for (const guild of guilds) {
+				if (guild[1].id === "530645640280277003") {
+					const channel: TextChannel = (await this.client.channels.fetch("530645640280277005")) as TextChannel;
 				}
-			});
+			}
 
 			const foldersPath = path.join(__dirname, "commands");
 			const commandFiles = fs.readdirSync(foldersPath).filter((file) => file.endsWith(".js"));
@@ -39,8 +45,11 @@ export class DiscordBot {
 
 			const addCommands = async () => {
 				for (const [string, guild] of await this.client.guilds.fetch()) {
-					if (guild.id == BotEnvironment.DISCORD_MAIN_CHANNEL_ID) {
-						const data = await rest.put(Routes.applicationGuildCommands(BotEnvironment.DISCORD_APPLICATION_ID, guild.id), { body: resultCommands });
+					if (guild.id === BotEnvironment.DISCORD_MAIN_CHANNEL_ID) {
+						const data = await rest.put(
+							Routes.applicationGuildCommands(BotEnvironment.DISCORD_APPLICATION_ID, guild.id),
+							{ body: resultCommands },
+						);
 						await utils.Sleep(100);
 					}
 				}
@@ -63,7 +72,10 @@ export class DiscordBot {
 				} catch (error) {
 					console.error(error);
 					if (interaction.replied || interaction.deferred) {
-						await interaction.followUp({ content: "There was an error while executing this command!", ephemeral: true });
+						await interaction.followUp({
+							content: "There was an error while executing this command!",
+							ephemeral: true,
+						});
 					} else {
 						await interaction.reply({ content: "There was an error while executing this command!", ephemeral: true });
 					}

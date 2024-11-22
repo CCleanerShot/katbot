@@ -4,4 +4,4 @@ import { HypixelAuctionItem } from "./hypixel_routes/HypixelAuctionItem";
 import { OngoingAuctionItem } from "./hypixel_routes/OngoingAuctionItem";
 import { OngoingAuctions } from "./hypixel_routes/OngoingAuctions";
 
-export { FinishedAuctionItem, FinishedAuctions, HypixelAuctionItem, OngoingAuctionItem, OngoingAuctions }
+export { FinishedAuctionItem, FinishedAuctions, HypixelAuctionItem, OngoingAuctionItem, OngoingAuctions };

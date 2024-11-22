@@ -12,21 +12,21 @@ export type Database = {
             auction_items: {
                 Row: {
                     category: string
-                    created_at: string
+                    created_at: number
                     id: string
                     name: string
                     tier: string
                 }
                 Insert: {
                     category: string
-                    created_at?: string
+                    created_at: number
                     id?: string
                     name: string
                     tier: string
                 }
                 Update: {
                     category?: string
-                    created_at?: string
+                    created_at?: number
                     id?: string
                     name?: string
                     tier?: string
@@ -36,21 +36,21 @@ export type Database = {
             auction_prices: {
                 Row: {
                     average_price: number
-                    date_sold: string
+                    created_at: number
                     id: string
                     item_id: string
                     total_sold: number
                 }
                 Insert: {
                     average_price: number
-                    date_sold: string
+                    created_at: number
                     id?: string
                     item_id: string
                     total_sold: number
                 }
                 Update: {
                     average_price?: number
-                    date_sold?: string
+                    created_at?: number
                     id?: string
                     item_id?: string
                     total_sold?: number

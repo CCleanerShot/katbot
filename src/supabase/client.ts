@@ -5,7 +5,7 @@ import { Database } from './types';
 class CustomSupabaseClient {
     client: SupabaseClient<Database>
     constructor() {
-        this.client = createClient<Database>(BotEnvironment.SUPABASE_URL, BotEnvironment.DISCORD_PUBLIC_KEY);
+        this.client = createClient<Database>(BotEnvironment.SUPABASE_URL, BotEnvironment.SUPABASE_PUBLIC_KEY);
     }
 }
 

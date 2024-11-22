@@ -1,10 +1,9 @@
-import { readFileSync, writeFile } from "fs";
-import { FinishedAuctionItem } from "./classes";
+import { readFileSync, writeFile } from "node:fs";
+import type { FinishedAuctionItem } from "./classes";
 
 class CustomUtils {
-
 	/** this is just a helper methof to easier display the methods. kinda annoying to see all the random BS methods on a static class */
-	static me: CustomUtils
+	static me: CustomUtils;
 	/**
 	 * Helper function to sleep.
 	 */
@@ -28,18 +27,18 @@ class CustomUtils {
 
 		if (stringResult === "") {
 			return [];
-		} else {
-			const json = JSON.parse(stringResult);
-			return json.data as FinishedAuctionItem[];
 		}
+
+		const json = JSON.parse(stringResult);
+		return json.data as FinishedAuctionItem[];
 	}
 
 	/** Hypixel gives some text special colors (created with a group of special characters). This helps remove them */
 	RemoveSpecialText(text: string): string {
 		let result = text;
 
-		result = text.replace(/§.[a]?/g, "")
-		return result
+		result = text.replace(/§.[a]?/g, "");
+		return result;
 	}
 }
 
