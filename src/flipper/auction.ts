@@ -25,9 +25,13 @@ class HypixelController {
 
 		const [names, tiers] = results.reduce(
 			(pV, cV) => {
-				// ignore here if its too old
-				console.log(cV.end - Date.now());
-				if (cV.end - Date.now() > 60000 * myConfig.MINIMUM_MINUTES_FOR_SALE) {
+				const timeLeft = cV.end - Date.now();
+
+				if (timeLeft < 0) {
+					return pV;
+				}
+
+				if (timeLeft > 60000 * myConfig.MINIMUM_MINUTES_FOR_SALE) {
 					return pV;
 				}
 
@@ -62,7 +66,9 @@ class HypixelController {
 			{} as Record<string, OngoingAuctionItem>
 		);
 
-		let discordResponse = "(Item Name, Rarity, Auction, Average, Ending)";
+		let discordResponse = "(Item Name, Rarity, Auction, Average, Ending)\n";
+		const originalLength = discordResponse.length;
+
 		for (const item of pricesResponse.data) {
 			if (item.auction_prices.length === 0) {
 				continue;
@@ -73,43 +79,57 @@ class HypixelController {
 
 			const filterPrice = myConfig.MINIMUM_PRICE_FOR_SALE;
 			const avgPrice = item.auction_prices[0].average_price;
-			const secondsLeft = end - Date.now() / 1000;
+			const secondsLeft = (end - Date.now()) / 1000;
 			const { Count, Damage, id, tag } = await myUtils.NBTParse(item_bytes);
 
+			console.log(highest_bid_amount, Count.value, filterPrice, avgPrice);
+
 			if (highest_bid_amount / Count.value + filterPrice < avgPrice) {
-				discordResponse += `${item_name} **|** ${tier} **|** ${highest_bid_amount} **|** ${avgPrice} **|** ${secondsLeft}s`;
+				discordResponse += `${item_name} **|** ${tier} **|** ${highest_bid_amount} **|** ${avgPrice} **|** ${secondsLeft / 60}m`;
 				discordResponse += "\n";
 			}
 		}
 
 		const textChannel = (await client.channels.fetch(BotEnvironment.DISCORD_SEND_CHANNEL_ID)) as TextChannel;
-		await myUtils.SendBulkText(textChannel, discordResponse);
+		if (discordResponse.length === originalLength) {
+			await textChannel.send("no sales lol");
+		} else {
+			await myUtils.SendBulkText(textChannel, discordResponse);
+		}
 	}
 
 	async GetOngoingAuctions(): Promise<OngoingAuctionItem[]> {
 		const ROUTE = "/v2/skyblock/auctions";
 
-		const amountOfPages = 50;
+		const pages = Array(myConfig.NUMBER_OF_FETCHED_PAGES)
+			.fill(null)
+			.map((v, i) => {
+				return new Promise(async (res, rej) => {
+					const query = `?page=${i}`;
+					const fetchedResults = await fetch(BASE_URL + ROUTE + query, {
+						headers: HEADERS,
+						method: "GET",
+					});
+					const results = new OngoingAuctions(await fetchedResults.json());
+					console.log(`done with page ${i}: ${results.auctions.length} results`);
 
-		const allResults: OngoingAuctionItem[] = [];
-		for (let i = 0; i < amountOfPages; i++) {
-			const query = `?page=${i}`;
-			const fetchedResults = await fetch(BASE_URL + ROUTE + query, {
-				headers: HEADERS,
-				method: "GET",
+					res(results.auctions);
+				}) as Promise<OngoingAuctionItem[]>;
 			});
-			const results = new OngoingAuctions(await fetchedResults.json());
-			allResults.push(...results.auctions);
-			console.log(`done with page ${i}: ${results.auctions.length} results`);
-			await myUtils.Sleep(10);
 
-			// meaning we are at the end of the pages
-			if (results.auctions.length < 1000) {
-				break;
+		const allResults = await Promise.allSettled(pages);
+		const finalResults: OngoingAuctionItem[] = [];
+
+		for (const result of allResults) {
+			if (result.status === "fulfilled") {
+				finalResults.push(...result.value);
+				continue;
 			}
+
+			console.log("failed to fetch, likely failed URL fetch");
 		}
 
-		return allResults;
+		return finalResults;
 	}
 
 	async GetFinishedAuctions(): Promise<FinishedAuctions> {
@@ -132,20 +152,8 @@ class HypixelController {
 			const bin: boolean = auction.bin;
 			const price: number = auction.price / Count.value; // consider it 1 purchase
 
-			// either its an outlier sell, or the item is so worthless it doesnt matter
-			if (price < myConfig.MINIMUM_PRICE_TO_IGNORE_SAVE) {
-				continue;
-			}
-
-			// only bins for now
-			if (bin === false) {
-				continue;
-			}
-
 			const name: string = myUtils.RemoveSpecialText(tag.value.display.value.Name.value);
 			const lore: string = tag.value.display.value.Lore.value.value;
-
-			// console.log("- - - - - - - - - - - - -");
 
 			// the last item in the array contains the rarity and item type
 			const lastLine = myUtils.RemoveSpecialText(lore[lore.length - 1]).trim();

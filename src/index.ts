@@ -10,9 +10,18 @@ bot.client.login(BotEnvironment.DISCORD_TOKEN);
 async function test() {
 	await hypixelController.GetMoreData();
 
-	const minutes = 5;
+	const minutes = 2;
+	await myUtils.Sleep(60000 * minutes);
+	test();
+}
+
+async function test2() {
+	await hypixelController.GetGoodSales(bot.client);
+
+	const minutes = 15;
 	await myUtils.Sleep(60000 * minutes);
 	test();
 }
 
 test();
+test2();
