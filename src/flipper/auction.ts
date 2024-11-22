@@ -1,4 +1,3 @@
-import nbt from "prismarine-nbt";
 import { BotEnvironment } from "../environment";
 import { utils } from "../utils";
 import { supabaseClient } from "../supabase/client";
@@ -29,15 +28,17 @@ class HypixelController {
 				pV[1].push(cV.tier.trim()); // for some reason, not trimmed
 				return pV;
 			},
-			[[], []] as string[][],
+			[[], []] as string[][]
 		);
 
 		const pricesResponse = await supabaseClient.client
 			.from("auction_items")
-			.select(`
+			.select(
+				`
 			*,
 			auction_prices ( * )
-		`)
+		`
+			)
 			.in("name", names)
 			.in("tier", tiers);
 
@@ -51,7 +52,7 @@ class HypixelController {
 				pV[cV.item_name] = cV;
 				return pV;
 			},
-			{} as Record<string, OngoingAuctionItem>,
+			{} as Record<string, OngoingAuctionItem>
 		);
 
 		const returnRate = 100000;
@@ -64,8 +65,8 @@ class HypixelController {
 
 			// should work, if an error, client fetch is altered/wrong, or dict creation is wrong
 			const priceItem = resultsDict[item.name];
-
-			if (priceItem.highest_bid_amount + returnRate < item.auction_prices[0].average_price) {
+			const { Count, Damage, id, tag } = await utils.NBTParse(priceItem.item_bytes);
+			if (priceItem.highest_bid_amount / Count + returnRate < item.auction_prices[0].average_price) {
 				discordResponse += `(Item Name, Rarity, Auction, Average) ${priceItem.item_name} | ${priceItem.tier} | ${priceItem.highest_bid_amount} | ${item.auction_prices[0].average_price}`;
 				discordResponse += "\n";
 			}
@@ -78,7 +79,7 @@ class HypixelController {
 	async GetOngoingAuctions(): Promise<OngoingAuctionItem[]> {
 		const ROUTE = "/v2/skyblock/auctions";
 
-		const amountOfPages = 1;
+		const amountOfPages = 10;
 
 		const allResults: OngoingAuctionItem[] = [];
 		for (let i = 0; i < amountOfPages; i++) {
@@ -113,11 +114,11 @@ class HypixelController {
 
 		for (let i = 0; i < response.auctions.length; i++) {
 			const auction = response.auctions[i];
-			const data = Buffer.from(auction.item_bytes, "base64");
-			const nestedData = ((await nbt.parse(data)).parsed.value as any)!.i!.value!.value![0].tag.value;
+
+			const { Count, Damage, id, tag } = await utils.NBTParse(auction.item_bytes);
 
 			const bin: boolean = auction.bin;
-			const price: number = auction.price;
+			const price: number = auction.price / Count.value; // consider it 1 purchase
 
 			// either its an outlier sell, or the item is so worthless it doesnt matter
 			if (price < 200000) {
@@ -129,8 +130,10 @@ class HypixelController {
 				continue;
 			}
 
-			const name: string = utils.RemoveSpecialText(nestedData.display.value.Name.value);
-			const lore: string = nestedData.display.value.Lore.value.value;
+			const name: string = utils.RemoveSpecialText(tag.display.value.Name.value);
+			const lore: string = tag.display.value.Lore.value.value;
+
+			// console.log("- - - - - - - - - - - - -");
 
 			// the last item in the array contains the rarity and item type
 			const lastLine = utils.RemoveSpecialText(lore[lore.length - 1]).trim();
@@ -156,7 +159,7 @@ class HypixelController {
 					price,
 					created_at: auction.timestamp,
 					tier: rarity,
-				}),
+				})
 			);
 		}
 

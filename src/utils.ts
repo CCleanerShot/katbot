@@ -1,25 +1,25 @@
+import nbt from "prismarine-nbt";
 import { TextChannel } from "discord.js";
 import { readFileSync, writeFile } from "node:fs";
 import type { FinishedAuctionItem } from "./classes";
 
 class CustomUtils {
-	/** this is just a helper methof to easier display the methods. kinda annoying to see all the random BS methods on a static class */
-	static me: CustomUtils;
-	/**
-	 * Helper function to sleep.
-	 */
-	Sleep(milliseconds: number): Promise<void> {
-		return new Promise((res, rej) => {
-			setTimeout(() => res(), milliseconds);
-		});
+	LogNested(obj: Record<string, any>, current_iter: number, max_iter: number) {
+		for (const key in obj) {
+			const nestedItem = obj[key];
+
+			if (typeof nestedItem === "object" && current_iter < max_iter) {
+				this.LogNested(nestedItem, current_iter + 1, max_iter);
+			} else {
+				console.log(key, ":", nestedItem);
+			}
+		}
 	}
 
-	WriteAuctionData(data: FinishedAuctionItem[]) {
-		writeFile("data.txt", JSON.stringify(data), (err) => {
-			if (err) {
-				console.log("error writing", err);
-			}
-		});
+	async NBTParse(stringValue: string) {
+		const data = Buffer.from(stringValue, "base64");
+		const nestedData = ((await nbt.parse(data)).parsed.value as any)!.i!.value!.value![0];
+		return nestedData as { id: any; Count: any; tag: any; Damage: any };
 	}
 
 	ReadAuctionData(): FinishedAuctionItem[] {
@@ -48,6 +48,23 @@ class CustomUtils {
 		for (const chunk of chunks) {
 			await textChannel.send(chunk);
 		}
+	}
+
+	/**
+	 * Helper function to sleep.
+	 */
+	Sleep(milliseconds: number): Promise<void> {
+		return new Promise((res, rej) => {
+			setTimeout(() => res(), milliseconds);
+		});
+	}
+
+	WriteAuctionData(data: FinishedAuctionItem[]) {
+		writeFile("data.txt", JSON.stringify(data), (err) => {
+			if (err) {
+				console.log("error writing", err);
+			}
+		});
 	}
 }
 
