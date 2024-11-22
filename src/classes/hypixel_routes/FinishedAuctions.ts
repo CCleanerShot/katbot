@@ -94,7 +94,6 @@ export class FinishedAuctions {
 		}
 
 		for (const item of addItemsResponse.data) {
-			console.log("ITEM ADDED: ", item.name, item.tier, item.category);
 			allItemsDict[item.name] = item;
 		}
 

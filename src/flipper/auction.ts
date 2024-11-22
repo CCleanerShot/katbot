@@ -82,8 +82,6 @@ class HypixelController {
 			const secondsLeft = (end - Date.now()) / 1000;
 			const { Count, Damage, id, tag } = await myUtils.NBTParse(item_bytes);
 
-			console.log(highest_bid_amount, Count.value, filterPrice, avgPrice);
-
 			if (highest_bid_amount / Count.value + filterPrice < avgPrice) {
 				discordResponse += `${item_name} **|** ${tier} **|** ${highest_bid_amount} **|** ${avgPrice} **|** ${secondsLeft / 60}m`;
 				discordResponse += "\n";
@@ -91,9 +89,8 @@ class HypixelController {
 		}
 
 		const textChannel = (await client.channels.fetch(BotEnvironment.DISCORD_SEND_CHANNEL_ID)) as TextChannel;
-		if (discordResponse.length === originalLength) {
-			await textChannel.send("no sales lol");
-		} else {
+
+		if (discordResponse.length !== originalLength) {
 			await myUtils.SendBulkText(textChannel, discordResponse);
 		}
 	}
@@ -111,8 +108,6 @@ class HypixelController {
 						method: "GET",
 					});
 					const results = new OngoingAuctions(await fetchedResults.json());
-					console.log(`done with page ${i}: ${results.auctions.length} results`);
-
 					res(results.auctions);
 				}) as Promise<OngoingAuctionItem[]>;
 			});
