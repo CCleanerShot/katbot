@@ -1,8 +1,9 @@
 import { BotEnvironment } from "../environment";
-import { utils } from "../utils";
+import { myUtils } from "../utils";
 import { supabaseClient } from "../supabase/client";
 import { FinishedAuctions, HypixelAuctionItem, OngoingAuctionItem, OngoingAuctions } from "../classes";
 import { Client, TextChannel } from "discord.js";
+import { myConfig } from "../config";
 
 const DEV_URL = "https://developer.hypixel.net";
 const BASE_URL = "https://api.hypixel.net";
@@ -55,8 +56,6 @@ class HypixelController {
 			{} as Record<string, OngoingAuctionItem>
 		);
 
-		const returnRate = 100000;
-
 		let discordResponse = "";
 		for (const item of pricesResponse.data) {
 			if (item.auction_prices.length === 0) {
@@ -64,22 +63,26 @@ class HypixelController {
 			}
 
 			// should work, if an error, client fetch is altered/wrong, or dict creation is wrong
-			const priceItem = resultsDict[item.name];
-			const { Count, Damage, id, tag } = await utils.NBTParse(priceItem.item_bytes);
-			if (priceItem.highest_bid_amount / Count + returnRate < item.auction_prices[0].average_price) {
-				discordResponse += `(Item Name, Rarity, Auction, Average) ${priceItem.item_name} | ${priceItem.tier} | ${priceItem.highest_bid_amount} | ${item.auction_prices[0].average_price}`;
+			const pItem = resultsDict[item.name];
+
+			const filterPrice = myConfig.MINIMUM_PRICE_FOR_SALE;
+			const avgPrice = item.auction_prices[0].average_price;
+			const { Count, Damage, id, tag } = await myUtils.NBTParse(pItem.item_bytes);
+
+			if (pItem.highest_bid_amount / Count + filterPrice < avgPrice) {
+				discordResponse += `(Item Name, Rarity, Auction, Average) ${pItem.item_name} | ${pItem.tier} | ${pItem.highest_bid_amount} | ${avgPrice}`;
 				discordResponse += "\n";
 			}
 		}
 
 		const textChannel = (await client.channels.fetch(BotEnvironment.DISCORD_SEND_CHANNEL_ID)) as TextChannel;
-		await utils.SendBulkText(textChannel, discordResponse);
+		await myUtils.SendBulkText(textChannel, discordResponse);
 	}
 
 	async GetOngoingAuctions(): Promise<OngoingAuctionItem[]> {
 		const ROUTE = "/v2/skyblock/auctions";
 
-		const amountOfPages = 10;
+		const amountOfPages = 40;
 
 		const allResults: OngoingAuctionItem[] = [];
 		for (let i = 0; i < amountOfPages; i++) {
@@ -91,7 +94,7 @@ class HypixelController {
 			const results = new OngoingAuctions(await fetchedResults.json());
 			allResults.push(...results.auctions);
 			console.log(`done with page ${i}: ${results.auctions.length} results`);
-			await utils.Sleep(10);
+			await myUtils.Sleep(10);
 
 			// meaning we are at the end of the pages
 			if (results.auctions.length < 1000) break;
@@ -115,13 +118,13 @@ class HypixelController {
 		for (let i = 0; i < response.auctions.length; i++) {
 			const auction = response.auctions[i];
 
-			const { Count, Damage, id, tag } = await utils.NBTParse(auction.item_bytes);
+			const { Count, Damage, id, tag } = await myUtils.NBTParse(auction.item_bytes);
 
 			const bin: boolean = auction.bin;
 			const price: number = auction.price / Count.value; // consider it 1 purchase
 
 			// either its an outlier sell, or the item is so worthless it doesnt matter
-			if (price < 200000) {
+			if (price < myConfig.MINIMUM_PRICE_TO_IGNORE_SAVE) {
 				continue;
 			}
 
@@ -130,13 +133,13 @@ class HypixelController {
 				continue;
 			}
 
-			const name: string = utils.RemoveSpecialText(tag.display.value.Name.value);
+			const name: string = myUtils.RemoveSpecialText(tag.display.value.Name.value);
 			const lore: string = tag.display.value.Lore.value.value;
 
 			// console.log("- - - - - - - - - - - - -");
 
 			// the last item in the array contains the rarity and item type
-			const lastLine = utils.RemoveSpecialText(lore[lore.length - 1]).trim();
+			const lastLine = myUtils.RemoveSpecialText(lore[lore.length - 1]).trim();
 
 			/// cut off from the first space
 			const cutIndex = lastLine.indexOf(" ");

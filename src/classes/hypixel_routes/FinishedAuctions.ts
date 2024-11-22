@@ -1,5 +1,5 @@
 import nbt from "prismarine-nbt";
-import { utils } from "../../utils";
+import { myUtils } from "../../utils";
 import { FinishedAuctionItem } from "./FinishedAuctionItem";
 import { Database } from "../../supabase/types";
 import { HypixelAuctionItem } from "./HypixelAuctionItem";
@@ -11,11 +11,7 @@ export class FinishedAuctions {
 	lastUpdated: number;
 	auctions: FinishedAuctionItem[];
 	parsedData: HypixelAuctionItem[] = [];
-	constructor(params: {
-		success: boolean;
-		lastUpdated: number;
-		auctions: FinishedAuctionItem[];
-	}) {
+	constructor(params: { success: boolean; lastUpdated: number; auctions: FinishedAuctionItem[] }) {
 		this.success = params.success;
 		this.lastUpdated = params.lastUpdated;
 		this.auctions = params.auctions;
@@ -48,7 +44,7 @@ export class FinishedAuctions {
 		const allItemsDict: Record<string, Database["public"]["Tables"]["auction_items"]["Row"]> = {};
 		const itemsToAddDict: Record<string, Database["public"]["Tables"]["auction_items"]["Insert"]> = createDictFromArray(
 			this.parsedData,
-			(obj) => obj.name,
+			(obj) => obj.name
 		);
 
 		const currentItemsResponse = await supabaseClient.client
@@ -56,15 +52,15 @@ export class FinishedAuctions {
 			.select("*")
 			.in(
 				"name",
-				this.parsedData.map((e) => e.name),
+				this.parsedData.map((e) => e.name)
 			)
 			.in(
 				"category",
-				this.parsedData.map((e) => e.category),
+				this.parsedData.map((e) => e.category)
 			)
 			.in(
 				"tier",
-				this.parsedData.map((e) => e.tier),
+				this.parsedData.map((e) => e.tier)
 			);
 
 		if (currentItemsResponse.error) {
@@ -111,10 +107,12 @@ export class FinishedAuctions {
 		//////////////////
 		const existingPricesToOverrideResponse = await supabaseClient.client
 			.from("auction_prices")
-			.select(`
+			.select(
+				`
 				*,
 				auction_items ( * )
-			`)
+			`
+			)
 			.in("item_id", [...currentItemsResponse.data.map((e) => e.id), ...addItemsResponse.data.map((e) => e.id)]);
 
 		if (existingPricesToOverrideResponse.error) {
@@ -146,7 +144,7 @@ export class FinishedAuctions {
 				const { average_price, created_at, id, item_id, total_sold } = pV;
 				const { bin, category, name, price, tier } = item;
 				finalDataDict[item.name].average_price = Math.round(
-					(average_price! * total_sold! + item.price) / (total_sold! + 1),
+					(average_price! * total_sold! + item.price) / (total_sold! + 1)
 				);
 				finalDataDict[item.name].total_sold!++;
 			}

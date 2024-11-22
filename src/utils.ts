@@ -68,4 +68,4 @@ class CustomUtils {
 	}
 }
 
-export const utils = new CustomUtils();
+export const myUtils = new CustomUtils();

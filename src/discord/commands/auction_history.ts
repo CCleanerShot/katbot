@@ -1,4 +1,4 @@
-import { utils } from "../../utils";
+import { myUtils } from "../../utils";
 import { supabaseClient } from "../../supabase/client";
 import { CommandInteraction, TextChannel } from "discord.js";
 import { SlashCommandBuilder } from "discord.js";
@@ -27,7 +27,7 @@ module.exports = {
 
 		const channel = (await interaction.client.channels.fetch(interaction.channelId)) as TextChannel;
 
-		await utils.SendBulkText(channel, stringBuilder);
+		await myUtils.SendBulkText(channel, stringBuilder);
 		await interaction.reply("Done!");
 	},
 };

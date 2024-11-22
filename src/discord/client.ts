@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { Client, Collection, Events, GatewayIntentBits, REST, Routes, TextChannel } from "discord.js";
 import { BotEnvironment } from "../environment";
-import { utils } from "../utils";
+import { myUtils } from "../utils";
 
 export class DiscordBot {
 	client: Client;
@@ -48,9 +48,9 @@ export class DiscordBot {
 					if (guild.id === BotEnvironment.DISCORD_MAIN_CHANNEL_ID) {
 						const data = await rest.put(
 							Routes.applicationGuildCommands(BotEnvironment.DISCORD_APPLICATION_ID, guild.id),
-							{ body: resultCommands },
+							{ body: resultCommands }
 						);
-						await utils.Sleep(100);
+						await myUtils.Sleep(100);
 					}
 				}
 			};
