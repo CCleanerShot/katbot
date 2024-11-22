@@ -19,11 +19,11 @@
 		"module": "CommonJS"
 	},
 	"scripts": {
-		"clean-windows": "rmdir dist",
-		"build-windows": "npm run clean && npx tsc",
-		"start-windows": "npm run build && node ./dist/index.js",
+		"clean-windows": "if exist dist (rmdir /s /q dist)",
+		"build-windows": "npm run clean-windows && npx tsc",
+		"start-windows": "npm run build-windows && node ./dist/index.js",
 		"clean-linux": "rm -rf dist",
-		"build-linux": "npm run clean && npx tsc",
-		"start-linux": "npm run build && node ./dist/index.js"
+		"build-linux": "npm run clean-linux && npx tsc",
+		"start-linux": "npm run build-linux && node ./dist/index.js"
 	}
 }
