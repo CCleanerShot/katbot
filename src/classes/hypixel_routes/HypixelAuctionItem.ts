@@ -1,4 +1,3 @@
-/** all items are implied to be BIN */
 export class HypixelAuctionItem {
 	bin: boolean;
 	name: string;
@@ -16,10 +15,10 @@ export class HypixelAuctionItem {
 		tier: string;
 	}) {
 		this.bin = params.bin;
-		this.name = params.name;
+		this.name = params.name.trim();
 		this.created_at = params.created_at;
-		this.category = params.category;
+		this.category = params.category.trim();
 		this.price = params.price;
-		this.tier = params.tier;
+		this.tier = params.tier.trim();
 	}
 }

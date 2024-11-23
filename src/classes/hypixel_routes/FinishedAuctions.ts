@@ -1,9 +1,7 @@
-import nbt from "prismarine-nbt";
-import { myUtils } from "../../utils";
-import { FinishedAuctionItem } from "./FinishedAuctionItem";
-import { Database } from "../../supabase/types";
-import { HypixelAuctionItem } from "./HypixelAuctionItem";
+import { DB } from "../../types";
 import { supabaseClient } from "../../supabase/client";
+import { HypixelAuctionItem } from "./HypixelAuctionItem";
+import { FinishedAuctionItem } from "./FinishedAuctionItem";
 
 /** /auctions_ended */
 export class FinishedAuctions {
@@ -29,6 +27,21 @@ export class FinishedAuctions {
 			return result;
 		}
 
+		function createArrayFromDict<T, K extends Record<string, T>>(obj: K): T[] {
+			const result: T[] = [];
+
+			for (const key in obj) {
+				const item = obj[key];
+				result.push(item);
+			}
+
+			return result;
+		}
+
+		function dictName<T extends { name: string; tier: string }>(obj: T) {
+			return obj.name + obj.tier;
+		}
+
 		// STEPS:
 		// 1. fetch item rows where items match of the same type
 		// 2. add new item rows where they dont already exist
@@ -39,62 +52,59 @@ export class FinishedAuctions {
 		// NEW ITEMS START //
 		/////////////////////
 
-		// creating dicts to optimize out n^2 operations
-		// which gets to trillions easily in our case
-		const allItemsDict: Record<string, Database["public"]["Tables"]["auction_items"]["Row"]> = {};
-		const itemsToAddDict: Record<string, Database["public"]["Tables"]["auction_items"]["Insert"]> = createDictFromArray(
-			this.parsedData,
-			(obj) => obj.name
-		);
-
-		const currentItemsResponse = await supabaseClient.client
+		const _currentItems = await supabaseClient.client
 			.from("auction_items")
 			.select("*")
 			.in(
 				"name",
-				this.parsedData.map((e) => e.name)
+				this.parsedData.map((e) => e.name),
 			)
 			.in(
 				"category",
-				this.parsedData.map((e) => e.category)
+				this.parsedData.map((e) => e.category),
 			)
 			.in(
 				"tier",
-				this.parsedData.map((e) => e.tier)
+				this.parsedData.map((e) => e.tier),
 			);
 
-		if (currentItemsResponse.error) {
+		if (_currentItems.error) {
 			// dont continue to prevent duplicate items
-			console.log("ERROR AT CURRENT ITEMS:", currentItemsResponse);
+			console.log("ERROR AT CURRENT ITEMS:", _currentItems);
 			return;
 		}
 
-		for (const existingItem of currentItemsResponse.data) {
-			allItemsDict[existingItem.name] = existingItem;
-			const potentialItem = { ...itemsToAddDict[existingItem.name] };
+		// creating dicts to optimize out n^2 operations
+		// which gets to trillions easily in our case
+		const allItemsDict: Record<string, DB.RowItem> = {};
+		const itemsToAddDict = createDictFromArray(this.parsedData, (obj) => dictName(obj));
+
+		for (const existingItem of _currentItems.data) {
+			allItemsDict[dictName(existingItem)] = existingItem;
+			const potentialItem = { ...itemsToAddDict[dictName(existingItem)] };
 
 			if (potentialItem && potentialItem.tier === existingItem.tier) {
-				delete itemsToAddDict[existingItem.name];
+				delete itemsToAddDict[dictName(existingItem)];
 			}
 		}
 
-		const itemsToAddArray: Database["public"]["Tables"]["auction_items"]["Insert"][] = [];
+		const itemsToAddArray: DB.InsertItem[] = [];
 
 		for (const key in itemsToAddDict) {
-			const { category, created_at, name, tier, id } = itemsToAddDict[key];
-			itemsToAddArray.push({ category: category!, created_at: created_at!, name: name!, tier: tier! });
+			const { category, created_at, name, tier } = itemsToAddDict[key];
+			itemsToAddArray.push({ category, created_at, name, tier });
 		}
 
-		const addItemsResponse = await supabaseClient.client.from("auction_items").insert(itemsToAddArray).select();
+		const _addItems = await supabaseClient.client.from("auction_items").insert(itemsToAddArray).select();
 
-		if (addItemsResponse.error) {
+		if (_addItems.error) {
 			// dont continue to prevent missing items when adding prices
-			console.log("ERROR AT ADDING ITEMS:", addItemsResponse);
+			console.log("ERROR AT ADDING ITEMS:", _addItems);
 			return;
 		}
 
-		for (const item of addItemsResponse.data) {
-			allItemsDict[item.name] = item;
+		for (const item of _addItems.data) {
+			allItemsDict[dictName(item)] = item;
 		}
 
 		///////////////////
@@ -104,63 +114,83 @@ export class FinishedAuctions {
 		//////////////////
 		// PRICES START //
 		//////////////////
-		const existingPricesToOverrideResponse = await supabaseClient.client
+		const _existingPricesToOverride = await supabaseClient.client
 			.from("auction_prices")
 			.select(
 				`
 				*,
 				auction_items ( * )
-			`
+			`,
 			)
-			.in("item_id", [...currentItemsResponse.data.map((e) => e.id), ...addItemsResponse.data.map((e) => e.id)]);
+			.in("item_id", [..._currentItems.data.map((e) => e.id), ..._addItems.data.map((e) => e.id)]);
 
-		if (existingPricesToOverrideResponse.error) {
-			// dont continue because... idk
-			console.log("ERROR AT EXISTING PRICES:", existingPricesToOverrideResponse);
+		if (_existingPricesToOverride.error) {
+			console.log("ERROR AT EXISTING PRICES:", _existingPricesToOverride);
 			return;
 		}
 
-		const existingPrices = existingPricesToOverrideResponse.data;
-		const finalPricesDict = createDictFromArray(existingPrices, (obj) => obj.auction_items!.name);
-
-		const finalDataDict: Record<string, Database["public"]["Tables"]["auction_prices"]["Update"]> = {};
-
-		for (const key in finalPricesDict) {
-			const { auction_items, average_price, created_at, id, item_id, total_sold } = finalPricesDict[key];
-			finalDataDict[auction_items!.name] = { average_price, created_at, item_id, total_sold };
-		}
+		const ap: Record<string, DB.InsertPrice> = {};
+		// biome-ignore format: fuck off
+		const op = _existingPricesToOverride.data.reduce((pV, cV) => {
+			const {auction_items, average_price, created_at, id, item_id, total_sold} = cV
+			pV[dictName(auction_items!)] = {average_price, created_at, id, item_id, total_sold}
+			return pV;
+		}, {} as Record<string, DB.UpdatePrice>)
 
 		for (const item of this.parsedData) {
-			if (!finalDataDict[item.name]) {
-				finalDataDict[item.name] = {
-					average_price: item.price,
-					created_at: item.created_at,
-					item_id: allItemsDict[item.name].id,
-					total_sold: 1,
-				};
-			} else {
-				const pV = finalDataDict[item.name];
-				const { average_price, created_at, id, item_id, total_sold } = pV;
-				const { bin, category, name, price, tier } = item;
-				finalDataDict[item.name].average_price = Math.round(
-					(average_price! * total_sold! + item.price) / (total_sold! + 1)
-				);
-				finalDataDict[item.name].total_sold!++;
+			const { bin, category, created_at, name, price, tier } = item;
+			switch (true as boolean) {
+				case !!op[dictName(item)]: {
+					const { average_price, created_at, id, item_id, total_sold } = op[dictName(item)];
+					op[dictName(item)].average_price = Math.round((average_price! * total_sold! + price) / (total_sold! + 1));
+					op[dictName(item)].total_sold!++;
+					break;
+				}
+				case !!ap[dictName(item)]: {
+					const { average_price, created_at, id, item_id, total_sold } = ap[dictName(item)];
+					ap[dictName(item)].average_price = Math.round((average_price! * total_sold! + price) / (total_sold! + 1));
+					ap[dictName(item)].total_sold!++;
+					break;
+				}
+				default: {
+					ap[dictName(item)] = {
+						average_price: price,
+						created_at: created_at,
+						item_id: allItemsDict[dictName(item)].id,
+						total_sold: 1,
+					};
+					break;
+				}
 			}
 		}
 
-		const finalDataArray: Database["public"]["Tables"]["auction_prices"]["Insert"][] = [];
+		const overrideD: DB.UpdatePrice[] = createArrayFromDict(op);
+		const addD: DB.InsertPrice[] = createArrayFromDict(ap);
 
-		for (const key in finalDataDict) {
-			const { average_price, created_at, id, item_id, total_sold } = finalDataDict[key];
-			finalDataArray.push({
-				average_price: average_price!,
-				created_at: created_at!,
-				item_id: item_id!,
-				total_sold: total_sold!,
-			});
+		const _addSuccess = await supabaseClient.client.from("auction_prices").insert(addD);
+
+		if (_addSuccess.error) {
+			console.log("ERROR AT ADDING PRICES:", _addSuccess);
+			return;
 		}
 
-		const overriddenSuccessResponse = await supabaseClient.client.from("auction_prices").upsert(finalDataArray);
+		let failed = false;
+		// why cant i mass update
+		for (const item of overrideD) {
+			const _overriddenSuccess = await supabaseClient.client.from("auction_prices").update(item).eq("id", item.id!);
+
+			if (_overriddenSuccess.error) {
+				console.log("ERROR AT OVERRIDING PRICES:", _overriddenSuccess);
+				failed = true;
+			}
+		}
+
+		////////////////
+		// PRICES END //
+		////////////////
+
+		if (!failed) {
+			console.log("got more data!", Date.now());
+		}
 	}
 }

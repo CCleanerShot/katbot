@@ -23,10 +23,10 @@
 			"recommended": true,
 			"style": {
 				"noNonNullAssertion": "off",
-				"useImportType": "off"
+				"useImportType": "off",
+				"useTemplate": "off"
 			},
-			"suspicious":
-			{
+			"suspicious": {
 				"noExplicitAny": "off"
 			}
 		}

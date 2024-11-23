@@ -1,6 +1,7 @@
 import { HypixelAuctionItem } from "./HypixelAuctionItem";
 
 export class OngoingAuctionItem {
+	bin: boolean;
 	uuid: string; // "409a1e0f261a49849493278d6cd9305a";
 	auctioneer: string; // "347ef6c1daac45ed9d1fa02818cf0fb6";
 	profile_id: string; // "347ef6c1daac45ed9d1fa02818cf0fb6";
@@ -21,6 +22,7 @@ export class OngoingAuctionItem {
 	parsedData: HypixelAuctionItem[] = [];
 
 	constructor(params: {
+		bin: boolean;
 		uuid: string;
 		auctioneer: string;
 		profile_id: string;
@@ -39,17 +41,18 @@ export class OngoingAuctionItem {
 		highest_bid_amount: number;
 		bids: any;
 	}) {
+		this.bin = params.bin;
 		this.uuid = params.uuid;
 		this.auctioneer = params.auctioneer;
 		this.profile_id = params.profile_id;
 		this.coop = params.coop;
 		this.start = params.start;
 		this.end = params.end;
-		this.item_name = params.item_name;
-		this.item_lore = params.item_lore;
+		this.item_name = params.item_name.trim();
+		this.item_lore = params.item_lore.trim();
 		this.extra = params.extra;
-		this.category = params.category;
-		this.tier = params.tier;
+		this.category = params.category.trim();
+		this.tier = params.tier.trim();
 		this.starting_bid = params.starting_bid;
 		this.item_bytes = params.item_bytes;
 		this.claimed = params.claimed;

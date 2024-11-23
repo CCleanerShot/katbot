@@ -4,6 +4,24 @@ import { readFileSync, writeFile } from "node:fs";
 import type { FinishedAuctionItem } from "./classes";
 
 class CustomUtils {
+	FormatPrice(price: number): string {
+		let multiple = 1;
+		const result = [];
+		const sPrice = price.toString();
+
+		for (let i = sPrice.length - 1; i >= 0; i--) {
+			multiple++;
+			const letter = sPrice[i];
+			result.unshift(letter);
+
+			if (multiple % 4 === 0) {
+				multiple = 1;
+				result.unshift(" ");
+			}
+		}
+
+		return result.join("").trim();
+	}
 	LogNested(obj: Record<string, any>, current_iter: number, max_iter: number) {
 		for (const key in obj) {
 			const nestedItem = obj[key];
@@ -43,11 +61,22 @@ class CustomUtils {
 		return result;
 	}
 
+	/** send bulk text */
 	async SendBulkText(textChannel: TextChannel, message: string) {
 		const chunks = message.match(/[\s\S]{1,2000}/g) || [];
 
 		for (const chunk of chunks) {
 			await textChannel.send(chunk);
+		}
+	}
+
+	/** send bulk text as code blocks */
+	async SendBulkTextCode(textChannel: TextChannel, message: string) {
+		const chunks = message.match(/[\s\S]{1,1994}/g) || [];
+
+		for (const chunk of chunks) {
+			const result = "```" + chunk + "```";
+			await textChannel.send(result);
 		}
 	}
 
@@ -58,6 +87,15 @@ class CustomUtils {
 		return new Promise((res, rej) => {
 			setTimeout(() => res(), milliseconds);
 		});
+	}
+
+	/** returns the string back with a number of leading spaces based on the maxValue */
+	SpaceText(maxValue: number, currentString: string): string {
+		const spaces = Array(Math.max(maxValue - currentString.length, 0))
+			.fill(" ")
+			.join("");
+
+		return spaces + currentString;
 	}
 
 	WriteAuctionData(data: FinishedAuctionItem[]) {

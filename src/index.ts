@@ -6,21 +6,17 @@ import { myUtils } from "./utils";
 const bot = new DiscordBot();
 bot.client.login(BotEnvironment.DISCORD_TOKEN);
 
-/** for testing stuff right here */
+const minutes = 60000;
 async function test() {
 	await hypixelController.GetMoreData();
-
-	const minutes = 2;
-	await myUtils.Sleep(60000 * minutes);
+	await myUtils.Sleep(minutes * 2);
 	test();
 }
 
 async function test2() {
 	await hypixelController.GetGoodSales(bot.client);
-
-	const minutes = 15;
-	await myUtils.Sleep(60000 * minutes);
-	test();
+	await myUtils.Sleep(minutes * 1);
+	test2();
 }
 
 test();
