@@ -22,6 +22,7 @@ class CustomUtils {
 
 		return result.join("").trim();
 	}
+
 	LogNested(obj: Record<string, any>, current_iter: number, max_iter: number) {
 		for (const key in obj) {
 			const nestedItem = obj[key];

@@ -23,5 +23,12 @@ export class OngoingAuctions {
 		this.totalAuctions = params.totalAuctions;
 		this.lastUpdated = params.lastUpdated;
 		this.auctions = params.auctions;
+
+		for (const auction of this.auctions) {
+			auction.auctioneer = auction.auctioneer.trim();
+			auction.item_name = auction.item_name.trim();
+			auction.category = auction.category.trim();
+			auction.tier = auction.tier.trim();
+		}
 	}
 }

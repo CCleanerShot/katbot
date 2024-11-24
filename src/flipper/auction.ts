@@ -8,6 +8,7 @@ import { FinishedAuctions } from "../classes/hypixel_routes/FinishedAuctions";
 import { GetPlayerItem } from "../classes/hypixel_routes/GetPlayerItem";
 import { GetPlayerResponse } from "../classes/hypixel_routes/GetPlayerResponse";
 import { DB } from "../types";
+import { myFetcher } from "../abortController";
 
 const DEV_URL = "https://developer.hypixel.net";
 const BASE_URL = "https://api.hypixel.net";
@@ -32,10 +33,22 @@ class HypixelController {
 	async GetGoodSales(client: Client) {
 		const allResults = await this.GetOngoingAuctions();
 		// likely dont need the end results cuz we'll see them later
-		const results = allResults.sort((a, b) => a.end - b.end).slice(0, 2000);
+		const results = allResults.sort((a, b) => a.end - b.end).slice(0, 4000);
 
 		const resultsDict = results.reduce(
 			(pV, cV) => {
+				const timeLeft = cV.end - Date.now();
+
+				// if theres barely any time left
+				if (timeLeft < 60000 / 4) {
+					return pV;
+				}
+
+				// if below set auction timer (not taking auctions that are 5hrs away)
+				if (cV.bin === false && timeLeft > 60000 * myConfig.data.MINIMUM_MINUTES_FOR_AUCTION_SALE) {
+					return pV;
+				}
+
 				pV[cV.item_name + cV.tier] = cV;
 				return pV;
 			},
@@ -44,16 +57,6 @@ class HypixelController {
 
 		const [names, tiers] = results.reduce(
 			(pV, cV) => {
-				const timeLeft = cV.end - Date.now();
-
-				if (timeLeft < 60000 / 2) {
-					return pV;
-				}
-
-				if (timeLeft > 60000 * myConfig.data.MINIMUM_MINUTES_FOR_SALE) {
-					return pV;
-				}
-
 				pV[0].push(cV.item_name); // for some reason, not trimmed
 				pV[1].push(cV.tier); // for some reason, not trimmed
 				return pV;
@@ -64,10 +67,10 @@ class HypixelController {
 		const stack = 500;
 		const pricesData: (DB.RowItem & { auction_prices: DB.RowPrice[] })[] = [];
 
-		// splitting it to 5 requests cuz supabase cant handle so many at once
-		for (let i = 0; i < 5; i++) {
-			const _names = names.slice(i * stack, i * (stack + 1));
-			const _tiers = tiers.slice(i * stack, i * (stack + 1));
+		// splitting it to 10 requests cuz supabase cant handle so many at once
+		for (let i = 0; i < 10; i++) {
+			const _names = names.slice(stack * i, (i + 1) * stack);
+			const _tiers = tiers.slice(stack * i, (i + 1) * stack);
 
 			const pricesResponse = await supabaseClient.client
 				.from("auction_items")
@@ -89,19 +92,24 @@ class HypixelController {
 
 			pricesData.push(...pricesResponse.data);
 
-			if (i * (stack + 1) > _names.length) {
+			if ((i + 1) * stack > _names.length) {
 				break;
 			}
+
+			await myUtils.Sleep(10);
 		}
 
+		const NAME_SIZE = 30;
 		const nameText = "Name";
 		const tierText = "Tier";
 		const saleText = "Sale";
 		const avgText = "Avg";
-		let maxName = nameText.length;
-		let maxTier = tierText.length;
+		const maxName = NAME_SIZE; // hard coding for simplicity, max is NAME_SIZE
+		const maxTier = 9; // hard coding for simplicity, max is LEGENDARY
 		let maxAuction = saleText.length;
 		let maxPrice = avgText.length;
+
+		const filterPrice = myConfig.data.MINIMUM_PRICE_FOR_SALE;
 
 		for (const { auction_prices, category, created_at, id, name, tier } of pricesData) {
 			if (auction_prices.length === 0) {
@@ -116,18 +124,9 @@ class HypixelController {
 			const auction = Math.max(highest_bid_amount, starting_bid);
 			const { Count, Damage, id, tag } = await myUtils.NBTParse(item_bytes);
 			const avgPrice = auction_prices[0].average_price;
-			const filterPrice = myConfig.data.MINIMUM_PRICE_FOR_SALE;
 
 			if (auction / Count.value + filterPrice > avgPrice) {
 				continue;
-			}
-
-			if (name.length > maxName) {
-				maxName = name.length;
-			}
-
-			if (tier.length > maxTier) {
-				maxTier = tier.length;
 			}
 
 			const auctionWithSpaces = myUtils.FormatPrice(auction);
@@ -160,12 +159,10 @@ class HypixelController {
 			}
 
 			// should work, if an error, client fetch is altered/wrong, or dict creation is wrong
-			const { end, bin, item_bytes, starting_bid, highest_bid_amount, item_name, auctioneer } =
-				resultsDict[name + tier];
+			const { end, bin, item_bytes, starting_bid, highest_bid_amount, auctioneer } = resultsDict[name + tier];
 			const auction = Math.max(highest_bid_amount, starting_bid);
 			const { Count, Damage, id, tag } = await myUtils.NBTParse(item_bytes);
 			const avgPrice = auction_prices[0].average_price;
-			const filterPrice = myConfig.data.MINIMUM_PRICE_FOR_SALE;
 
 			if (auction / Count.value + filterPrice > avgPrice) {
 				continue;
@@ -173,14 +170,19 @@ class HypixelController {
 
 			const user = await this.GetPlayer(auctioneer);
 
-			const minutesLeft = Math.round(((end - Date.now()) / 1000 / 60) * 1000) / 1000;
+			if (!user) {
+				// continue anyways, idk whats going on
+				console.log("somehow no user...", user, auctioneer);
+			}
+
+			const minutesLeft = Math.round(((end - Date.now()) / 1000 / 60) * 100) / 100;
 
 			const myBin = bin ? "  +" : "  -";
-			const myName = myUtils.SpaceText(maxName, item_name);
+			const myName = myUtils.SpaceText(maxName, name.length > NAME_SIZE ? name.slice(0, NAME_SIZE - 3) + "..." : name);
 			const myTier = myUtils.SpaceText(maxTier, tier);
 			const myBid = myUtils.SpaceText(maxAuction, myUtils.FormatPrice(auction));
 			const myPrice = myUtils.SpaceText(maxPrice, myUtils.FormatPrice(avgPrice));
-			const myUser = user.displayname;
+			const myUser = user?.displayname.trim() ?? "N/A";
 
 			dResponse += `${myBin}|${myName}|${myTier}|${myBid}|${myPrice}|${minutesLeft}m|${myUser}\n`;
 		}
@@ -199,7 +201,7 @@ class HypixelController {
 	async GetFinishedAuctions(): Promise<FinishedAuctions> {
 		const ROUTE = "/v2/skyblock/auctions_ended";
 
-		const fetchedResults = await fetch(BASE_URL + ROUTE, {
+		const fetchedResults = await myFetcher.Fetch(BASE_URL + ROUTE, {
 			headers: HEADERS,
 			method: "GET",
 		});
@@ -254,17 +256,21 @@ class HypixelController {
 	async GetOngoingAuctions(): Promise<OngoingAuctionItem[]> {
 		const ROUTE = "/v2/skyblock/auctions";
 
-		// const pages = Array(.data.NUMBER_OF_FETCHED_PAGES)
+		// const pages = Array(myConfig.data.NUMBER_OF_FETCHED_PAGES)
 		// 	.fill(null)
 		// 	.map((v, i) => {
-		// 		return new Promise(async (res, rej) => {
-		// 			const query = `?page=${i}`;
-		// 			const fetchedResults = await fetch(BASE_URL + ROUTE + query, {
-		// 				headers: HEADERS,
-		// 				method: "GET",
-		// 			});
-		// 			const results = new OngoingAuctions(await fetchedResults.json());
-		// 			res(results.auctions);
+		// 		return new Promise((res, rej) => {
+		// 			async function test() {
+		// 				const query = `?page=${i}`;
+		// 				const fetchedResults = await fetch(BASE_URL + ROUTE + query, {
+		// 					headers: HEADERS,
+		// 					method: "GET",
+		// 				});
+		// 				const results = new OngoingAuctions(await fetchedResults.json());
+		// 				res(results.auctions);
+		// 			}
+
+		// 			test();
 		// 		}) as Promise<OngoingAuctionItem[]>;
 		// 	});
 
@@ -285,14 +291,14 @@ class HypixelController {
 
 		for (let i = 0; i < myConfig.data.NUMBER_OF_FETCHED_PAGES; i++) {
 			const query = `?page=${i}`;
-			const fetchedResults = await fetch(BASE_URL + ROUTE + query, {
+			const fetchedResults = await myFetcher.Fetch(BASE_URL + ROUTE + query, {
 				headers: HEADERS,
 				method: "GET",
 			});
 			const results = new OngoingAuctions(await fetchedResults.json());
 			finalResults.push(...results.auctions);
 
-			await myUtils.Sleep(1);
+			await myUtils.Sleep(5);
 		}
 
 		return finalResults;
@@ -301,7 +307,7 @@ class HypixelController {
 	async GetPlayer(player_uuid: string): Promise<GetPlayerItem> {
 		const ROUTE = "/v2/player";
 		const query = `?uuid=${player_uuid}`;
-		const fetchedResults = await fetch(BASE_URL + ROUTE + query, {
+		const fetchedResults = await myFetcher.Fetch(BASE_URL + ROUTE + query, {
 			headers: HEADERS,
 			method: "GET",
 		});

@@ -7,17 +7,28 @@ const bot = new DiscordBot();
 bot.client.login(BotEnvironment.DISCORD_TOKEN);
 
 const minutes = 60000;
+
+// NOTE: dont run 2 async tasks cuz node has a fucking uncatchable error from an event
+// what the fuck is thi shit
+
+let counter = 0;
 async function test() {
-	await hypixelController.GetMoreData();
-	await myUtils.Sleep(minutes * 2);
+	counter++;
+
+	if (counter > 2) {
+		counter = 0;
+		await hypixelController.GetGoodSales(bot.client);
+		await myUtils.Sleep(minutes - 50000); // already taks a long ass time
+	} else {
+		await hypixelController.GetMoreData();
+		await myUtils.Sleep(minutes);
+	}
+
 	test();
 }
 
-async function test2() {
-	await hypixelController.GetGoodSales(bot.client);
-	await myUtils.Sleep(minutes * 1);
-	test2();
-}
-
 test();
-test2();
+
+process.on("uncaughtException", (err) => {
+	console.log("uncaught", err);
+});

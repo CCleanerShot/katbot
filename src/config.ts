@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 type ConfigData = {
 	NUMBER_OF_FETCHED_PAGES: number;
 	MINIMUM_PRICE_FOR_SALE: number;
-	MINIMUM_MINUTES_FOR_SALE: number;
+	MINIMUM_MINUTES_FOR_AUCTION_SALE: number;
 };
 class Config {
 	data: ConfigData;
