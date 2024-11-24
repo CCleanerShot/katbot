@@ -265,40 +265,6 @@ class HypixelController {
 	async GetOngoingAuctions(): Promise<OngoingAuctionItem[]> {
 		const ROUTE = "/v2/skyblock/auctions";
 
-		// const batchAmount = 5;
-		// const pages = myConfig.data.NUMBER_OF_FETCHED_PAGES;
-		// const doubleArray = myUtils.Array2D(pages / batchAmount, pages / (pages / batchAmount));
-		// const batches = myUtils.Array2DFill(doubleArray, (i) => {
-		// 	return new Promise((res, rej) => {
-		// 		async function test() {
-		// 			const query = `?page=${i}`;
-		// 			const fetchedResults = await myFetcher.Fetch(BASE_URL + ROUTE + query, {
-		// 				headers: HEADERS,
-		// 				method: "GET",
-		// 			});
-		// 			const results = new OngoingAuctions(await fetchedResults.json());
-		// 			res(results.auctions);
-		// 		}
-
-		// 		test();
-		// 	});
-		// });
-
-		// const finalResults: OngoingAuctionItem[] = [];
-
-		// for (const batch of batches) {
-		// 	const results = (await Promise.allSettled(batch)) as PromiseSettledResult<OngoingAuctionItem[]>[];
-
-		// 	for (const result of results) {
-		// 		if (result.status === "rejected") {
-		// 			console.log("failed to fetch, likely failed URL fetch");
-		// 			continue;
-		// 		}
-
-		// 		finalResults.push(...result.value);
-		// 	}
-		// }
-
 		const finalResults: OngoingAuctionItem[] = [];
 
 		for (let i = 0; i < myConfig.data.NUMBER_OF_FETCHED_PAGES; i++) {
