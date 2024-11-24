@@ -25,6 +25,7 @@ type FinishedAuctionsResponse = {
 };
 
 class HypixelController {
+	cachedAuctions: Record<string, any> = {};
 	async GetMoreData() {
 		const results = await this.GetFinishedAuctions();
 		await results.SaveDataToDatabase();
@@ -33,11 +34,16 @@ class HypixelController {
 	async GetGoodSales(client: Client) {
 		const allResults = await this.GetOngoingAuctions();
 		// likely dont need the end results cuz we'll see them later
-		const results = allResults.sort((a, b) => a.end - b.end).slice(0, 4000);
+		const results = allResults.sort((a, b) => a.end - b.end).slice(0, 10000);
 
 		const resultsDict = results.reduce(
 			(pV, cV) => {
 				const timeLeft = cV.end - Date.now();
+
+				// ignoring items already checked this session
+				if (this.cachedAuctions[cV.uuid]) {
+					return pV;
+				}
 
 				// if theres barely any time left
 				if (timeLeft < 60000 / 4) {
@@ -49,6 +55,7 @@ class HypixelController {
 					return pV;
 				}
 
+				this.cachedAuctions[cV.uuid] = cV.uuid;
 				pV[cV.item_name + cV.tier] = cV;
 				return pV;
 			},
@@ -67,8 +74,8 @@ class HypixelController {
 		const stack = 500;
 		const pricesData: (DB.RowItem & { auction_prices: DB.RowPrice[] })[] = [];
 
-		// splitting it to 10 requests cuz supabase cant handle so many at once
-		for (let i = 0; i < 10; i++) {
+		// splitting it to 20 requests cuz supabase cant handle so many at once
+		for (let i = 0; i < 20; i++) {
 			const _names = names.slice(stack * i, (i + 1) * stack);
 			const _tiers = tiers.slice(stack * i, (i + 1) * stack);
 
@@ -99,13 +106,14 @@ class HypixelController {
 			await myUtils.Sleep(10);
 		}
 
-		const NAME_SIZE = 30;
 		const nameText = "Name";
 		const tierText = "Tier";
 		const saleText = "Sale";
 		const avgText = "Avg";
-		const maxName = NAME_SIZE; // hard coding for simplicity, max is NAME_SIZE
-		const maxTier = 9; // hard coding for simplicity, max is LEGENDARY
+
+		const MAX_NAME = 25; // hard coding for simplicity
+		const MAX_TIER = 7; // hard coding for simplicity, max is LEGEND-
+		const MAX_USER = 10;
 		let maxAuction = saleText.length;
 		let maxPrice = avgText.length;
 
@@ -141,12 +149,12 @@ class HypixelController {
 			}
 		}
 
-		const titleName = myUtils.SpaceText(maxName, nameText);
-		const titleTier = myUtils.SpaceText(maxTier, tierText);
+		const titleName = myUtils.SpaceText(MAX_NAME, nameText);
+		const titleTier = myUtils.SpaceText(MAX_TIER, tierText);
 		const titleAuction = myUtils.SpaceText(maxAuction, saleText);
 		const titlePrice = myUtils.SpaceText(maxPrice, avgText);
 
-		let dResponse = `BIN|${titleName}|${titleTier}|${titleAuction}|${titlePrice}|Ending|User\n`;
+		let dResponse = `B|${titleName}|${titleTier}|${titleAuction}|${titlePrice}|Ending|User\n`;
 		const originalLength = dResponse.length;
 
 		for (const { auction_prices, category, created_at, id, name, tier } of pricesData) {
@@ -175,14 +183,15 @@ class HypixelController {
 				console.log("somehow no user...", user, auctioneer);
 			}
 
-			const minutesLeft = Math.round(((end - Date.now()) / 1000 / 60) * 100) / 100;
+			const minutesLeft = Math.round(((end - Date.now()) / 1000 / 60) * 10) / 10;
+			const uName = user?.displayname ?? "N/A";
 
-			const myBin = bin ? "  +" : "  -";
-			const myName = myUtils.SpaceText(maxName, name.length > NAME_SIZE ? name.slice(0, NAME_SIZE - 3) + "..." : name);
-			const myTier = myUtils.SpaceText(maxTier, tier);
+			const myBin = bin ? "+" : "-";
+			const myName = name.length >= MAX_NAME ? name.slice(0, MAX_NAME - 1) + "-" : myUtils.SpaceText(MAX_NAME, name);
+			const myTier = tier.length > MAX_TIER ? tier.slice(0, MAX_TIER - 1) + "-" : tier;
 			const myBid = myUtils.SpaceText(maxAuction, myUtils.FormatPrice(auction));
 			const myPrice = myUtils.SpaceText(maxPrice, myUtils.FormatPrice(avgPrice));
-			const myUser = user?.displayname.trim() ?? "N/A";
+			const myUser = uName.length > MAX_USER ? uName.slice(0, MAX_USER - 1) + "-" : uName;
 
 			dResponse += `${myBin}|${myName}|${myTier}|${myBid}|${myPrice}|${minutesLeft}m|${myUser}\n`;
 		}
@@ -256,35 +265,38 @@ class HypixelController {
 	async GetOngoingAuctions(): Promise<OngoingAuctionItem[]> {
 		const ROUTE = "/v2/skyblock/auctions";
 
-		// const pages = Array(myConfig.data.NUMBER_OF_FETCHED_PAGES)
-		// 	.fill(null)
-		// 	.map((v, i) => {
-		// 		return new Promise((res, rej) => {
-		// 			async function test() {
-		// 				const query = `?page=${i}`;
-		// 				const fetchedResults = await fetch(BASE_URL + ROUTE + query, {
-		// 					headers: HEADERS,
-		// 					method: "GET",
-		// 				});
-		// 				const results = new OngoingAuctions(await fetchedResults.json());
-		// 				res(results.auctions);
-		// 			}
+		// const batchAmount = 5;
+		// const pages = myConfig.data.NUMBER_OF_FETCHED_PAGES;
+		// const doubleArray = myUtils.Array2D(pages / batchAmount, pages / (pages / batchAmount));
+		// const batches = myUtils.Array2DFill(doubleArray, (i) => {
+		// 	return new Promise((res, rej) => {
+		// 		async function test() {
+		// 			const query = `?page=${i}`;
+		// 			const fetchedResults = await myFetcher.Fetch(BASE_URL + ROUTE + query, {
+		// 				headers: HEADERS,
+		// 				method: "GET",
+		// 			});
+		// 			const results = new OngoingAuctions(await fetchedResults.json());
+		// 			res(results.auctions);
+		// 		}
 
-		// 			test();
-		// 		}) as Promise<OngoingAuctionItem[]>;
+		// 		test();
 		// 	});
-
-		// const allResults = await Promise.allSettled(pages);
+		// });
 
 		// const finalResults: OngoingAuctionItem[] = [];
 
-		// for (const result of allResults) {
-		// 	if (result.status === "fulfilled") {
-		// 		finalResults.push(...result.value);
-		// 		continue;
-		// 	}
+		// for (const batch of batches) {
+		// 	const results = (await Promise.allSettled(batch)) as PromiseSettledResult<OngoingAuctionItem[]>[];
 
-		// 	console.log("failed to fetch, likely failed URL fetch");
+		// 	for (const result of results) {
+		// 		if (result.status === "rejected") {
+		// 			console.log("failed to fetch, likely failed URL fetch");
+		// 			continue;
+		// 		}
+
+		// 		finalResults.push(...result.value);
+		// 	}
 		// }
 
 		const finalResults: OngoingAuctionItem[] = [];

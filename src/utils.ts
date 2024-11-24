@@ -4,6 +4,24 @@ import { readFileSync, writeFile } from "node:fs";
 import type { FinishedAuctionItem } from "./classes";
 
 class CustomUtils {
+	Array2D(y: number, x: number) {
+		return Array(y).fill(Array(x).fill(null));
+	}
+
+	/** fills an entire 2D array using its actual index */
+	Array2DFill<T, K extends T[][]>(array: K, fill_function: (i: number) => T): K {
+		let index = 0;
+
+		for (let row = 0; row < array.length; row++) {
+			for (let col = 0; col < array[col].length; col++) {
+				index++;
+				array[row][col] = fill_function(index);
+			}
+		}
+
+		return array;
+	}
+
 	FormatPrice(price: number): string {
 		let multiple = 1;
 		const result = [];
@@ -64,7 +82,7 @@ class CustomUtils {
 
 	/** send bulk text */
 	async SendBulkText(textChannel: TextChannel, message: string) {
-		const chunks = message.match(/[\s\S]{1,2000}/g) || [];
+		const chunks = message.match(/[\s\S]{1,1900}\n/g) || [];
 
 		for (const chunk of chunks) {
 			await textChannel.send(chunk);
@@ -73,7 +91,7 @@ class CustomUtils {
 
 	/** send bulk text as code blocks */
 	async SendBulkTextCode(textChannel: TextChannel, message: string) {
-		const chunks = message.match(/[\s\S]{1,1994}/g) || [];
+		const chunks = message.match(/[\s\S]{1,1900}\n/g) || [];
 
 		for (const chunk of chunks) {
 			const result = "```" + chunk + "```";
