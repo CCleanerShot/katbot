@@ -1,4 +1,4 @@
-import { HypixelAuctionItem } from "./HypixelAuctionItem";
+import { DB } from "../../types";
 
 export class OngoingAuctionItem {
 	bin: boolean;
@@ -19,7 +19,7 @@ export class OngoingAuctionItem {
 	claimed_bidders: any[]; // TODO: complete
 	highest_bid_amount: number; // 7607533;
 	bids: any[]; // TODO: complete
-	parsedData: HypixelAuctionItem[] = [];
+	parsedData: DB.InsertItem[] = [];
 
 	constructor(params: {
 		bin: boolean;

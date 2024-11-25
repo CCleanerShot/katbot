@@ -22,6 +22,17 @@ class CustomUtils {
 		return array;
 	}
 
+	DictName<T extends { name: string; tier: string; lore: string }>(obj: T) {
+		return obj.name + obj.tier + obj.lore;
+	}
+
+	FilterLore(loreText: string): string {
+		let text = loreText;
+		text = text.replace(/MAX LEVEL▸(.+)XPRight/, "");
+		text = text.replace(/Progress to(.+)Right-click/, "");
+		return text;
+	}
+
 	FormatPrice(price: number): string {
 		let multiple = 1;
 		const result = [];
@@ -51,13 +62,6 @@ class CustomUtils {
 				console.log(key, ":", nestedItem);
 			}
 		}
-	}
-
-	async NBTParse(stringValue: string) {
-		type NBTValue = { value: any };
-		const data = Buffer.from(stringValue, "base64");
-		const nestedData = ((await nbt.parse(data)).parsed.value as any)!.i!.value!.value![0];
-		return nestedData as { id: NBTValue; Count: NBTValue; tag: NBTValue; Damage: NBTValue };
 	}
 
 	ReadAuctionData(): FinishedAuctionItem[] {

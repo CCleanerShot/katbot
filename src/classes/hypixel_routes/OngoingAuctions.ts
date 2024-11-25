@@ -29,6 +29,7 @@ export class OngoingAuctions {
 			auction.item_name = auction.item_name.trim();
 			auction.category = auction.category.trim();
 			auction.tier = auction.tier.trim();
+			auction.item_lore = auction.item_lore.trim();
 		}
 	}
 }

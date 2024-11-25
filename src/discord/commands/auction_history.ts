@@ -7,7 +7,7 @@ module.exports = {
 	data: new SlashCommandBuilder().setName("auction_history").setDescription("Fetches auction data"),
 
 	async execute(interaction: CommandInteraction) {
-		const results = await supabaseClient.client.from("auction_prices").select("*, auction_items (*) ");
+		const results = await supabaseClient.client.from("auction_items").select("*, auction_items (*) ");
 
 		if (results.error) {
 			await interaction.reply("Failed to fetch data, sorry!");
@@ -17,7 +17,7 @@ module.exports = {
 		let stringBuilder = "";
 
 		for (const item of results.data) {
-			stringBuilder += item.auction_items?.name;
+			stringBuilder += item.name;
 			stringBuilder += " | ";
 			stringBuilder += item.average_price;
 			stringBuilder += " | ";

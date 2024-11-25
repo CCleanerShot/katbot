@@ -1,7 +1,7 @@
 import { BotEnvironment } from "../environment";
 import { myUtils } from "../utils";
 import { supabaseClient } from "../supabase/client";
-import { FinishedAuctionItem, HypixelAuctionItem, OngoingAuctionItem, OngoingAuctions } from "../classes";
+import { CustomNBT, OngoingAuctionItem, OngoingAuctions } from "../classes";
 import { Client, TextChannel } from "discord.js";
 import { myConfig } from "../config";
 import { FinishedAuctions } from "../classes/hypixel_routes/FinishedAuctions";
@@ -9,20 +9,12 @@ import { GetPlayerItem } from "../classes/hypixel_routes/GetPlayerItem";
 import { GetPlayerResponse } from "../classes/hypixel_routes/GetPlayerResponse";
 import { DB } from "../types";
 import { myFetcher } from "../abortController";
-
 const DEV_URL = "https://developer.hypixel.net";
 const BASE_URL = "https://api.hypixel.net";
 const HEADERS = new Headers();
 
 // https://api.hypixel.net/#section/Authentication
 HEADERS.append("API-Key", BotEnvironment.HYPIXEL_BOT_KEY);
-
-type FinishedAuctionsResponse = {
-	success: boolean;
-	lastUpdated: number;
-	auctions: FinishedAuctionItem[];
-	parsedData: HypixelAuctionItem[];
-};
 
 class HypixelController {
 	cachedAuctions: Record<string, any> = {};
@@ -32,6 +24,7 @@ class HypixelController {
 	}
 
 	async GetGoodSales(client: Client) {
+		console.log("> fetching auctions...");
 		const allResults = await this.GetOngoingAuctions();
 		// likely dont need the end results cuz we'll see them later
 		const results = allResults.sort((a, b) => a.end - b.end).slice(0, 10000);
@@ -56,37 +49,38 @@ class HypixelController {
 				}
 
 				this.cachedAuctions[cV.uuid] = cV.uuid;
-				pV[cV.item_name + cV.tier] = cV;
+				pV[myUtils.DictName({ lore: cV.item_lore, name: cV.item_name, tier: cV.tier })] = cV;
 				return pV;
 			},
 			{} as Record<string, OngoingAuctionItem>,
 		);
 
-		const [names, tiers] = results.reduce(
+		const [names, tiers, lores] = results.reduce(
 			(pV, cV) => {
-				pV[0].push(cV.item_name); // for some reason, not trimmed
-				pV[1].push(cV.tier); // for some reason, not trimmed
+				pV[0].push(cV.item_name);
+				pV[1].push(cV.tier);
+				pV[2].push(cV.item_lore);
 				return pV;
 			},
-			[[], []] as string[][],
+			[[], [], []] as string[][],
 		);
 
-		const stack = 500;
-		const pricesData: (DB.RowItem & { auction_prices: DB.RowPrice[] })[] = [];
+		const stack = 20;
+		const pricesData: DB.RowItem[] = [];
 
-		// splitting it to 20 requests cuz supabase cant handle so many at once
-		for (let i = 0; i < 20; i++) {
+		console.log("> fetching supabase...");
+		// splitting it to 500 requests cuz supabase cant handle so many at once
+		for (let i = 0; i < 500; i++) {
 			const _names = names.slice(stack * i, (i + 1) * stack);
 			const _tiers = tiers.slice(stack * i, (i + 1) * stack);
+			const _lores = lores.slice(stack * i, (i + 1) * stack);
 
 			const pricesResponse = await supabaseClient.client
 				.from("auction_items")
-				.select(`
-			*,
-			auction_prices ( * )
-			`)
+				.select("*")
 				.in("name", _names)
-				.in("tier", _tiers);
+				.in("tier", _tiers)
+				.in("lore", _lores);
 
 			if (pricesResponse.error) {
 				for (let i = 0; i < names.length; i++) {
@@ -119,26 +113,23 @@ class HypixelController {
 
 		const filterPrice = myConfig.data.MINIMUM_PRICE_FOR_SALE;
 
-		for (const { auction_prices, category, created_at, id, name, tier } of pricesData) {
-			if (auction_prices.length === 0) {
+		for (const item of pricesData) {
+			const { average_price, id, lore, name, tier, total_sold } = item;
+			if (!resultsDict[myUtils.DictName(item)]) {
 				continue;
 			}
 
-			if (!resultsDict[name + tier]) {
-				continue;
-			}
-
-			const { end, item_bytes, starting_bid, highest_bid_amount, item_name, auctioneer } = resultsDict[name + tier];
+			const { end, item_bytes, starting_bid, highest_bid_amount, item_name, auctioneer } =
+				resultsDict[myUtils.DictName(item)];
 			const auction = Math.max(highest_bid_amount, starting_bid);
-			const { Count, Damage, id, tag } = await myUtils.NBTParse(item_bytes);
-			const avgPrice = auction_prices[0].average_price;
+			const { Lore, Count } = await CustomNBT.Create(item_bytes);
 
-			if (auction / Count.value + filterPrice > avgPrice) {
+			if (auction / Count + filterPrice > average_price) {
 				continue;
 			}
 
 			const auctionWithSpaces = myUtils.FormatPrice(auction);
-			const priceWithSpaces = myUtils.FormatPrice(avgPrice);
+			const priceWithSpaces = myUtils.FormatPrice(average_price);
 
 			if (auctionWithSpaces.length > maxAuction) {
 				maxAuction = auctionWithSpaces.length;
@@ -157,22 +148,20 @@ class HypixelController {
 		let dResponse = `B|${titleName}|${titleTier}|${titleAuction}|${titlePrice}|Ending|User\n`;
 		const originalLength = dResponse.length;
 
-		for (const { auction_prices, category, created_at, id, name, tier } of pricesData) {
-			if (auction_prices.length === 0) {
-				continue;
-			}
-
-			if (!resultsDict[name + tier]) {
+		console.log("> assembling sale prices...");
+		for (const item of pricesData) {
+			const { average_price, id, lore, name, tier, total_sold } = item;
+			if (!resultsDict[myUtils.DictName(item)]) {
 				continue;
 			}
 
 			// should work, if an error, client fetch is altered/wrong, or dict creation is wrong
-			const { end, bin, item_bytes, starting_bid, highest_bid_amount, auctioneer } = resultsDict[name + tier];
+			const { end, bin, item_bytes, starting_bid, highest_bid_amount, auctioneer } =
+				resultsDict[myUtils.DictName(item)];
 			const auction = Math.max(highest_bid_amount, starting_bid);
-			const { Count, Damage, id, tag } = await myUtils.NBTParse(item_bytes);
-			const avgPrice = auction_prices[0].average_price;
+			const { Count, Lore } = await CustomNBT.Create(item_bytes);
 
-			if (auction / Count.value + filterPrice > avgPrice) {
+			if (auction / Count + filterPrice > average_price) {
 				continue;
 			}
 
@@ -188,9 +177,9 @@ class HypixelController {
 
 			const myBin = bin ? "+" : "-";
 			const myName = name.length >= MAX_NAME ? name.slice(0, MAX_NAME - 1) + "-" : myUtils.SpaceText(MAX_NAME, name);
-			const myTier = tier.length > MAX_TIER ? tier.slice(0, MAX_TIER - 1) + "-" : tier;
+			const myTier = tier.length >= MAX_TIER ? tier.slice(0, MAX_TIER - 1) + "-" : myUtils.SpaceText(MAX_TIER, tier);
 			const myBid = myUtils.SpaceText(maxAuction, myUtils.FormatPrice(auction));
-			const myPrice = myUtils.SpaceText(maxPrice, myUtils.FormatPrice(avgPrice));
+			const myPrice = myUtils.SpaceText(maxPrice, myUtils.FormatPrice(average_price));
 			const myUser = uName.length > MAX_USER ? uName.slice(0, MAX_USER - 1) + "-" : uName;
 
 			dResponse += `${myBin}|${myName}|${myTier}|${myBid}|${myPrice}|${minutesLeft}m|${myUser}\n`;
@@ -217,44 +206,14 @@ class HypixelController {
 
 		const response = new FinishedAuctions(await fetchedResults.json());
 
-		const results: HypixelAuctionItem[] = [];
+		const results: DB.InsertItem[] = [];
 
+		const created_at = Date.now();
 		for (let i = 0; i < response.auctions.length; i++) {
 			const auction = response.auctions[i];
-			const { Count, Damage, id, tag } = await myUtils.NBTParse(auction.item_bytes);
-
-			const bin: boolean = auction.bin;
-			const price: number = Math.round(auction.price / Count.value); // consider it 1 purchase
-
-			const name: string = myUtils.RemoveSpecialText(tag.value.display.value.Name.value);
-			const lore: string = tag.value.display.value.Lore.value.value;
-
-			// the last item in the array contains the rarity and item type
-			const lastLine = myUtils.RemoveSpecialText(lore[lore.length - 1]).trim();
-
-			/// cut off from the first space
-			const cutIndex = lastLine.indexOf(" ");
-
-			let rarity = "";
-			let category = "";
-
-			if (cutIndex === -1) {
-				rarity = lastLine;
-			} else {
-				category = lastLine.slice(cutIndex);
-				rarity = lastLine.slice(0, cutIndex + 1);
-			}
-
-			results.push(
-				new HypixelAuctionItem({
-					bin,
-					name,
-					category,
-					price,
-					created_at: auction.timestamp,
-					tier: rarity,
-				}),
-			);
+			const { Count, Name: name, Lore: lore, Tier: tier } = await CustomNBT.Create(auction.item_bytes);
+			const average_price: number = Math.round(auction.price / Count); // consider it 1 purchase
+			results.push({ average_price, lore, name, tier, total_sold: 1, created_at });
 		}
 
 		response.parsedData = results;
@@ -273,8 +232,16 @@ class HypixelController {
 				headers: HEADERS,
 				method: "GET",
 			});
-			const results = new OngoingAuctions(await fetchedResults.json());
-			finalResults.push(...results.auctions);
+
+			const data = new OngoingAuctions(await fetchedResults.json());
+
+			// have to do it out here cuz constructors cannot be async
+			for (let i = 0; i < data.auctions.length; i++) {
+				const auction = data.auctions[i];
+				auction.item_lore = (await CustomNBT.Create(auction.item_bytes)).Lore;
+			}
+
+			finalResults.push(...data.auctions);
 
 			await myUtils.Sleep(5);
 		}
