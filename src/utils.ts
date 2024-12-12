@@ -1,7 +1,7 @@
 import nbt from "prismarine-nbt";
 import { TextChannel } from "discord.js";
 import { readFileSync, writeFile } from "node:fs";
-import type { FinishedAuctionItem } from "./classes";
+import type { FinishedAuctionItem } from "./custom";
 
 class CustomUtils {
 	Array2D(y: number, x: number) {

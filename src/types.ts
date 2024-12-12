@@ -1,7 +1,14 @@
-import { Database } from "./supabase/types";
-
 export namespace DB {
-	export type InsertItem = Database["public"]["Tables"]["auction_items"]["Insert"];
-	export type RowItem = Database["public"]["Tables"]["auction_items"]["Row"];
-	export type UpdateItem = Database["public"]["Tables"]["auction_items"]["Update"];
+	export type BazaarItem = {
+		name: string;
+	};
+
+	export type AuctionItem = {
+		name: string;
+		tier: string;
+		lore: string;
+		average_price: number;
+		total_sold: number;
+		created_at: number;
+	};
 }

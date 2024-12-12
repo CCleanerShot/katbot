@@ -13,7 +13,8 @@ export class CustomNBT {
 	Lore: string;
 	Name: string;
 	Tier: string;
-	/** dont use constructor! need async for NBT parsing*/
+
+	/** @hideconstructor dont use constructor! need async for NBT parsing*/
 	constructor(Count: number, Lore: string[], Name: string) {
 		this.Count = Count;
 		this.Name = myUtils.RemoveSpecialText(Name.trim());

@@ -1,5 +1,3 @@
-import { DB } from "../../types";
-
 export class OngoingAuctionItem {
 	bin: boolean;
 	uuid: string; // "409a1e0f261a49849493278d6cd9305a";
@@ -19,7 +17,7 @@ export class OngoingAuctionItem {
 	claimed_bidders: any[]; // TODO: complete
 	highest_bid_amount: number; // 7607533;
 	bids: any[]; // TODO: complete
-	parsedData: DB.InsertItem[] = [];
+	parsedData: any[] = [];
 
 	constructor(params: {
 		bin: boolean;
