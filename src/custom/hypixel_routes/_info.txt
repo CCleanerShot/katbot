@@ -1,2 +1,0 @@
-hypixel provides a schematic at https://api.hypixel.net/, but would take some time to implement
-for now, we are hardcoding the requests
