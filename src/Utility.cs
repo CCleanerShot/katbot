@@ -1,7 +1,7 @@
 /// <summary>
 /// Random class for helper functions
 /// </summary>
-public partial class Utility
+public class Utility
 {
     static void GetBazaar()
     {

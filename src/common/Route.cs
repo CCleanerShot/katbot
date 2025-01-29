@@ -1,4 +1,4 @@
-public partial class Route
+public class Route
 {
     public bool success;
 }

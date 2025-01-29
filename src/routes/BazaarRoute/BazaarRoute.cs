@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
-public partial class BazaarRoute : Route
+public class BazaarRoute : Route
 {
     public double lastUpdated;
     public Dictionary<string, BazaarRouteProduct> products;
@@ -45,10 +45,10 @@ public partial class BazaarRoute : Route
             return;
         }
 
-        Console.WriteLine(bazaarRoute.products);
-
-        foreach (var (key, value) in bazaarRoute.products)
-            if (Regex.IsMatch(key, @"\d"))
-                Console.WriteLine(key);
+        foreach (var v in bazaarRoute.products)
+        {
+            if (true)
+                continue;
+        }
     }
 }

@@ -9,6 +9,7 @@
     <NoWarn>CS</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Discord.Net" Version="3.14.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>

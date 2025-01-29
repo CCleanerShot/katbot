@@ -1,7 +1,7 @@
 /// <summary>
 /// Holds data regarding runtime-specifics of the app.
 /// </summary>
-public partial class Settings
+public class Settings
 {
     public static string ADMIN_1 = "";
     public static string ADMIN_2 = "";
