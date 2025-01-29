@@ -15,13 +15,15 @@ public partial class DiscordBot
 
     static async Task InteractionCreated(SocketInteraction socketInteraction)
     {
+        Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.User.GlobalName} used a command.");
+        Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.Data}");
+
         SocketInteractionContext context = new SocketInteractionContext(_Client, socketInteraction);
         await _InteractionService.ExecuteCommandAsync(context, null);
     }
 
     static Task SlashCommandExecuted(SlashCommandInfo socketInteraction, IInteractionContext context, IResult result)
     {
-        Console.WriteLine("there");
         return Task.CompletedTask;
     }
 

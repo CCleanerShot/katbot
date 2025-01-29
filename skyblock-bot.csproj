@@ -6,7 +6,7 @@
     <RootNamespace>skyblock_bot</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <NoWarn>CS</NoWarn>
+    <NoWarn>IDE1006</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.14.1" />

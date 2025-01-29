@@ -1,3 +1,5 @@
+using System.Reflection;
+
 /// <summary>
 /// Holds data regarding runtime-specifics of the app.
 /// </summary>
@@ -11,8 +13,35 @@ public class Settings
     public static string DISCORD_SEND_CHANNEL_ID = "";
     public static string DISCORD_TOKEN = "";
     public static string HYPIXEL_BOT_KEY = "";
+    public static string ID_CARLOS = "";
+    public static string ID_KELINIMO = "";
+    public static string ID_RAMOJUSD = "";
+    public static string ID_VOLATILE = "";
+    public static string OBAMA_PATH = "";
 
+    /// <summary>
+    /// Loads the settings.
+    /// </summary>
     public static void Load()
+    {
+        LoadAssets();
+        LoadENV();
+    }
+
+    /// <summary>
+    /// Loads the assets from /assets, if any.
+    /// </summary>
+    static void LoadAssets()
+    {
+        string assetsFolder = Path.GetFullPath("assets");
+
+        OBAMA_PATH = $"{assetsFolder}/obama.jpg";
+    }
+
+    /// <summary>
+    /// Loads the .env file.
+    /// </summary>
+    static void LoadENV()
     {
         using StreamReader streamReader = new StreamReader(".env");
         string? line = null;
@@ -27,7 +56,7 @@ public class Settings
             string[] lines = line.Split("=");
 
             if (lines.Length != 2)
-                throw new Exception("Illegal data in the .env.");
+                throw new Exception("Illegal structure in the .env.");
 
             if (lines[0] == "ADMIN_1")
                 ADMIN_1 = lines[1];
@@ -45,6 +74,14 @@ public class Settings
                 DISCORD_TOKEN = lines[1];
             else if (lines[0] == "HYPIXEL_BOT_KEY")
                 HYPIXEL_BOT_KEY = lines[1];
+            else if (lines[0] == "ID_CARLOS")
+                ID_CARLOS = lines[1];
+            else if (lines[0] == "ID_KELINIMO")
+                ID_KELINIMO = lines[1];
+            else if (lines[0] == "ID_RAMOJUSD")
+                ID_RAMOJUSD = lines[1];
+            else if (lines[0] == "ID_VOLATILE")
+                ID_VOLATILE = lines[1];
             else
                 Utility.Log(Enums.LogLevel.WARN, "The key was not implemented yet. Intentional?");
 
