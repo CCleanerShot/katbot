@@ -40,5 +40,7 @@ public partial class DiscordBot
 
         foreach (SocketGuild guild in _Client.Guilds)
             await _InteractionService.RegisterCommandsToGuildAsync(guild.Id);
+
+        await _DiscordEvents.Load();
     }
 }

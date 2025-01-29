@@ -11,6 +11,7 @@ public class Program
     {
         Settings.Load();
         await DiscordBot.Initialize();
+
         using HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Accept.Clear();
 
