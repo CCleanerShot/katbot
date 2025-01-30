@@ -2,8 +2,9 @@ using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
-public class BazaarRoute : Route
+public class BazaarRoute
 {
+    public bool success;
     public double lastUpdated;
     public Dictionary<string, BazaarRouteProduct> products;
 

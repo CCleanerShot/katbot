@@ -11,6 +11,7 @@ public class Program
     {
         Settings.Load();
         await DiscordBot.Initialize();
+        await MongoBot.Load();
 
         using HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Accept.Clear();

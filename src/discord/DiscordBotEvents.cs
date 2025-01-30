@@ -7,13 +7,17 @@ public partial class DiscordBot
 {
     static void AddSignals()
     {
-        _Client.InteractionCreated += InteractionCreated;
-        _Client.Log += Log;
-        _Client.Ready += Ready;
-        _InteractionService.SlashCommandExecuted += SlashCommandExecuted;
+        _Client.InteractionCreated += _InteractionCreated;
+        _Client.Log += _Log;
+        _Client.Ready += _Ready;
+
+        // adding to stop the warnings that I'm not using them
+        _Client.GuildScheduledEventCreated += (_) => Task.CompletedTask;
+        _Client.InviteCreated += (_) => Task.CompletedTask;
+        _Client.PresenceUpdated += (_, _, _) => Task.CompletedTask;
     }
 
-    static async Task InteractionCreated(SocketInteraction socketInteraction)
+    static async Task _InteractionCreated(SocketInteraction socketInteraction)
     {
         Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.User.GlobalName} used a command.");
         Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.Data}");
@@ -22,18 +26,7 @@ public partial class DiscordBot
         await _InteractionService.ExecuteCommandAsync(context, null);
     }
 
-    static Task SlashCommandExecuted(SlashCommandInfo socketInteraction, IInteractionContext context, IResult result)
-    {
-        return Task.CompletedTask;
-    }
-
-    static Task Log(LogMessage message)
-    {
-        Utility.Log(Enums.LogLevel.NONE, message.ToString());
-        return Task.CompletedTask;
-    }
-
-    static async Task Ready()
+    static async Task _Ready()
     {
         await _InteractionService.RegisterCommandsGloballyAsync();
         await _InteractionService.AddModulesAsync(Assembly.GetExecutingAssembly(), null);
@@ -42,5 +35,11 @@ public partial class DiscordBot
             await _InteractionService.RegisterCommandsToGuildAsync(guild.Id);
 
         await _DiscordEvents.Load();
+    }
+
+    static Task _Log(LogMessage message)
+    {
+        Utility.Log(Enums.LogLevel.NONE, message.ToString());
+        return Task.CompletedTask;
     }
 }

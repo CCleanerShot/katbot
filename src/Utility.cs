@@ -32,13 +32,13 @@ public static class Utility
         switch (logLevel)
         {
             case Enums.LogLevel.NONE:
-                prefix = "> ";
-                break;
-            case Enums.LogLevel.ERROR:
-                prefix = "? ";
+                prefix = ">";
                 break;
             case Enums.LogLevel.WARN:
-                prefix = "! ";
+                prefix = "?";
+                break;
+            case Enums.LogLevel.ERROR:
+                prefix = "!";
                 break;
             default:
                 throw new NotImplementedException("Implement this");

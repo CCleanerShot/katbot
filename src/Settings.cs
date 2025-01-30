@@ -18,6 +18,12 @@ public class Settings
     public static string ID_KELINIMO = "";
     public static string ID_RAMOJUSD = "";
     public static string ID_VOLATILE = "";
+    public static string MONGODB_DATABASE_DISCORD = "";
+    public static string MONGODB_DATABASE_HYPIXEL = "";
+    public static string MONGODB_COLLECTION_BAZAAR_TRACKED = "";
+    public static string MONGODB_COLLECTION_DISCORD_STARBOARDS = "";
+    public static string MONGODB_URI = "";
+
     public static string PATH_OBAMA = "";
     public static string PATH_RAMOJUSD_GIF_URL = "https://cdn.discordapp.com/attachments/1218190610247323751/1334044487223087155/ramojusd.gif?ex=679b193f&is=6799c7bf&hm=338b1002ce5e2367c193d4f5500bbbf9ec8ed7b452f571b4174a1fb54cce6452&";
 
@@ -55,7 +61,7 @@ public class Settings
             if (line == null)
                 continue;
 
-            string[] lines = line.Split("=");
+            string[] lines = line.Split("=", 2);
 
             if (lines.Length != 2)
                 throw new Exception("Illegal structure in the .env.");
@@ -86,6 +92,16 @@ public class Settings
                 ID_RAMOJUSD = lines[1];
             else if (lines[0] == "ID_VOLATILE")
                 ID_VOLATILE = lines[1];
+            else if (lines[0] == "MONGODB_DATABASE_DISCORD")
+                MONGODB_DATABASE_DISCORD = lines[1];
+            else if (lines[0] == "MONGODB_DATABASE_HYPIXEL")
+                MONGODB_DATABASE_HYPIXEL = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_TRACKED")
+                MONGODB_COLLECTION_BAZAAR_TRACKED = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_STARBOARDS")
+                MONGODB_COLLECTION_DISCORD_STARBOARDS = lines[1];
+            else if (lines[0] == "MONGODB_URI")
+                MONGODB_URI = lines[1];
             else
                 Utility.Log(Enums.LogLevel.WARN, "The key was not implemented yet. Intentional?");
 
