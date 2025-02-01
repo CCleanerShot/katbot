@@ -9,7 +9,7 @@ public partial class DiscordCommands : InteractionModuleBase
     {
         Embed embed = new EmbedBuilder()
             .WithColor(Color.Blue)
-            .WithTitle("brazilian goes to the store with $1")
+            .WithTitle("brazillian goes to the store with $1")
             .WithImageUrl(Settings.PATH_RAMOJUSD_GIF_URL)
             .Build();
 

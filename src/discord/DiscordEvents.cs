@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Timers;
 using Discord.WebSocket;
 
 /// <summary>
@@ -12,7 +13,14 @@ public partial class DiscordEventsAttribute : Attribute { }
 /// </summary>
 public partial class DiscordEvents
 {
+    /// <summary>
+    /// Client for the discord bot.
+    /// </summary>
     DiscordSocketClient _Client;
+    /// <summary>
+    /// The timer for the next time Hypixel API is checked.
+    /// </summary>
+    System.Timers.Timer _Timer = new System.Timers.Timer();
 
     public Task Load()
     {
@@ -21,6 +29,10 @@ public partial class DiscordEvents
 
         foreach (MethodInfo method in methods)
             method.Invoke(this, null);
+
+        _Timer.AutoReset = true;
+        _Timer.Interval = Settings.HYPIXEL_TIMER_MINUTES * 6000;
+        _Timer.Start();
 
         return Task.CompletedTask;
     }

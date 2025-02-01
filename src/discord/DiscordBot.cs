@@ -5,9 +5,10 @@ using Discord.WebSocket;
 
 public partial class DiscordBot
 {
-    private static DiscordSocketClient _Client = default!;
+    public static DiscordSocketClient _Client = default!;
     private static InteractionService _InteractionService = default!;
     private static DiscordEvents _DiscordEvents = default!;
+
     public static async Task Initialize()
     {
         DiscordSocketConfig discordConfig = new DiscordSocketConfig() { GatewayIntents = GatewayIntents.All };

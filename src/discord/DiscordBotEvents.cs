@@ -7,6 +7,7 @@ public partial class DiscordBot
 {
     static void AddSignals()
     {
+        _Client.AutocompleteExecuted += AutocompleteExecuted;
         _Client.InteractionCreated += _InteractionCreated;
         _Client.Log += _Log;
         _Client.Ready += _Ready;
@@ -16,11 +17,15 @@ public partial class DiscordBot
         _Client.InviteCreated += (_) => Task.CompletedTask;
         _Client.PresenceUpdated += (_, _, _) => Task.CompletedTask;
     }
+    static async Task AutocompleteExecuted(SocketAutocompleteInteraction socketInteraction)
+    {
+        SocketInteractionContext context = new SocketInteractionContext(_Client, socketInteraction);
+        await _InteractionService.ExecuteCommandAsync(context, null);
+    }
 
     static async Task _InteractionCreated(SocketInteraction socketInteraction)
     {
-        Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.User.GlobalName} used a command.");
-        Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.Data}");
+        Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.User.GlobalName} used a command in {socketInteraction.Data}.");
 
         SocketInteractionContext context = new SocketInteractionContext(_Client, socketInteraction);
         await _InteractionService.ExecuteCommandAsync(context, null);

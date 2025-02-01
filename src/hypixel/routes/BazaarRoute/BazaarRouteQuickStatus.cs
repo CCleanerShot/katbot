@@ -1,14 +1,14 @@
 public class BazaarRouteQuickStatus
 {
     public string productId;
-    public float sellPrice;
-    public double sellVolume;
-    public double sellMovingWeek;
-    public int sellOrders;
-    public float buyPrice;
-    public double buyVolume;
-    public double buyMovingWeek;
     public int buyOrders;
+    public float buyPrice;
+    public double buyMovingWeek;
+    public double buyVolume;
+    public int sellOrders;
+    public float sellPrice;
+    public double sellMovingWeek;
+    public double sellVolume;
 
     public BazaarRouteQuickStatus(string _productId, float _sellPrice, double _sellVolume, double _sellMovingWeek, int _sellOrders, float _buyPrice, double _buyVolume, double _buyMovingWeek, int _buyOrders)
     {

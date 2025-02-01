@@ -8,24 +8,28 @@ public class Settings
     public static string ADMIN_1 = "";
     public static string ADMIN_2 = "";
     public static ulong DISCORD_APPLICATION_ID = 0;
+    public static ulong DISCORD_HYPIXEL_ALERTS_CHANNEL_ID = 0;
     public static ulong DISCORD_MAIN_CHANNEL_ID = 0;
     public static string DISCORD_PUBLIC_KEY = "";
     public static ulong DISCORD_SEND_CHANNEL_ID = 0;
     public static ulong DISCORD_STARBOARDS_CHANNEL_ID = 0;
     public static string DISCORD_TOKEN = "";
+    public static string HYPIXEL_API_BASE_URL = "";
     public static string HYPIXEL_BOT_KEY = "";
+    public static int HYPIXEL_TIMER_MINUTES = 0;
     public static string ID_CARLOS = "";
     public static string ID_KELINIMO = "";
     public static string ID_RAMOJUSD = "";
     public static string ID_VOLATILE = "";
     public static string MONGODB_DATABASE_DISCORD = "";
     public static string MONGODB_DATABASE_HYPIXEL = "";
-    public static string MONGODB_COLLECTION_BAZAAR_TRACKED = "";
+    public static string MONGODB_COLLECTION_BAZAAR_BUY = "";
+    public static string MONGODB_COLLECTION_BAZAAR_SELL = "";
+    public static string MONGODB_COLLECTION_ITEMS_ALL = "";
     public static string MONGODB_COLLECTION_DISCORD_STARBOARDS = "";
     public static string MONGODB_URI = "";
-
     public static string PATH_OBAMA = "";
-    public static string PATH_RAMOJUSD_GIF_URL = "https://cdn.discordapp.com/attachments/1218190610247323751/1334044487223087155/ramojusd.gif?ex=679b193f&is=6799c7bf&hm=338b1002ce5e2367c193d4f5500bbbf9ec8ed7b452f571b4174a1fb54cce6452&";
+    public static string PATH_RAMOJUSD_GIF_URL = "https://cdn.discordapp.com/attachments/1210132113358065695/1236680414597222411/ramojusd.gif?ex=679c3023&is=679adea3&hm=5f03113120db858cb71fcd7715f4ca75ffeda1a5de2a284639034d90fc97e07c&";
 
     /// <summary>
     /// Loads the settings.
@@ -72,6 +76,8 @@ public class Settings
                 ADMIN_2 = lines[1];
             else if (lines[0] == "DISCORD_APPLICATION_ID")
                 DISCORD_APPLICATION_ID = UInt64.Parse(lines[1]);
+            else if (lines[0] == "DISCORD_HYPIXEL_ALERTS_CHANNEL_ID")
+                DISCORD_HYPIXEL_ALERTS_CHANNEL_ID = UInt64.Parse(lines[1]);
             else if (lines[0] == "DISCORD_MAIN_CHANNEL_ID")
                 DISCORD_MAIN_CHANNEL_ID = UInt64.Parse(lines[1]);
             else if (lines[0] == "DISCORD_PUBLIC_KEY")
@@ -82,8 +88,12 @@ public class Settings
                 DISCORD_STARBOARDS_CHANNEL_ID = UInt64.Parse(lines[1]);
             else if (lines[0] == "DISCORD_TOKEN")
                 DISCORD_TOKEN = lines[1];
+            else if (lines[0] == "HYPIXEL_API_BASE_URL")
+                HYPIXEL_API_BASE_URL = lines[1];
             else if (lines[0] == "HYPIXEL_BOT_KEY")
                 HYPIXEL_BOT_KEY = lines[1];
+            else if (lines[0] == "HYPIXEL_TIMER_MINUTES")
+                HYPIXEL_TIMER_MINUTES = Int32.Parse(lines[1]);
             else if (lines[0] == "ID_CARLOS")
                 ID_CARLOS = lines[1];
             else if (lines[0] == "ID_KELINIMO")
@@ -96,8 +106,12 @@ public class Settings
                 MONGODB_DATABASE_DISCORD = lines[1];
             else if (lines[0] == "MONGODB_DATABASE_HYPIXEL")
                 MONGODB_DATABASE_HYPIXEL = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_TRACKED")
-                MONGODB_COLLECTION_BAZAAR_TRACKED = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_BUY")
+                MONGODB_COLLECTION_BAZAAR_BUY = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_SELL")
+                MONGODB_COLLECTION_BAZAAR_SELL = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_ITEMS_ALL")
+                MONGODB_COLLECTION_ITEMS_ALL = lines[1];
             else if (lines[0] == "MONGODB_COLLECTION_STARBOARDS")
                 MONGODB_COLLECTION_DISCORD_STARBOARDS = lines[1];
             else if (lines[0] == "MONGODB_URI")

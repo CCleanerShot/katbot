@@ -1,8 +1,14 @@
 public class BazaarRouteProduct
 {
     public string product_id;
-    public BazaarRouteSummaryItem[] sell_summary;
+    /// <summary>
+    /// The list of the top buy orders.
+    /// </summary>
     public BazaarRouteSummaryItem[] buy_summary;
+    /// <summary>
+    /// The list of the top sell orders.
+    /// </summary>
+    public BazaarRouteSummaryItem[] sell_summary;
     public BazaarRouteQuickStatus quick_status;
 
     public BazaarRouteProduct(string _product_id, BazaarRouteSummaryItem[] _sell_summary, BazaarRouteSummaryItem[] _buy_summary, BazaarRouteQuickStatus _quick_status)
