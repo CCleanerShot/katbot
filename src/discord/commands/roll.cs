@@ -24,7 +24,7 @@ public partial class DiscordCommands : InteractionModuleBase
             bool result = await match.StartRoll();
 
             if (!result)
-                await RespondAsync($"<@{user1.Id}>, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.");
+                await RespondAsync($"<@{user2.Id}>, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.");
         }
 
         catch (Exception e)
