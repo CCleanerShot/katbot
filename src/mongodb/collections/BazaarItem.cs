@@ -16,13 +16,17 @@ public class BazaarItem
     /// </summary>
     public string Name = "";
     /// <summary>
+    /// The type of order the watch is, from.
+    /// </summary>
+    public Enums.OrderType OrderType;
+    /// <summary>
     /// The price to start evaluating the threshold for alerts.
     /// </summary>
     public ulong Price;
     /// <summary>
-    /// The type of order the watch is, from.
+    /// Whether or not to remove the tracked item after successfully found.
     /// </summary>
-    public Enums.OrderType OrderType;
+    public bool RemovedAfter;
     /// <summary>
     /// The Discord ID of the user that submitted the tracking item.
     /// </summary>

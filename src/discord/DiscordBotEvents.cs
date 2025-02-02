@@ -17,6 +17,7 @@ public partial class DiscordBot
         _Client.InviteCreated += (_) => Task.CompletedTask;
         _Client.PresenceUpdated += (_, _, _) => Task.CompletedTask;
     }
+
     static async Task AutocompleteExecuted(SocketAutocompleteInteraction socketInteraction)
     {
         SocketInteractionContext context = new SocketInteractionContext(_Client, socketInteraction);
@@ -31,6 +32,12 @@ public partial class DiscordBot
         await _InteractionService.ExecuteCommandAsync(context, null);
     }
 
+    static Task _Log(LogMessage message)
+    {
+        Utility.Log(Enums.LogLevel.NONE, message.ToString());
+        return Task.CompletedTask;
+    }
+
     static async Task _Ready()
     {
         await _InteractionService.RegisterCommandsGloballyAsync();
@@ -40,11 +47,5 @@ public partial class DiscordBot
             await _InteractionService.RegisterCommandsToGuildAsync(guild.Id);
 
         await _DiscordEvents.Load();
-    }
-
-    static Task _Log(LogMessage message)
-    {
-        Utility.Log(Enums.LogLevel.NONE, message.ToString());
-        return Task.CompletedTask;
     }
 }

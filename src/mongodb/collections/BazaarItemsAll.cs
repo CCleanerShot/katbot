@@ -1,7 +1,7 @@
 using System.Runtime.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 
-public class ItemsAll
+public class BazaarItemsAll
 {
     [BsonId]
     [DataMember]
@@ -15,7 +15,7 @@ public class ItemsAll
     /// </summary>
     public string Name = "";
 
-    public ItemsAll(string _ID, string _Name)
+    public BazaarItemsAll(string _ID, string _Name)
     {
         ID = _ID;
         Name = _Name;

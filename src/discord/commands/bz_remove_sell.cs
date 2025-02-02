@@ -3,8 +3,8 @@ using MongoDB.Driver;
 
 public partial class DiscordCommands : InteractionModuleBase
 {
-    [SlashCommand("remove_sell_item", "removes a bazaar item from the watchlist")]
-    public async Task remove_sell_item(
+    [SlashCommand("bz_remove_sell", "removes a bazaar item from the watchlist")]
+    public async Task bz_remove_sell(
         [Summary("item", "the item to remove from tracking (AUTOCOMPLETE => MAX 25)"), Autocomplete(typeof(UserSellsAutocomplete))] string itemID
     )
     {
@@ -15,8 +15,9 @@ public partial class DiscordCommands : InteractionModuleBase
             MongoBot.CachedSells.Remove(MongoBot.CachedSells.Find(e => e.ID == itemID && e.Name == Context.User.Id.ToString())!);
         }
 
-        catch (Exception)
+        catch (Exception e)
         {
+            Utility.Log(Enums.LogLevel.ERROR, e.ToString());
             await RespondAsync($"Action failed! Ping <@{Settings.ADMIN_1}> for details.");
         }
     }

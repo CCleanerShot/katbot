@@ -56,7 +56,7 @@ public partial class DiscordEvents
         }
 
 
-        List<StarboardMessage>? response = (await MongoBot.Starboards.FindAsync(e => e.MessageStarredId == message.Id)).ToList();
+        List<Starboards>? response = (await MongoBot.Starboards.FindAsync(e => e.MessageStarredId == message.Id)).ToList();
         IUserMessage userMessage = await message.GetOrDownloadAsync();
         EmbedFooterBuilder footer = new EmbedFooterBuilder()
             .WithText($"{Starboards_Emote}{users!.Count()} • {userMessage.CreatedAt.UtcDateTime.ToString("M/d/yyyy HH:mm:ss")}");
@@ -115,7 +115,7 @@ public partial class DiscordEvents
 
                     RestUserMessage discordResponse = await starboardsChannel.SendMessageAsync("", false, embedBuilder.Build());
 
-                    StarboardMessage starboardMessage = new StarboardMessage()
+                    Starboards starboardMessage = new Starboards()
                     {
                         MessageId = discordResponse.Id,
                         MessageStarredId = message.Id,

@@ -25,8 +25,9 @@ public class Settings
     public static string MONGODB_DATABASE_HYPIXEL = "";
     public static string MONGODB_COLLECTION_BAZAAR_BUY = "";
     public static string MONGODB_COLLECTION_BAZAAR_SELL = "";
-    public static string MONGODB_COLLECTION_ITEMS_ALL = "";
+    public static string MONGODB_COLLECTION_BAZAAR_ITEMS = "";
     public static string MONGODB_COLLECTION_DISCORD_STARBOARDS = "";
+    public static string MONGODB_COLLECTION_DISCORD_ROLL_STATS = "";
     public static string MONGODB_URI = "";
     public static string PATH_OBAMA = "";
     public static string PATH_RAMOJUSD_GIF_URL = "https://cdn.discordapp.com/attachments/1210132113358065695/1236680414597222411/ramojusd.gif?ex=679c3023&is=679adea3&hm=5f03113120db858cb71fcd7715f4ca75ffeda1a5de2a284639034d90fc97e07c&";
@@ -110,10 +111,12 @@ public class Settings
                 MONGODB_COLLECTION_BAZAAR_BUY = lines[1];
             else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_SELL")
                 MONGODB_COLLECTION_BAZAAR_SELL = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_ITEMS_ALL")
-                MONGODB_COLLECTION_ITEMS_ALL = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_ITEMS")
+                MONGODB_COLLECTION_BAZAAR_ITEMS = lines[1];
             else if (lines[0] == "MONGODB_COLLECTION_STARBOARDS")
                 MONGODB_COLLECTION_DISCORD_STARBOARDS = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_DISCORD_ROLL_STATS")
+                MONGODB_COLLECTION_DISCORD_ROLL_STATS = lines[1];
             else if (lines[0] == "MONGODB_URI")
                 MONGODB_URI = lines[1];
             else

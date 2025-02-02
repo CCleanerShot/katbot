@@ -9,13 +9,15 @@ public class MongoBot
     private static string _Uri = default!;
 
     public static List<BazaarItem> CachedBuys = new List<BazaarItem>();
-    public static Dictionary<string, ItemsAll> CachedItems = new Dictionary<string, ItemsAll>();
+    public static Dictionary<string, BazaarItemsAll> CachedItems = new Dictionary<string, BazaarItemsAll>();
     public static List<BazaarItem> CachedSells = new List<BazaarItem>();
 
     public static IMongoCollection<BazaarItem> BazaarBuy { get; protected set; } = default!;
     public static IMongoCollection<BazaarItem> BazaarSell { get; protected set; } = default!;
-    public static IMongoCollection<ItemsAll> ItemsAll { get; protected set; } = default!;
-    public static IMongoCollection<StarboardMessage> Starboards { get; protected set; } = default!;
+    public static IMongoCollection<BazaarItemsAll> ItemsAll { get; protected set; } = default!;
+    public static IMongoCollection<Starboards> Starboards { get; protected set; } = default!;
+    public static IMongoCollection<RollStats> RollStats { get; protected set; } = default!;
+
 
     public static async Task Load()
     {
@@ -27,8 +29,9 @@ public class MongoBot
             _HypixelDB = _Client.GetDatabase(Settings.MONGODB_DATABASE_HYPIXEL);
             BazaarBuy = _HypixelDB.GetCollection<BazaarItem>(Settings.MONGODB_COLLECTION_BAZAAR_BUY);
             BazaarSell = _HypixelDB.GetCollection<BazaarItem>(Settings.MONGODB_COLLECTION_BAZAAR_SELL);
-            ItemsAll = _HypixelDB.GetCollection<ItemsAll>(Settings.MONGODB_COLLECTION_ITEMS_ALL);
-            Starboards = _DiscordDB.GetCollection<StarboardMessage>(Settings.MONGODB_COLLECTION_DISCORD_STARBOARDS);
+            ItemsAll = _HypixelDB.GetCollection<BazaarItemsAll>(Settings.MONGODB_COLLECTION_BAZAAR_ITEMS);
+            Starboards = _DiscordDB.GetCollection<Starboards>(Settings.MONGODB_COLLECTION_DISCORD_STARBOARDS);
+            RollStats = _HypixelDB.GetCollection<RollStats>(Settings.MONGODB_COLLECTION_BAZAAR_BUY);
 
             // Test the connection
             await BazaarBuy.FindAsync(e => e.Name != "");
@@ -37,12 +40,12 @@ public class MongoBot
 
             // Creating the cache
             List<BazaarItem> currentBuys = (await BazaarBuy.FindAsync(e => true)).ToList();
-            List<ItemsAll> currentItems = (await ItemsAll.FindAsync(e => true)).ToList();
+            List<BazaarItemsAll> currentItems = (await ItemsAll.FindAsync(e => true)).ToList();
             List<BazaarItem> currentSells = (await BazaarSell.FindAsync(e => true)).ToList();
 
             // Reset the cache just in case
             CachedBuys = currentBuys.Aggregate(new List<BazaarItem>(), (pV, cV) => { pV.Add(cV); return pV; });
-            CachedItems = currentItems.Aggregate(new Dictionary<string, ItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
+            CachedItems = currentItems.Aggregate(new Dictionary<string, BazaarItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
             CachedSells = currentSells.Aggregate(new List<BazaarItem>(), (pV, cV) => { pV.Add(cV); return pV; });
 
             Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");
@@ -70,7 +73,7 @@ public class MongoBot
         }
 
         // resetting the cached items
-        CachedItems = new Dictionary<string, ItemsAll>();
+        CachedItems = new Dictionary<string, BazaarItemsAll>();
         // dictionary here to prevent o^2 notation, and with how many items there are, probably a billion+ operation
         Dictionary<string, JsonNode> kvAllItems = new Dictionary<string, JsonNode>();
 
@@ -88,7 +91,7 @@ public class MongoBot
             else
                 name = id;
 
-            CachedItems.Add(id, new ItemsAll(id, name));
+            CachedItems.Add(id, new BazaarItemsAll(id, name));
         }
 
         await ItemsAll.InsertManyAsync(CachedItems.Select(e => e.Value));

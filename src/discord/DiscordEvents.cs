@@ -14,13 +14,13 @@ public partial class DiscordEventsAttribute : Attribute { }
 public partial class DiscordEvents
 {
     /// <summary>
+    /// The timer for the next time Hypixel API is checked.
+    /// </summary>
+    public readonly System.Timers.Timer _Timer = new System.Timers.Timer();
+    /// <summary>
     /// Client for the discord bot.
     /// </summary>
     DiscordSocketClient _Client;
-    /// <summary>
-    /// The timer for the next time Hypixel API is checked.
-    /// </summary>
-    System.Timers.Timer _Timer = new System.Timers.Timer();
 
     public Task Load()
     {
@@ -31,7 +31,7 @@ public partial class DiscordEvents
             method.Invoke(this, null);
 
         _Timer.AutoReset = true;
-        _Timer.Interval = Settings.HYPIXEL_TIMER_MINUTES * 6000;
+        _Timer.Interval = Settings.HYPIXEL_TIMER_MINUTES * 60000;
         _Timer.Start();
 
         return Task.CompletedTask;

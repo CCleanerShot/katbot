@@ -6,6 +6,15 @@ using System.Text.RegularExpressions;
 public static class Utility
 {
     /// <summary>
+    /// Colors a text with ANSI format
+    /// </summary>
+    /// <returns></returns>
+    public static string ColorText(string input, Enums.Color colorCode)
+    {
+        return $"{Enums.Dictionaries.Colors[colorCode]}{input}{Enums.Dictionaries.Colors[Enums.Color.WHITE]}";
+    }
+
+    /// <summary>
     /// Current way of logging. Will do some other stuff later.
     /// </summary>
     /// <param name="logLevel"></param>
@@ -32,7 +41,7 @@ public static class Utility
     }
 
     /// <summary>
-    /// Picks a random number from the given range.
+    /// Picks a random number from the given range (inclusive).
     /// </summary>
     /// <param name="min"></param>
     /// <param name="max"></param>

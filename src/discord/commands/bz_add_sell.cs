@@ -3,11 +3,12 @@ using MongoDB.Driver;
 
 public partial class DiscordCommands : InteractionModuleBase
 {
-    [SlashCommand("watch_sell_item", "adds a bazaar item to the watchlist for selling")]
-    public async Task watch_sell_item(
+    [SlashCommand("bz_add_sell", "adds a bazaar item to the watchlist for selling")]
+    public async Task bz_add_sell(
         [Summary("item", "the item to track (AUTOCOMPLETE => MAX 25)"), Autocomplete(typeof(ItemAutocomplete))] string itemID,
-        [Summary("sell_price", "the maximum sell price (alerts if below)")] ulong sellPrice,
-        [Summary("order_type", "the type of order it is")] Enums.OrderType orderType
+        [Summary("sell_price", "the minimum sell price (alerts if higher)")] ulong sellPrice,
+        [Summary("order_type", "the type of order it is")] Enums.OrderType orderType,
+        [Summary("remove_after", "whether or not to remove this item after it alerts the user")] bool removeAfter = true
     )
     {
         try
@@ -20,7 +21,7 @@ public partial class DiscordCommands : InteractionModuleBase
                 inserted = response[0];
                 inserted.Price = sellPrice;
                 inserted.OrderType = orderType;
-
+                inserted.RemovedAfter = removeAfter;
                 await MongoBot.BazaarSell.ReplaceOneAsync(e => e._id == response[0]._id, inserted);
             }
 
@@ -33,6 +34,7 @@ public partial class DiscordCommands : InteractionModuleBase
                     Price = sellPrice,
                     OrderType = orderType,
                     UserId = Context.User.Id,
+                    RemovedAfter = removeAfter,
                 };
 
                 await MongoBot.BazaarSell.InsertOneAsync(inserted);
@@ -41,11 +43,12 @@ public partial class DiscordCommands : InteractionModuleBase
             if (MongoBot.CachedSells.Find(e => e.ID == inserted.ID && e.Name == inserted.Name) == null)
                 MongoBot.CachedSells.Add(inserted);
 
-            await RespondAsync($"OK! You will be alerted for '**{MongoBot.CachedItems[itemID].Name}**' if prices are **lower** than {sellPrice} ({orderType}).");
+            await RespondAsync($"OK! You will be alerted for '**{MongoBot.CachedItems[itemID].Name}**' if prices are **higher** than {sellPrice} ({orderType}).");
         }
 
-        catch (Exception)
+        catch (Exception e)
         {
+            Utility.Log(Enums.LogLevel.ERROR, e.ToString());
             await RespondAsync($"Action failed! Ping <@{Settings.ADMIN_1}> for details.");
         }
     }
