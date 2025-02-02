@@ -136,8 +136,8 @@ class RollMatch
 
         if (CurrentRoll != MaxRoll)
         {
-            SocketGuildUser cV = Users.Find(e => e == PlayerTurn)!;
-            SocketGuildUser nV = Users.Find(e => e != PlayerTurn)!;
+            SocketGuildUser cV = Users.Find(e => e.Id == PlayerTurn.Id)!;
+            SocketGuildUser nV = Users.Find(e => e.Id != PlayerTurn.Id)!;
             PlayerTurn = nV;
             await message.Channel.SendMessageAsync($"<@{cV.Id}> rolled a {CurrentRoll}! <@{nV.Id}>, !roll.");
         }

@@ -31,12 +31,13 @@ public class MongoBot
             BazaarSell = _HypixelDB.GetCollection<BazaarItem>(Settings.MONGODB_COLLECTION_BAZAAR_SELL);
             ItemsAll = _HypixelDB.GetCollection<BazaarItemsAll>(Settings.MONGODB_COLLECTION_BAZAAR_ITEMS);
             Starboards = _DiscordDB.GetCollection<Starboards>(Settings.MONGODB_COLLECTION_DISCORD_STARBOARDS);
-            RollStats = _HypixelDB.GetCollection<RollStats>(Settings.MONGODB_COLLECTION_BAZAAR_BUY);
+            RollStats = _DiscordDB.GetCollection<RollStats>(Settings.MONGODB_COLLECTION_DISCORD_ROLL_STATS);
 
             // Test the connection
             await BazaarBuy.FindAsync(e => e.Name != "");
             await BazaarSell.FindAsync(e => e.Name != "");
             await Starboards.FindAsync(e => e.MessageId != 0);
+            await RollStats.FindAsync(e => e.UserId != 0);
 
             // Creating the cache
             List<BazaarItem> currentBuys = (await BazaarBuy.FindAsync(e => true)).ToList();
@@ -51,9 +52,9 @@ public class MongoBot
             Program.Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");
         }
 
-        catch (Exception)
+        catch (Exception e)
         {
-            Program.Utility.Log(Enums.LogLevel.ERROR, "MongoDB failed to connect! Throwing...");
+            Program.Utility.Log(Enums.LogLevel.ERROR, $"MongoDB failed to connect! {e}");
             throw;
         }
     }
@@ -95,5 +96,6 @@ public class MongoBot
         }
 
         await ItemsAll.InsertManyAsync(CachedItems.Select(e => e.Value));
+        Program.Utility.Log(Enums.LogLevel.NONE, "Added items to database");
     }
 }
