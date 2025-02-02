@@ -31,7 +31,7 @@ public class BazaarRoute
                 currentRetry++;
                 Thread.Sleep(100);
 
-                Utility.Log(Enums.LogLevel.WARN, $"Fetch failed! ({currentRetry})");
+                Program.Utility.Log(Enums.LogLevel.WARN, $"Fetch failed! ({currentRetry})");
                 if (currentRetry >= maxRetry)
                     throw;
 
@@ -42,19 +42,19 @@ public class BazaarRoute
 
             if (result == null)
             {
-                Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should not be null.");
+                Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should not be null.");
                 return null;
             }
 
             if (result["success"] == null)
             {
-                Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should always contains a 'success' field.");
+                Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should always contains a 'success' field.");
                 return null;
             }
 
             if (result["success"]!.Equals(false))
             {
-                Utility.Log(Enums.LogLevel.WARN, "Success = false, returning...");
+                Program.Utility.Log(Enums.LogLevel.WARN, "Success = false, returning...");
                 return null;
             }
 
@@ -62,7 +62,7 @@ public class BazaarRoute
 
             if (bazaarRoute == null)
             {
-                Utility.Log(Enums.LogLevel.ERROR, "Unexpected null while converting response to C# class.");
+                Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null while converting response to C# class.");
                 return null;
             }
 
@@ -76,7 +76,7 @@ public class BazaarRoute
 
         catch (Exception e)
         {
-            Utility.Log(Enums.LogLevel.ERROR, e.ToString());
+            Program.Utility.Log(Enums.LogLevel.ERROR, e.ToString());
             return null;
         }
     }

@@ -16,19 +16,19 @@ public class ItemsRoute
 
         if (result == null)
         {
-            Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should not be null.");
+            Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should not be null.");
             return null;
         }
 
         if (result["success"] == null)
         {
-            Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should always contains a 'success' field.");
+            Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should always contains a 'success' field.");
             return null;
         }
 
         if (result["success"]!.Equals(false))
         {
-            Utility.Log(Enums.LogLevel.WARN, "Success = false, returning...");
+            Program.Utility.Log(Enums.LogLevel.WARN, "Success = false, returning...");
             return null;
         }
 

@@ -36,7 +36,7 @@ public partial class DiscordEvents
 
         if (starboardsChannel == null)
         {
-            Utility.Log(Enums.LogLevel.WARN, "Could not found the starboards channel! Was it deleted?");
+            Program.Utility.Log(Enums.LogLevel.WARN, "Could not found the starboards channel! Was it deleted?");
             return;
         }
 
@@ -68,7 +68,7 @@ public partial class DiscordEvents
 
             if (existingMessage == null)
             {
-                Utility.Log(Enums.LogLevel.WARN, "Found the message in the database, but the message has disappeared.");
+                Program.Utility.Log(Enums.LogLevel.WARN, "Found the message in the database, but the message has disappeared.");
                 return;
             }
 
@@ -126,7 +126,7 @@ public partial class DiscordEvents
 
                 catch (Exception)
                 {
-                    Utility.Log(Enums.LogLevel.ERROR, $"An unexpected error has occured while creating the starboard message! (Message ID: {userMessage.Id})");
+                    Program.Utility.Log(Enums.LogLevel.ERROR, $"An unexpected error has occured while creating the starboard message! (Message ID: {userMessage.Id})");
                     throw;
                 }
 

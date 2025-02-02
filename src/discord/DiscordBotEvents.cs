@@ -26,7 +26,7 @@ public partial class DiscordBot
 
     static async Task _InteractionCreated(SocketInteraction socketInteraction)
     {
-        Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.User.GlobalName} used a command in {socketInteraction.Data}.");
+        Program.Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.User.GlobalName} used a command in {socketInteraction.Data}.");
 
         SocketInteractionContext context = new SocketInteractionContext(_Client, socketInteraction);
         await _InteractionService.ExecuteCommandAsync(context, null);
@@ -34,7 +34,7 @@ public partial class DiscordBot
 
     static Task _Log(LogMessage message)
     {
-        Utility.Log(Enums.LogLevel.NONE, message.ToString());
+        Program.Utility.Log(Enums.LogLevel.NONE, message.ToString());
         return Task.CompletedTask;
     }
 

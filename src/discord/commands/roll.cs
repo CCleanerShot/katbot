@@ -21,13 +21,15 @@ public partial class DiscordCommands : InteractionModuleBase
                 throw new Exception("One of the values unexpectedly returned null!");
 
             RollMatch match = new RollMatch(channel, user1, user2);
+            bool result = await match.StartRoll();
 
-            await RespondAsync($"<@{targetUser.Id}> time to fight");
+            if (!result)
+                await RespondAsync($"${user1.Id}, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.");
         }
 
         catch (Exception e)
         {
-            Utility.Log(Enums.LogLevel.ERROR, e.ToString());
+            Program.Utility.Log(Enums.LogLevel.ERROR, e.ToString());
             await RespondAsync($"Action failed! Ping <@{Settings.ADMIN_1}> for details.");
         }
     }
@@ -56,10 +58,67 @@ class RollMatch
         Channel = _Channel;
         User1 = _User1;
         User2 = _User2;
-        PlayerTurn = User2; // it is implied that the user that created the command already rolled.
+        PlayerTurn = User1;
         RollMatches.Add(this);
         Users = new List<SocketGuildUser>() { User1, User2 };
         DiscordBot._Client.MessageReceived += _MessageReceived;
+    }
+
+    /// <summary>
+    /// Returns a bool to check if player automatically won on the first roll.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> StartRoll()
+    {
+        CurrentRoll = Program.Utility.NextRange(CurrentRoll, MaxRoll);
+        PlayerTurn = User2;
+
+        if (CurrentRoll != MaxRoll)
+            return false;
+
+        // if somehow the first roll won
+        await ConcludeMatch();
+        return true;
+    }
+
+    async Task ConcludeMatch()
+    {
+        // even if the next operations fail, it should just remove these
+        RollMatches.Remove(this);
+        DiscordBot._Client.MessageReceived -= _MessageReceived;
+
+        SocketGuildUser winnerDiscord = Users.Find(e => e == PlayerTurn)!;
+        SocketGuildUser loserDiscord = Users.Find(e => e == PlayerTurn)!;
+        List<RollStats> winner = (await MongoBot.RollStats.FindAsync(e => e.UserId == winnerDiscord.Id)).ToList();
+        List<RollStats> loser = (await MongoBot.RollStats.FindAsync(e => e.UserId == loserDiscord.Id)).ToList();
+
+        if (winner.Count == 0)
+        {
+            RollStats newPlayer = new RollStats(winnerDiscord.Id) { Wins = 1 };
+            await MongoBot.RollStats.InsertOneAsync(newPlayer);
+        }
+
+        if (loser.Count == 0)
+        {
+            RollStats newPlayer = new RollStats(loserDiscord.Id) { Loses = 1 };
+            await MongoBot.RollStats.InsertOneAsync(newPlayer);
+        }
+
+        if (winner.Count != 0)
+        {
+            RollStats replacement = winner.First();
+            replacement.Wins++;
+            await MongoBot.RollStats.FindOneAndReplaceAsync(e => e.UserId == winnerDiscord.Id, replacement);
+        }
+
+        if (loser.Count != 0)
+        {
+            RollStats replacement = loser.First();
+            replacement.Loses++;
+            await MongoBot.RollStats.FindOneAndReplaceAsync(e => e.UserId == loserDiscord.Id, replacement);
+        }
+
+        await Channel.SendMessageAsync($":confetti_ball: <@{winnerDiscord.Id}> has rolled 1000 and won! :confetti_ball: ");
     }
 
     async Task _MessageReceived(SocketMessage message)
@@ -73,7 +132,7 @@ class RollMatch
         if (message.Content != "!roll")
             return;
 
-        CurrentRoll = Utility.NextRange(CurrentRoll, MaxRoll);
+        CurrentRoll = Program.Utility.NextRange(CurrentRoll, MaxRoll);
 
         if (CurrentRoll != MaxRoll)
         {
@@ -84,43 +143,6 @@ class RollMatch
         }
 
         else
-        {
-            // even if the next operations fail, it should just remove these
-            RollMatches.Remove(this);
-            DiscordBot._Client.MessageReceived -= _MessageReceived;
-
-            SocketGuildUser winnerDiscord = Users.Find(e => e == PlayerTurn)!;
-            SocketGuildUser loserDiscord = Users.Find(e => e == PlayerTurn)!;
-            List<RollStats> winner = (await MongoBot.RollStats.FindAsync(e => e.UserId == winnerDiscord.Id)).ToList();
-            List<RollStats> loser = (await MongoBot.RollStats.FindAsync(e => e.UserId == loserDiscord.Id)).ToList();
-
-            if (winner.Count == 0)
-            {
-                RollStats newPlayer = new RollStats(winnerDiscord.Id) { Wins = 1 };
-                await MongoBot.RollStats.InsertOneAsync(newPlayer);
-            }
-
-            if (loser.Count == 0)
-            {
-                RollStats newPlayer = new RollStats(loserDiscord.Id) { Loses = 1 };
-                await MongoBot.RollStats.InsertOneAsync(newPlayer);
-            }
-
-            if (winner.Count != 0)
-            {
-                RollStats replacement = winner.First();
-                replacement.Wins++;
-                await MongoBot.RollStats.FindOneAndReplaceAsync(e => e.UserId == winnerDiscord.Id, replacement);
-            }
-
-            if (loser.Count != 0)
-            {
-                RollStats replacement = loser.First();
-                replacement.Loses++;
-                await MongoBot.RollStats.FindOneAndReplaceAsync(e => e.UserId == loserDiscord.Id, replacement);
-            }
-
-            await message.Channel.SendMessageAsync($":confetti_ball: <@{winnerDiscord.Id}> has rolled 1000 and won! :confetti_ball: ");
-        }
+            await ConcludeMatch();
     }
 }

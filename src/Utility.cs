@@ -3,15 +3,15 @@ using System.Text.RegularExpressions;
 /// <summary>
 /// Random class for helper functions
 /// </summary>
-public static class Utility
+public class Utility
 {
-    /// <summary>
-    /// Colors a text with ANSI format
-    /// </summary>
-    /// <returns></returns>
-    public static string ColorText(string input, Enums.Color colorCode)
+    public string LogLine = "";
+
+    ~Utility()
     {
-        return $"{Enums.Dictionaries.Colors[colorCode]}{input}{Enums.Dictionaries.Colors[Enums.Color.WHITE]}";
+        Program.Utility.Log(Enums.LogLevel.NONE, "Closing...");
+        using StreamWriter writer = new StreamWriter($"{DateTime.Now.ToString()}.txt");
+        writer.Write(Program.Utility.LogLine);
     }
 
     /// <summary>
@@ -19,7 +19,7 @@ public static class Utility
     /// </summary>
     /// <param name="logLevel"></param>
     /// <param name="message"></param>
-    public static void Log(Enums.LogLevel logLevel, string message)
+    public void Log(Enums.LogLevel logLevel, string message)
     {
         string prefix = "";
         switch (logLevel)
@@ -37,7 +37,9 @@ public static class Utility
                 throw new NotImplementedException("Implement this");
         }
 
-        Console.WriteLine($"{prefix} {message}");
+        string fullMessage = $"{prefix} {message}";
+        LogLine += fullMessage + "\n";
+        Console.WriteLine(fullMessage);
     }
 
     /// <summary>
@@ -46,7 +48,7 @@ public static class Utility
     /// <param name="min"></param>
     /// <param name="max"></param>
     /// <returns></returns>
-    public static int NextRange(int min, int max)
+    public int NextRange(int min, int max)
     {
         float value = new Random().NextSingle();
         int difference = max - min;
@@ -59,7 +61,7 @@ public static class Utility
     /// <param name="input"></param>
     /// <param name="spacing"></param>
     /// <returns></returns>
-    public static string SpaceNumber(int input, int spacing)
+    public string SpaceNumber(int input, int spacing)
     {
         return string.Join(" ", Regex.Split(input.ToString(), $@"\d{{{spacing}}}"));
     }
@@ -71,7 +73,7 @@ public static class Utility
     /// <param name="input"></param>
     /// <param name="maxSpacing"></param>
     /// <returns></returns>
-    public static string SpaceString(string input, int maxSpacing)
+    public string SpaceString(string input, int maxSpacing)
     {
         return new string(' ', (int)MathF.Max(maxSpacing - input.Length, 0)) + input;
     }
@@ -82,7 +84,7 @@ public static class Utility
     /// <param name="input"></param>
     /// <param name="maxSpacing"></param>
     /// <returns></returns>
-    public static string SS(string input, int maxSpacing)
+    public string SS(string input, int maxSpacing)
     {
         return SpaceString(input, maxSpacing);
     }

@@ -120,7 +120,7 @@ public class Settings
             else if (lines[0] == "MONGODB_URI")
                 MONGODB_URI = lines[1];
             else
-                Utility.Log(Enums.LogLevel.WARN, "The key was not implemented yet. Intentional?");
+                Program.Utility.Log(Enums.LogLevel.WARN, "The key was not implemented yet. Intentional?");
 
         } while (line != null);
     }

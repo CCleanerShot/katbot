@@ -48,12 +48,12 @@ public class MongoBot
             CachedItems = currentItems.Aggregate(new Dictionary<string, BazaarItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
             CachedSells = currentSells.Aggregate(new List<BazaarItem>(), (pV, cV) => { pV.Add(cV); return pV; });
 
-            Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");
+            Program.Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");
         }
 
         catch (Exception)
         {
-            Utility.Log(Enums.LogLevel.ERROR, "MongoDB failed to connect! Throwing...");
+            Program.Utility.Log(Enums.LogLevel.ERROR, "MongoDB failed to connect! Throwing...");
             throw;
         }
     }
@@ -68,7 +68,7 @@ public class MongoBot
 
         if (products == null || items == null)
         {
-            Utility.Log(Enums.LogLevel.WARN, "Failed to load items; one of the routes has failed");
+            Program.Utility.Log(Enums.LogLevel.WARN, "Failed to load items; one of the routes has failed");
             return;
         }
 

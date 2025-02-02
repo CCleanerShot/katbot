@@ -82,7 +82,7 @@ public partial class DiscordEvents
 
         if (channel == null)
         {
-            Utility.Log(Enums.LogLevel.ERROR, "Attempted to send a message to the hypixel alerts channel, but it is missing!");
+            Program.Utility.Log(Enums.LogLevel.ERROR, "Attempted to send a message to the hypixel alerts channel, but it is missing!");
             return;
         }
 
@@ -134,23 +134,23 @@ public partial class DiscordEvents
 
             response += $"{"**BUYS**"}\n";
             List<BazaarItem> buys = elgibleBuys.Where(e => e.UserId == k).ToList();
-            response += $"{Utility.SS("NAME", maxName)}|{Utility.SS("LIVE_PRICE", maxPrice)}|WANTED_PRICE\n";
+            response += $"{Program.Utility.SS("NAME", maxName)}|{Program.Utility.SS("LIVE_PRICE", maxPrice)}|WANTED_PRICE\n";
             foreach (BazaarItem tracked in buys)
             {
-                string name = Utility.SS(tracked.Name, maxName);
-                string livePrice = Utility.SS(liveItems[tracked.ID].sell_summary.First().pricePerUnit.ToString(), maxPrice);
+                string name = Program.Utility.SS(tracked.Name, maxName);
+                string livePrice = Program.Utility.SS(liveItems[tracked.ID].sell_summary.First().pricePerUnit.ToString(), maxPrice);
                 string wantedPrice = tracked.Price.ToString();
                 response += $"{name}|{livePrice}|{wantedPrice}\n";
             }
 
             response += $"{"**SELLS**"}\n";
             List<BazaarItem> sells = elgibleSells.Where(e => e.UserId == k).ToList();
-            response += $"{Utility.SS("NAME", maxName)}|{Utility.SS("LIVE_PRICE", maxPrice)}|WANTED_PRICE\n";
+            response += $"{Program.Utility.SS("NAME", maxName)}|{Program.Utility.SS("LIVE_PRICE", maxPrice)}|WANTED_PRICE\n";
             foreach (BazaarItem tracked in sells)
             {
 
-                string name = Utility.SS(tracked.Name, maxName);
-                string livePrice = Utility.SS(liveItems[tracked.ID].buy_summary.First().pricePerUnit.ToString(), maxPrice);
+                string name = Program.Utility.SS(tracked.Name, maxName);
+                string livePrice = Program.Utility.SS(liveItems[tracked.ID].buy_summary.First().pricePerUnit.ToString(), maxPrice);
                 string wantedPrice = tracked.Price.ToString();
                 response += $"{name}|{livePrice}|{wantedPrice}\n";
             }

@@ -22,7 +22,7 @@ public partial class DiscordCommands : InteractionModuleBase
 
         catch (Exception e)
         {
-            Utility.Log(Enums.LogLevel.ERROR, e.ToString());
+            Program.Utility.Log(Enums.LogLevel.ERROR, e.ToString());
             await RespondAsync($"Action failed! Ping <@{Settings.ADMIN_1}> for details.");
         }
     }
