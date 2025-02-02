@@ -14,7 +14,6 @@ public class Program
 
 #if WINDOWS
     // related to catching program exit method #2
-    // P/Invoke and handler (Windows-only)
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
     private delegate bool ConsoleEventDelegate(int eventType);
@@ -26,7 +25,6 @@ public class Program
         Console.CancelKeyPress += (sender, e) => SaveSession();
 
 #if WINDOWS
-    // Windows-only setup
     handler = ConsoleEventCallback;
     SetConsoleCtrlHandler(handler, true);
 #endif
@@ -68,7 +66,6 @@ public class Program
 
 
 #if WINDOWS
-    // Windows-specific callback
     private static bool ConsoleEventCallback(int eventType)
     {
         if (eventType == 2)
@@ -77,7 +74,7 @@ public class Program
             SaveSession();
         }
 
-        return false; // Allow default exit behavior
+        return false;
     }
 #endif
 }
