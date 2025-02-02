@@ -12,7 +12,6 @@ public class Program
     public static HttpClient Client = default!;
     public static Utility Utility = default!;
 
-
 #if WINDOWS
     // related to catching program exit method #2
     // P/Invoke and handler (Windows-only)
@@ -21,7 +20,6 @@ public class Program
     private delegate bool ConsoleEventDelegate(int eventType);
     static ConsoleEventDelegate? handler; // Nullable for conditional use
 #endif
-
 
     static async Task Main()
     {
