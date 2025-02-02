@@ -3,7 +3,9 @@
 // 2. abrupt program exit
 // the purpose of this is to log the session into /logs
 
-using System.Runtime.InteropServices;
+#if WINDOWS
+    using System.Runtime.InteropServices;
+#endif
 
 public class Program
 {
@@ -11,17 +13,26 @@ public class Program
     public static Utility Utility = default!;
 
 
+#if WINDOWS
     // related to catching program exit method #2
-    private delegate bool ConsoleEventDelegate(int eventType);
-    static ConsoleEventDelegate handler = default!;
+    // P/Invoke and handler (Windows-only)
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
+    private delegate bool ConsoleEventDelegate(int eventType);
+    static ConsoleEventDelegate? handler; // Nullable for conditional use
+#endif
+
+
     static async Task Main()
     {
         Console.CancelKeyPress += (sender, e) => SaveSession();
 
-        handler = new ConsoleEventDelegate(ConsoleEventCallback);
-        SetConsoleCtrlHandler(handler, true);
+#if WINDOWS
+    // Windows-only setup
+    handler = ConsoleEventCallback;
+    SetConsoleCtrlHandler(handler, true);
+#endif
+
         await Run();
     }
 
@@ -58,7 +69,9 @@ public class Program
     }
 
 
-    static bool ConsoleEventCallback(int eventType)
+#if WINDOWS
+    // Windows-specific callback
+    private static bool ConsoleEventCallback(int eventType)
     {
         if (eventType == 2)
         {
@@ -66,7 +79,8 @@ public class Program
             SaveSession();
         }
 
-        return false;
+        return false; // Allow default exit behavior
     }
+#endif
 }
 
