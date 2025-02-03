@@ -10,6 +10,7 @@ public partial class DiscordCommands : InteractionModuleBase
         {
             string result = "Fetching...";
             await RespondAsync(result);
+            result = "";
 
             List<RollStats> allStats = (await MongoBot.RollStats.FindAsync(e => e.UserId != 1)).ToList();
             allStats.Sort((a, b) => b.Wins - a.Wins);
