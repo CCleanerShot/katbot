@@ -30,7 +30,7 @@ public class Settings
     public static string MONGODB_COLLECTION_DISCORD_ROLL_STATS = "";
     public static string MONGODB_URI = "";
     public static string PATH_OBAMA = "";
-    public static string PATH_MONDAY_GIF_URL = "https://tenor.com/view/evangelion-gif-19221516";
+    public static string PATH_MONDAY_GIF_URL = "https://media1.tenor.com/m/eB9Egjcaa_QAAAAd/evangelion.gif";
     public static string PATH_RAMOJUSD_GIF_URL = "https://cdn.discordapp.com/attachments/1210132113358065695/1236680414597222411/ramojusd.gif?ex=679c3023&is=679adea3&hm=5f03113120db858cb71fcd7715f4ca75ffeda1a5de2a284639034d90fc97e07c&";
 
     /// <summary>
