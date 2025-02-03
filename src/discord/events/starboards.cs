@@ -18,7 +18,7 @@ public partial class DiscordEvents
     /// <summary>
     /// The threshold at which a new starboard is added for a message.
     /// </summary>
-    int Starboards_Threshold = 1;
+    int Starboards_Threshold = 3;
 
     [DiscordEvents]
     public void starboards()

@@ -20,11 +20,23 @@ public partial class DiscordCommands : InteractionModuleBase
             if (channel == null || user1 == null || user2 == null)
                 throw new Exception("One of the values unexpectedly returned null!");
 
-            RollMatch match = new RollMatch(channel, user1, user2);
-            bool result = await match.StartRoll();
+            if (
+                RollMatch.RollMatches.Find(e => e.Users.Select(e => e.Id).Contains(user1.Id)) != null &&
+                RollMatch.RollMatches.Find(e => e.Users.Select(e => e.Id).Contains(user2.Id)) != null
+            )
+            {
+                await RespondAsync($"You guys already have a match >:(");
+            }
 
-            if (!result)
-                await RespondAsync($"<@{user2.Id}>, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.");
+            else
+            {
+
+                RollMatch match = new RollMatch(channel, user1, user2);
+                bool result = await match.StartRoll();
+
+                if (!result)
+                    await RespondAsync($"<@{user2.Id}>, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.");
+            }
         }
 
         catch (Exception e)
@@ -38,14 +50,14 @@ public partial class DiscordCommands : InteractionModuleBase
 class RollMatch
 {
     static int MaxRoll = 1000;
-    static List<RollMatch> RollMatches = new List<RollMatch>();
+    public static List<RollMatch> RollMatches = new List<RollMatch>();
 
     SocketTextChannel Channel;
     int CurrentRoll = 0;
     SocketGuildUser PlayerTurn;
     SocketGuildUser User1;
     SocketGuildUser User2;
-    List<SocketGuildUser> Users; // to not re-construct an array everything, but has little practical use outside of optimization
+    public readonly List<SocketGuildUser> Users; // to not re-construct an array everything, but has little practical use outside of optimization
 
     /// <summary>
     /// The constructor here itself causes it's own event to the discord bot.
@@ -87,8 +99,8 @@ class RollMatch
         RollMatches.Remove(this);
         DiscordBot._Client.MessageReceived -= _MessageReceived;
 
-        SocketGuildUser winnerDiscord = Users.Find(e => e == PlayerTurn)!;
-        SocketGuildUser loserDiscord = Users.Find(e => e == PlayerTurn)!;
+        SocketGuildUser winnerDiscord = Users.Find(e => e.Id == PlayerTurn.Id)!;
+        SocketGuildUser loserDiscord = Users.Find(e => e.Id != PlayerTurn.Id)!;
         List<RollStats> winner = (await MongoBot.RollStats.FindAsync(e => e.UserId == winnerDiscord.Id)).ToList();
         List<RollStats> loser = (await MongoBot.RollStats.FindAsync(e => e.UserId == loserDiscord.Id)).ToList();
 

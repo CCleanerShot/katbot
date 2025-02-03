@@ -14,11 +14,10 @@ public partial class DiscordCommands : InteractionModuleBase
             List<RollStats> allStats = (await MongoBot.RollStats.FindAsync(e => e.UserId != 1)).ToList();
             allStats.Sort((a, b) => b.Wins - a.Wins);
 
-            await Context.Interaction.ModifyOriginalResponseAsync(e => e.Content = "");
-
             foreach (RollStats stats in allStats)
-                result += $"<@{stats.UserId}>: {stats.Wins} Wins, {stats.Loses}";
+                result += $"<@{stats.UserId}>: {stats.Wins} Wins, {stats.Loses} Loses\n";
 
+            await Context.Interaction.ModifyOriginalResponseAsync(e => { e.Content = result; });
         }
 
         catch (Exception e)
