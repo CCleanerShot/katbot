@@ -18,6 +18,7 @@ public partial class DiscordCommands : InteractionModuleBase
             foreach (RollStats stats in allStats)
                 result += $"<@{stats.UserId}>: {stats.Wins} Wins, {stats.Loses} Loses\n";
 
+            await Task.Delay(20000);
             await Context.Interaction.ModifyOriginalResponseAsync(e => { e.Content = result; });
         }
 
