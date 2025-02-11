@@ -1,3 +1,4 @@
+using System.Reflection;
 using Discord;
 using Discord.Interactions;
 using Discord.Rest;
@@ -30,9 +31,11 @@ public partial class DiscordCommands : InteractionModuleBase
 
             else
             {
-                await RespondAsync($"You've successfully challenged <@{user2.Id}> to a duel!", null, false, true);
-                RestUserMessage message = (await Context.Channel.SendMessageAsync($"<@{user2.Id}>, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.") as RestUserMessage)!;
-                new RollMatch(channel, user1, user2, message);
+                RollMatch match = new RollMatch(channel, user1, user2);
+                bool result = await match.StartRoll();
+
+                if (!result)
+                    await RespondAsync($"<@{user2.Id}>, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.");
             }
         }
 
@@ -51,12 +54,13 @@ class RollMatch
 
     SocketTextChannel Channel;
     int CurrentRoll = 0;
-    RestUserMessage FullMessage;
     SocketGuildUser PlayerTurn;
-    RestUserMessage? PreviousMessage;
     SocketGuildUser User1;
     SocketGuildUser User2;
 
+    public string FullMessage = "";
+    public readonly List<RestUserMessage> RestMessages = new List<RestUserMessage>();
+    public readonly List<SocketMessage> SocketMessages = new List<SocketMessage>();
     public readonly List<SocketGuildUser> Users; // to not re-construct an array everything, but has little practical use outside of optimization
 
     /// <summary>
@@ -65,16 +69,32 @@ class RollMatch
     /// <param name="_Channel"></param>
     /// <param name="_User1"></param>
     /// <param name="_User2"></param>
-    public RollMatch(SocketTextChannel _Channel, SocketGuildUser _User1, SocketGuildUser _User2, RestUserMessage _FullMessage)
+    public RollMatch(SocketTextChannel _Channel, SocketGuildUser _User1, SocketGuildUser _User2)
     {
         Channel = _Channel;
-        FullMessage = _FullMessage;
         User1 = _User1;
         User2 = _User2;
         PlayerTurn = User1;
         RollMatches.Add(this);
         Users = new List<SocketGuildUser>() { User1, User2 };
         DiscordBot._Client.MessageReceived += _MessageReceived;
+    }
+
+    /// <summary>
+    /// Returns a bool to check if player automatically won on the first roll.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> StartRoll()
+    {
+        CurrentRoll = Program.Utility.NextRange(CurrentRoll, MaxRoll);
+        PlayerTurn = User2;
+
+        if (CurrentRoll != MaxRoll)
+            return false;
+
+        // if somehow the first roll won
+        await ConcludeMatch();
+        return true;
     }
 
     async Task ConcludeMatch()
@@ -114,9 +134,15 @@ class RollMatch
             await MongoBot.RollStats.FindOneAndReplaceAsync(e => e.UserId == loserDiscord.Id, replacement);
         }
 
-        string finalMessage = $":confetti_ball: <@{winnerDiscord.Id}> has rolled 1000 and won! :confetti_ball:";
-        await FullMessage.ModifyAsync((e) => { e.Content = $"{e.Content}\n{finalMessage}"; });
-        await Channel.SendMessageAsync(finalMessage);
+        foreach (SocketMessage message in SocketMessages)
+            await message.DeleteAsync();
+
+        foreach (RestMessage message in RestMessages)
+            await message.DeleteAsync();
+
+        string lastMessage = $":confetti_ball: <@{winnerDiscord.Id}> has rolled 1000 and won! :confetti_ball: ";
+        FullMessage += $"\n{lastMessage}";
+        await Channel.SendMessageAsync(FullMessage);
     }
 
     async Task _MessageReceived(SocketMessage message)
@@ -130,10 +156,7 @@ class RollMatch
         if (message.Content != "!roll")
             return;
 
-        if (PreviousMessage != null)
-            await PreviousMessage.DeleteAsync();
-
-        await message.DeleteAsync();
+        SocketMessages.Add(message);
         CurrentRoll = Program.Utility.NextRange(CurrentRoll, MaxRoll);
 
         if (CurrentRoll != MaxRoll)
@@ -141,8 +164,9 @@ class RollMatch
             SocketGuildUser cV = Users.Find(e => e.Id == PlayerTurn.Id)!;
             SocketGuildUser nV = Users.Find(e => e.Id != PlayerTurn.Id)!;
             PlayerTurn = nV;
-            await FullMessage.ModifyAsync((e) => { e.Content = $"{e.Content}\n<@{cV.Id}> rolled a {CurrentRoll}!"; });
-            PreviousMessage = await message.Channel.SendMessageAsync($"<@{cV.Id}>, !roll.");
+            string stringMessage = $"<@{cV.Id}> rolled a {CurrentRoll}! <@{nV.Id}>, !roll.";
+            RestMessages.Add(await message.Channel.SendMessageAsync(stringMessage));
+            FullMessage += $"\n{stringMessage}";
         }
 
         else
