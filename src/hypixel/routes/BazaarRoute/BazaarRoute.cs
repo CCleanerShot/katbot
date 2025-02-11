@@ -4,12 +4,9 @@ using Newtonsoft.Json;
 
 public class BazaarRoute
 {
-    public bool success;
-    public double lastUpdated;
-    /// <summary>
-    /// NOTE: Do not use! Used for deserialization from response.
-    /// </summary>
-    public readonly Dictionary<string, BazaarRouteProduct> products = new Dictionary<string, BazaarRouteProduct>();
+    public bool success = default!;
+    public double lastUpdated = default!;
+    public Dictionary<string, BazaarRouteProduct> products = new Dictionary<string, BazaarRouteProduct>();
 
     public static async Task<Dictionary<string, BazaarRouteProduct>?> GetRoute()
     {
@@ -66,12 +63,7 @@ public class BazaarRoute
                 return null;
             }
 
-            Dictionary<string, BazaarRouteProduct> products = new Dictionary<string, BazaarRouteProduct>();
-
-            foreach (var (k, v) in bazaarRoute.products)
-                products.Add(k, v);
-
-            return products;
+            return bazaarRoute.products;
         }
 
         catch (Exception e)

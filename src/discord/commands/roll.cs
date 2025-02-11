@@ -32,10 +32,7 @@ public partial class DiscordCommands : InteractionModuleBase
             else
             {
                 RollMatch match = new RollMatch(channel, user1, user2);
-                bool result = await match.StartRoll();
-
-                if (!result)
-                    await RespondAsync($"<@{user2.Id}>, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.");
+                await RespondAsync($"<@{user2.Id}>, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.");
             }
         }
 
@@ -74,27 +71,10 @@ class RollMatch
         Channel = _Channel;
         User1 = _User1;
         User2 = _User2;
-        PlayerTurn = User1;
+        PlayerTurn = User2;
         RollMatches.Add(this);
         Users = new List<SocketGuildUser>() { User1, User2 };
         DiscordBot._Client.MessageReceived += _MessageReceived;
-    }
-
-    /// <summary>
-    /// Returns a bool to check if player automatically won on the first roll.
-    /// </summary>
-    /// <returns></returns>
-    public async Task<bool> StartRoll()
-    {
-        CurrentRoll = Program.Utility.NextRange(CurrentRoll, MaxRoll);
-        PlayerTurn = User2;
-
-        if (CurrentRoll != MaxRoll)
-            return false;
-
-        // if somehow the first roll won
-        await ConcludeMatch();
-        return true;
     }
 
     async Task ConcludeMatch()
