@@ -40,18 +40,18 @@ public class Program
             Client = new HttpClient();
 
             Settings.Load();
-            // await DiscordBot.Initialize();
-            // await MongoBot.Load();
+            await DiscordBot.Initialize();
+            await MongoBot.Load();
 
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
 
-            AuctionsRouteProduct[]? products = await AuctionsRoute.GetRoute();
+            // AuctionsRouteProduct[]? products = await AuctionsRoute.GetRoute();
 
-            if (products != null)
-                foreach (AuctionsRouteProduct product in products)
-                    if (product.claimed_bidders.Length > 0)
-                        Utility.Log(Enums.LogLevel.NONE, product.uuid);
+            // if (products != null)
+            //     foreach (AuctionsRouteProduct product in products)
+            //         if (product.claimed_bidders.Length > 0)
+            //             Utility.Log(Enums.LogLevel.NONE, product.uuid);
 
             // keeps program running
             await Task.Delay(-1);

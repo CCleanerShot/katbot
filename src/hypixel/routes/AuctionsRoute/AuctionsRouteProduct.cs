@@ -1,7 +1,10 @@
-using SharpNBT;
+using System.Text;
+using Cyotek.Data.Nbt;
 
 public class AuctionsRouteProduct
 {
+    static NbtDocument document = new NbtDocument();
+
     public string uuid = default!;
     public string auctioneer = default!;
     public string profile_id = default!;
@@ -26,6 +29,9 @@ public class AuctionsRouteProduct
         set
         {
             _item_bytes = value;
+            byte[] bytes = Convert.FromBase64String(value);
+            document.Load(new MemoryStream(bytes));
+            Console.WriteLine(document.ToString());
         }
     }
 }
