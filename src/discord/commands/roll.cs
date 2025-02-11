@@ -31,7 +31,7 @@ public partial class DiscordCommands : InteractionModuleBase
             else
             {
                 await RespondAsync($"You've successfully challenged <@{user2.Id}> to a duel!", null, false, true);
-                SocketUserMessage message = (await Context.Channel.SendMessageAsync($"<@{user2.Id}>, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.") as SocketUserMessage)!;
+                RestUserMessage message = (await Context.Channel.SendMessageAsync($"<@{user2.Id}>, you have been challenged to a roll battle! Type to '!roll' to continue. First to 1000 wins.") as RestUserMessage)!;
                 new RollMatch(channel, user1, user2, message);
             }
         }
@@ -51,7 +51,7 @@ class RollMatch
 
     SocketTextChannel Channel;
     int CurrentRoll = 0;
-    SocketUserMessage FullMessage;
+    RestUserMessage FullMessage;
     SocketGuildUser PlayerTurn;
     RestUserMessage? PreviousMessage;
     SocketGuildUser User1;
@@ -65,7 +65,7 @@ class RollMatch
     /// <param name="_Channel"></param>
     /// <param name="_User1"></param>
     /// <param name="_User2"></param>
-    public RollMatch(SocketTextChannel _Channel, SocketGuildUser _User1, SocketGuildUser _User2, SocketUserMessage _FullMessage)
+    public RollMatch(SocketTextChannel _Channel, SocketGuildUser _User1, SocketGuildUser _User2, RestUserMessage _FullMessage)
     {
         Channel = _Channel;
         FullMessage = _FullMessage;
