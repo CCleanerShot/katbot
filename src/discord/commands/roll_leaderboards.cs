@@ -9,7 +9,9 @@ public partial class DiscordCommands : InteractionModuleBase
         try
         {
             string result = "Fetching...";
+
             await RespondAsync(result);
+
             result = "";
 
             List<RollStats> allStats = (await MongoBot.RollStats.FindAsync(e => e.UserId != 1)).ToList();
