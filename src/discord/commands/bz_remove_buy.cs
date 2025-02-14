@@ -3,7 +3,7 @@ using MongoDB.Driver;
 
 public partial class DiscordCommands : InteractionModuleBase
 {
-    [SlashCommand("bz_remove_buy", "removes a bazaar item from the watchlist")]
+    [SlashCommand("bz_remove_buy", "removes a bazaar item from your list")]
     public async Task bz_remove_buy(
         [Summary("item", "the item to remove from tracking (AUTOCOMPLETE => MAX 25)"), Autocomplete(typeof(UserBuysAutocomplete))] string itemID
     )

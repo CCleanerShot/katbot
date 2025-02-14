@@ -40,7 +40,7 @@ public partial class DiscordBot
 
     static async Task _Ready()
     {
-        // await _InteractionService.RegisterCommandsGloballyAsync();
+        await _InteractionService.AddCommandsGloballyAsync(true, []);
         await _InteractionService.AddModulesAsync(Assembly.GetExecutingAssembly(), null);
 
         foreach (SocketGuild guild in _Client.Guilds)

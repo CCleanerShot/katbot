@@ -31,7 +31,7 @@ public partial class DiscordEvents
             method.Invoke(this, null);
 
         _Timer.AutoReset = true;
-        _Timer.Interval = Settings.HYPIXEL_TIMER_MINUTES * 60000;
+        _Timer.Interval = Settings.PUBLIC_HYPIXEL_TIMER_MINUTES * 60000;
         _Timer.Start();
 
         return Task.CompletedTask;

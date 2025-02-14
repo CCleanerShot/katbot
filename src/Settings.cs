@@ -5,6 +5,7 @@ using System.Reflection;
 /// </summary>
 public class Settings
 {
+    #region  PRIVATE should not be exposed
     public static string ADMIN_1 = "";
     public static string ADMIN_2 = "";
     public static ulong DISCORD_APPLICATION_ID = 0;
@@ -16,7 +17,7 @@ public class Settings
     public static string DISCORD_TOKEN = "";
     public static string HYPIXEL_API_BASE_URL = "";
     public static string HYPIXEL_BOT_KEY = "";
-    public static int HYPIXEL_TIMER_MINUTES = 0;
+    public static string ID_BOT = "";
     public static string ID_CARLOS = "";
     public static string ID_KELINIMO = "";
     public static string ID_RAMOJUSD = "";
@@ -33,8 +34,16 @@ public class Settings
     public static string MONGODB_DATABASE_HYPIXEL = "";
     public static string MONGODB_URI = "";
     public static string PATH_OBAMA = "";
-    public static string PATH_MONDAY_GIF_URL = "https://media1.tenor.com/m/eB9Egjcaa_QAAAAd/evangelion.gif";
-    public static string PATH_RAMOJUSD_GIF_URL = "https://cdn.discordapp.com/attachments/1210132113358065695/1236680414597222411/ramojusd.gif?ex=679c3023&is=679adea3&hm=5f03113120db858cb71fcd7715f4ca75ffeda1a5de2a284639034d90fc97e07c&";
+    #endregion
+
+    #region PUBLIC idc if these are exposed
+    public static string PUBLIC_AH_PROPERTY_ADD_PROPERTY_BUTTON = "add-button";
+    public static string PUBLIC_AH_PROPERTY_ADD_PROPERTY_MENU = "add-menu";
+    public static string PUBLIC_AH_PROPERTY_REMOVE_PROPERTY_BUTTON = "remove-button";
+    public static string PUBLIC_PATH_MONDAY_GIF_URL = "https://media1.tenor.com/m/eB9Egjcaa_QAAAAd/evangelion.gif";
+    public static string PUBLIC_PATH_RAMOJUSD_GIF_URL = "https://cdn.discordapp.com/attachments/1210132113358065695/1236680414597222411/ramojusd.gif?ex=679c3023&is=679adea3&hm=5f03113120db858cb71fcd7715f4ca75ffeda1a5de2a284639034d90fc97e07c&";
+    public static int PUBLIC_HYPIXEL_TIMER_MINUTES = 4;
+    #endregion
 
     /// <summary>
     /// Loads the settings.
@@ -97,8 +106,8 @@ public class Settings
                 HYPIXEL_API_BASE_URL = lines[1];
             else if (lines[0] == "HYPIXEL_BOT_KEY")
                 HYPIXEL_BOT_KEY = lines[1];
-            else if (lines[0] == "HYPIXEL_TIMER_MINUTES")
-                HYPIXEL_TIMER_MINUTES = Int32.Parse(lines[1]);
+            else if (lines[0] == "ID_BOT")
+                ID_BOT = lines[1];
             else if (lines[0] == "ID_CARLOS")
                 ID_CARLOS = lines[1];
             else if (lines[0] == "ID_KELINIMO")

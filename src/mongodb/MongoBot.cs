@@ -110,7 +110,6 @@ public class MongoBot
     }
 
     /// <summary>
-    /// TODO: add reset functionality
     /// <br></br>
     /// Fetches all pages from /auctions?page={x} and does the following:
     /// <br></br>
@@ -131,9 +130,14 @@ public class MongoBot
             return;
         }
 
+        if (reset)
+        {
+            await AuctionItemsAll.DeleteManyAsync(e => e.ID != "");
+            await AuctionTags.DeleteManyAsync(e => e.Name != "");
+        }
+
         // resetting the cached items
         CachedAuctionItems = new Dictionary<string, AuctionItemsAll>();
-
 
         List<string> auctionIDs = auctions.Select(e => e.NBT.ID.Value).ToList();
         IAsyncCursor<AuctionItemsAll> existingItemsResult = await AuctionItemsAll.FindAsync(e => auctionIDs.Contains(e.ID));
@@ -143,12 +147,16 @@ public class MongoBot
         List<AuctionTags> existingTags = existingTagsResult.Current?.ToList() ?? new List<AuctionTags>();
 
         // theres actually alot of extra attributes, reducing from o^2
+
         Dictionary<string, AuctionTags> existingTagsDict = existingTags.Aggregate(new Dictionary<string, AuctionTags>(), (pV, cV) => { pV.Add(cV.Name, cV); return pV; });
         Dictionary<string, AuctionItemsAll> existingItemsDict = existingItems.Aggregate(new Dictionary<string, AuctionItemsAll>(), (pV, cV) => { pV.Add(cV.Name, cV); return pV; });
         // these will be added to the database after the fact.
         // key representation: Tags => Name, Items => ID
         Dictionary<string, AuctionTags> newTagsDict = new Dictionary<string, AuctionTags>();
         Dictionary<string, AuctionItemsAll> newItemsDict = new Dictionary<string, AuctionItemsAll>();
+
+        foreach (var (k, v) in existingItemsDict)
+            CachedAuctionItems.Add(v.ID, v);
 
         // recursive function
         void EvalTag(Cyotek.Data.Nbt.Tag tag)
@@ -200,13 +208,14 @@ public class MongoBot
             {
                 string id = auction.NBT.ID.Value;
                 string name = auction.NBT.NAME.Value;
-                List<string> tags = auction.NBT.EXTRA_ATTRIBUTES.Value.Aggregate(new List<string>(), (pV, cV) => { pV.Add(cV.Name); return pV; });
+                List<string> tags = auction.NBT.ExistingTags.Select(e => e.Name).ToList();
                 item = new AuctionItemsAll(id, name, tags);
                 newItemsDict.Add(item.ID, item);
                 existingItemsDict.Add(item.ID, item);
+                CachedAuctionItems.Add(item.ID, item);
             }
 
-            foreach (Cyotek.Data.Nbt.Tag tag in auction.NBT.EXTRA_ATTRIBUTES.Value)
+            foreach (Cyotek.Data.Nbt.Tag tag in auction.NBT.ExistingTags)
             {
                 EvalTag(tag);
 
@@ -214,8 +223,6 @@ public class MongoBot
                 if (!item.ExtraAttributes.Contains(tag.Name))
                     item.ExtraAttributes.Add(tag.Name);
             }
-
-            CachedAuctionItems.Add(item.ID, item);
         }
 
         await AuctionItemsAll.InsertManyAsync(newItemsDict.Select(e => e.Value));

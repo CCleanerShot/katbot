@@ -17,7 +17,7 @@ public class AuctionsRouteProductNBT
 
     #region /tag
     public TagCompound DISPLAY = default!;
-    public TagCompound EXTRA_ATTRIBUTES = default!;
+    protected TagCompound EXTRA_ATTRIBUTES = default!;
     public TagInt HIDE_FLAGS = default!;
     public TagCompound? SKULL_OWNER = default!;
     #endregion
@@ -31,7 +31,12 @@ public class AuctionsRouteProductNBT
     #region /tag/ExtraAttributes
     public TagString ID = default!; // somehow the only non-optional tag
 
-    public Dictionary<string, Tag?> ExtraTags = new Dictionary<string, Tag?>()
+    public List<Tag> ExistingTags
+    {
+        get => ExtraTags.Where(e => e.Value != null).Select(e => e.Value).ToList()!;
+    }
+
+    protected Dictionary<string, Tag?> ExtraTags = new Dictionary<string, Tag?>()
     {
         { "ability_scroll", null },
         { "additional_coins", null },
@@ -235,6 +240,10 @@ public class AuctionsRouteProductNBT
 
         foreach (Tag tag in EXTRA_ATTRIBUTES.Value)
         {
+            // NOTE: we're not adding the id to the mix
+            if (tag.Name == "id")
+                continue;
+
             ExtraTags[tag.Name] = tag;
 
             if (!Tags.ContainsKey(tag.Name))

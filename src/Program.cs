@@ -52,16 +52,16 @@ public class Program
             await Task.Delay(-1);
         }
 
-        catch (Exception)
+        catch (Exception e)
         {
-            Console.WriteLine("catching...");
+            Utility.Log(Enums.LogLevel.ERROR, e.ToString());
             SaveSession();
         }
     }
 
     static void SaveSession()
     {
-        Utility.Log(Enums.LogLevel.NONE, "Closing...");
+        Utility.Log(Enums.LogLevel.NONE, "Saving log to file...");
         using StreamWriter writer = new StreamWriter("./logs/" + DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm") + ".txt");
         writer.Write(Utility.LogLine);
     }

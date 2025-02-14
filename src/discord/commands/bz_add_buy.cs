@@ -3,7 +3,7 @@ using MongoDB.Driver;
 
 public partial class DiscordCommands : InteractionModuleBase
 {
-    [SlashCommand("bz_add_buy", "adds a bazaar item to the watchlist for buying")]
+    [SlashCommand("bz_add_buy", "adds a bazaar item to your list for buying")]
     public async Task bz_add_buy(
         [Summary("item", "the item to track (AUTOCOMPLETE => MAX 25)"), Autocomplete(typeof(BazaarItemAutocomplete))] string itemID,
         [Summary("buy_price", "the maximum buy price (alerts if lower)")] ulong buyPrice,
