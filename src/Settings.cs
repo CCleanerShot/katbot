@@ -21,13 +21,16 @@ public class Settings
     public static string ID_KELINIMO = "";
     public static string ID_RAMOJUSD = "";
     public static string ID_VOLATILE = "";
-    public static string MONGODB_DATABASE_DISCORD = "";
-    public static string MONGODB_DATABASE_HYPIXEL = "";
+    public static string MONGODB_COLLECTION_AUCTION_BUY = "";
+    public static string MONGODB_COLLECTION_AUCTION_ITEMS = "";
+    public static string MONGODB_COLLECTION_AUCTION_TAGS = "";
     public static string MONGODB_COLLECTION_BAZAAR_BUY = "";
     public static string MONGODB_COLLECTION_BAZAAR_SELL = "";
     public static string MONGODB_COLLECTION_BAZAAR_ITEMS = "";
     public static string MONGODB_COLLECTION_DISCORD_STARBOARDS = "";
     public static string MONGODB_COLLECTION_DISCORD_ROLL_STATS = "";
+    public static string MONGODB_DATABASE_DISCORD = "";
+    public static string MONGODB_DATABASE_HYPIXEL = "";
     public static string MONGODB_URI = "";
     public static string PATH_OBAMA = "";
     public static string PATH_MONDAY_GIF_URL = "https://media1.tenor.com/m/eB9Egjcaa_QAAAAd/evangelion.gif";
@@ -104,20 +107,26 @@ public class Settings
                 ID_RAMOJUSD = lines[1];
             else if (lines[0] == "ID_VOLATILE")
                 ID_VOLATILE = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_AUCTION_BUY")
+                MONGODB_COLLECTION_AUCTION_BUY = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_AUCTION_ITEMS")
+                MONGODB_COLLECTION_AUCTION_ITEMS = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_AUCTION_TAGS")
+                MONGODB_COLLECTION_AUCTION_TAGS = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_BUY")
+                MONGODB_COLLECTION_BAZAAR_BUY = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_ITEMS")
+                MONGODB_COLLECTION_BAZAAR_ITEMS = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_SELL")
+                MONGODB_COLLECTION_BAZAAR_SELL = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_DISCORD_ROLL_STATS")
+                MONGODB_COLLECTION_DISCORD_ROLL_STATS = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_STARBOARDS")
+                MONGODB_COLLECTION_DISCORD_STARBOARDS = lines[1];
             else if (lines[0] == "MONGODB_DATABASE_DISCORD")
                 MONGODB_DATABASE_DISCORD = lines[1];
             else if (lines[0] == "MONGODB_DATABASE_HYPIXEL")
                 MONGODB_DATABASE_HYPIXEL = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_BUY")
-                MONGODB_COLLECTION_BAZAAR_BUY = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_SELL")
-                MONGODB_COLLECTION_BAZAAR_SELL = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_ITEMS")
-                MONGODB_COLLECTION_BAZAAR_ITEMS = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_STARBOARDS")
-                MONGODB_COLLECTION_DISCORD_STARBOARDS = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_DISCORD_ROLL_STATS")
-                MONGODB_COLLECTION_DISCORD_ROLL_STATS = lines[1];
             else if (lines[0] == "MONGODB_URI")
                 MONGODB_URI = lines[1];
             else

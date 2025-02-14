@@ -1,10 +1,9 @@
-using System.Text;
 using Cyotek.Data.Nbt;
+using Newtonsoft.Json.Linq;
 
 public class AuctionsRouteProduct
 {
-    static NbtDocument document = new NbtDocument();
-
+    #region API_PROPERTIES ordered by API response order
     public string uuid = default!;
     public string auctioneer = default!;
     public string profile_id = default!;
@@ -21,6 +20,9 @@ public class AuctionsRouteProduct
     public bool claimed = default!;
     public string[] claimed_bidders = default!; // this might unironically be an empty arrayz
     public ulong highest_bid_amount = default!;
+    #endregion
+
+    public AuctionsRouteProductNBT NBT = default!;
 
     private string _item_bytes = default!;
     public string item_bytes
@@ -29,9 +31,8 @@ public class AuctionsRouteProduct
         set
         {
             _item_bytes = value;
-            byte[] bytes = Convert.FromBase64String(value);
-            document.Load(new MemoryStream(bytes));
-            Console.WriteLine(document.ToString());
+            NBT = new AuctionsRouteProductNBT(value);
         }
     }
+
 }

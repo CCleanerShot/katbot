@@ -7,6 +7,8 @@
     using System.Runtime.InteropServices;
 #endif
 
+using Cyotek.Data.Nbt;
+
 public class Program
 {
     public static HttpClient Client = default!;
@@ -40,18 +42,13 @@ public class Program
             Client = new HttpClient();
 
             Settings.Load();
-            await DiscordBot.Initialize();
+            // await DiscordBot.Initialize();
             await MongoBot.Load();
 
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
 
-            // AuctionsRouteProduct[]? products = await AuctionsRoute.GetRoute();
-
-            // if (products != null)
-            //     foreach (AuctionsRouteProduct product in products)
-            //         if (product.claimed_bidders.Length > 0)
-            //             Utility.Log(Enums.LogLevel.NONE, product.uuid);
+            await MongoBot.LoadAuctionItems();
 
             // keeps program running
             await Task.Delay(-1);

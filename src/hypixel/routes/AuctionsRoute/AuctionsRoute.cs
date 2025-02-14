@@ -11,64 +11,82 @@ public class AuctionsRoute
     public AuctionsRouteProduct[] auctions = default!;
 
 
-    public static async Task<AuctionsRouteProduct[]?> GetRoute()
+    public static async Task<List<AuctionsRouteProduct>?> GetRoute()
     {
         try
         {
-            string json = "";
-            int maxRetry = 3;
-            int currentRetry = 0;
+            List<AuctionsRouteProduct> auctions = new List<AuctionsRouteProduct>();
+            int PAGES = 5;
 
-            async Task setJson() => json = await Program.Client.GetStringAsync($"{Settings.HYPIXEL_API_BASE_URL}/skyblock/auctions");
-
-            try
+            for (int i = 0; i < PAGES; i++)
             {
-                await setJson();
+
+                string json = "";
+                int maxRetry = 3;
+                int currentRetry = 0;
+
+                async Task setJson() => json = await Program.Client.GetStringAsync($"{Settings.HYPIXEL_API_BASE_URL}/skyblock/auctions?page={i}");
+
+                try
+                {
+                    await setJson();
+                }
+
+                catch (Exception)
+                {
+                    currentRetry++;
+                    Thread.Sleep(100);
+
+                    Program.Utility.Log(Enums.LogLevel.WARN, $"Fetch failed! ({currentRetry})");
+                    if (currentRetry >= maxRetry)
+                        throw;
+
+                    await setJson();
+                }
+
+                JsonNode? result = JsonArray.Parse(json);
+
+                if (result == null)
+                {
+                    Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should not be null.");
+                    return null;
+                }
+
+                if (result["success"] == null)
+                {
+                    Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should always contains a 'success' field.");
+                    return null;
+                }
+
+                if (result["success"]!.Equals(false))
+                {
+                    Program.Utility.Log(Enums.LogLevel.WARN, "Success = false, returning...");
+                    return null;
+                }
+
+                AuctionsRoute? auctionsRoute = JsonConvert.DeserializeObject<AuctionsRoute>(json);
+
+                if (auctionsRoute == null)
+                {
+                    Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null while converting response to C# class.");
+                    return null;
+                }
+
+                foreach (AuctionsRouteProduct product in auctionsRoute.auctions)
+                    auctions.Add(product);
+
+                Program.Utility.Log(Enums.LogLevel.NONE, $"Page {i + 1} of auctions fetched.");
+
+                if (auctionsRoute.auctions.Length < 1000)
+                {
+                    Program.Utility.Log(Enums.LogLevel.NONE, $"Found end of length at page {i + 1}. Closing...");
+                    break;
+                }
+
+                await Task.Delay(10); // make sure we dont request too fast
             }
 
-            catch (Exception)
-            {
-                currentRetry++;
-                Thread.Sleep(100);
-
-                Program.Utility.Log(Enums.LogLevel.WARN, $"Fetch failed! ({currentRetry})");
-                if (currentRetry >= maxRetry)
-                    throw;
-
-                await setJson();
-            }
-
-            JsonNode? result = JsonArray.Parse(json);
-
-            if (result == null)
-            {
-                Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should not be null.");
-                return null;
-            }
-
-            if (result["success"] == null)
-            {
-                Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null when the result should always contains a 'success' field.");
-                return null;
-            }
-
-            if (result["success"]!.Equals(false))
-            {
-                Program.Utility.Log(Enums.LogLevel.WARN, "Success = false, returning...");
-                return null;
-            }
-
-            AuctionsRoute? auctionsRoute = JsonConvert.DeserializeObject<AuctionsRoute>(json);
-
-            if (auctionsRoute == null)
-            {
-                Program.Utility.Log(Enums.LogLevel.ERROR, "Unexpected null while converting response to C# class.");
-                return null;
-            }
-
-
-
-            return auctionsRoute.auctions;
+            return auctions;
         }
 
         catch (Exception e)
