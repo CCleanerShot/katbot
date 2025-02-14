@@ -5,7 +5,7 @@ public partial class DiscordCommands : InteractionModuleBase
 {
     [SlashCommand("bz_add_buy", "adds a bazaar item to the watchlist for buying")]
     public async Task bz_add_buy(
-        [Summary("item", "the item to track (AUTOCOMPLETE => MAX 25)"), Autocomplete(typeof(ItemAutocomplete))] string itemID,
+        [Summary("item", "the item to track (AUTOCOMPLETE => MAX 25)"), Autocomplete(typeof(BazaarItemAutocomplete))] string itemID,
         [Summary("buy_price", "the maximum buy price (alerts if lower)")] ulong buyPrice,
         [Summary("order_type", "the type of order it is")] Enums.OrderType orderType,
         [Summary("remove_after", "whether or not to remove this item after it alerts the user")] bool removeAfter = true
@@ -30,7 +30,7 @@ public partial class DiscordCommands : InteractionModuleBase
                 inserted = new BazaarItem()
                 {
                     ID = itemID,
-                    Name = MongoBot.CachedItems[itemID].Name,
+                    Name = MongoBot.CachedBazaarItems[itemID].Name,
                     Price = buyPrice,
                     OrderType = orderType,
                     UserId = Context.User.Id,
@@ -40,10 +40,10 @@ public partial class DiscordCommands : InteractionModuleBase
                 await MongoBot.BazaarBuy.InsertOneAsync(inserted);
             }
 
-            if (MongoBot.CachedBuys.Find(e => e.ID == inserted.ID && e.Name == inserted.Name) == null)
-                MongoBot.CachedBuys.Add(inserted);
+            if (MongoBot.CachedBazaarBuys.Find(e => e.ID == inserted.ID && e.Name == inserted.Name) == null)
+                MongoBot.CachedBazaarBuys.Add(inserted);
 
-            await RespondAsync($"OK! You will be alerted for '**{MongoBot.CachedItems[itemID].Name}**' if prices are **lower** than {buyPrice} ({orderType}).");
+            await RespondAsync($"OK! You will be alerted for '**{MongoBot.CachedBazaarItems[itemID].Name}**' if prices are **lower** than {buyPrice} ({orderType}).");
         }
 
         catch (Exception e)

@@ -3,13 +3,13 @@
 using Discord;
 using Discord.Interactions;
 
-public class ItemAutocomplete : AutocompleteHandler
+public class AuctionItemAutocomplete : AutocompleteHandler
 {
     public override async Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context, IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
     {
         string value = autocompleteInteraction.Data.Current.Value.ToString()!;
 
-        IEnumerable<AutocompleteResult> results = MongoBot.CachedItems
+        IEnumerable<AutocompleteResult> results = MongoBot.CachedAuctionItems
             .Where(e => e.Value.Name.ToLower().Contains(value.ToLower()))
             .OrderBy(e => e.Value.Name)
             .Select(e => new AutocompleteResult(e.Value.Name, e.Value.ID));

@@ -11,8 +11,8 @@ public partial class DiscordCommands : InteractionModuleBase
         try
         {
             await MongoBot.BazaarSell.DeleteOneAsync(e => e.ID == itemID && e.Name == Context.User.Id.ToString());
-            await RespondAsync($"{MongoBot.CachedItems[itemID].Name} removed from your watchlist!");
-            MongoBot.CachedSells.Remove(MongoBot.CachedSells.Find(e => e.ID == itemID && e.Name == Context.User.Id.ToString())!);
+            await RespondAsync($"{MongoBot.CachedBazaarItems[itemID].Name} removed from your watchlist!");
+            MongoBot.CachedBazaarSells.Remove(MongoBot.CachedBazaarSells.Find(e => e.ID == itemID && e.Name == Context.User.Id.ToString())!);
         }
 
         catch (Exception e)

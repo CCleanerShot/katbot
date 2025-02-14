@@ -9,8 +9,8 @@ public partial class DiscordCommands : InteractionModuleBase
         try
         {
             string result = "";
-            List<BazaarItem> buys = MongoBot.CachedBuys.Where(e => e.UserId == Context.User.Id).ToList();
-            List<BazaarItem> sells = MongoBot.CachedSells.Where(e => e.UserId == Context.User.Id).ToList();
+            List<BazaarItem> buys = MongoBot.CachedBazaarBuys.Where(e => e.UserId == Context.User.Id).ToList();
+            List<BazaarItem> sells = MongoBot.CachedBazaarSells.Where(e => e.UserId == Context.User.Id).ToList();
             Dictionary<string, BazaarRouteProduct>? products = await BazaarRoute.GetRoute();
 
             foreach (BazaarItem buy in buys)

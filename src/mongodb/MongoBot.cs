@@ -9,16 +9,19 @@ public class MongoBot
     private static IMongoDatabase _HypixelDB = default!;
     private static string _Uri = default!;
 
-    public static List<BazaarItem> CachedBuys = new List<BazaarItem>();
-    public static Dictionary<string, BazaarItemsAll> CachedItems = new Dictionary<string, BazaarItemsAll>();
-    public static List<BazaarItem> CachedSells = new List<BazaarItem>();
+    public static Dictionary<string, AuctionBuy> CachedAuctionBuy = new Dictionary<string, AuctionBuy>();
+    public static Dictionary<string, AuctionItemsAll> CachedAuctionItems = new Dictionary<string, AuctionItemsAll>();
+    public static Dictionary<string, AuctionTags> CachedAuctionTags = new Dictionary<string, AuctionTags>();
+    public static List<BazaarItem> CachedBazaarBuys = new List<BazaarItem>();
+    public static Dictionary<string, BazaarItemsAll> CachedBazaarItems = new Dictionary<string, BazaarItemsAll>();
+    public static List<BazaarItem> CachedBazaarSells = new List<BazaarItem>();
 
     public static IMongoCollection<AuctionBuy> AuctionBuy { get; protected set; } = default!;
     public static IMongoCollection<AuctionItemsAll> AuctionItemsAll { get; protected set; } = default!;
     public static IMongoCollection<AuctionTags> AuctionTags { get; protected set; } = default!;
     public static IMongoCollection<BazaarItem> BazaarBuy { get; protected set; } = default!;
+    public static IMongoCollection<BazaarItemsAll> BazaarItemsAll { get; protected set; } = default!;
     public static IMongoCollection<BazaarItem> BazaarSell { get; protected set; } = default!;
-    public static IMongoCollection<BazaarItemsAll> ItemsAll { get; protected set; } = default!;
     public static IMongoCollection<Starboards> Starboards { get; protected set; } = default!;
     public static IMongoCollection<RollStats> RollStats { get; protected set; } = default!;
 
@@ -36,29 +39,25 @@ public class MongoBot
             AuctionTags = _HypixelDB.GetCollection<AuctionTags>(Settings.MONGODB_COLLECTION_AUCTION_TAGS);
             BazaarBuy = _HypixelDB.GetCollection<BazaarItem>(Settings.MONGODB_COLLECTION_BAZAAR_BUY);
             BazaarSell = _HypixelDB.GetCollection<BazaarItem>(Settings.MONGODB_COLLECTION_BAZAAR_SELL);
-            ItemsAll = _HypixelDB.GetCollection<BazaarItemsAll>(Settings.MONGODB_COLLECTION_BAZAAR_ITEMS);
+            BazaarItemsAll = _HypixelDB.GetCollection<BazaarItemsAll>(Settings.MONGODB_COLLECTION_BAZAAR_ITEMS);
             Starboards = _DiscordDB.GetCollection<Starboards>(Settings.MONGODB_COLLECTION_DISCORD_STARBOARDS);
             RollStats = _DiscordDB.GetCollection<RollStats>(Settings.MONGODB_COLLECTION_DISCORD_ROLL_STATS);
 
-            // Test the connection
-            await AuctionBuy.FindAsync(e => e.ID != "");
-            await AuctionItemsAll.FindAsync(e => e.Name != "");
-            await AuctionTags.FindAsync(e => e.Name != "");
-            await BazaarBuy.FindAsync(e => e.Name != "");
-            await BazaarSell.FindAsync(e => e.Name != "");
-            await ItemsAll.FindAsync(e => e.Name != "");
-            await Starboards.FindAsync(e => e.MessageId != 0);
-            await RollStats.FindAsync(e => e.UserId != 0);
-
             // Creating the cache
-            List<BazaarItem> currentBuys = (await BazaarBuy.FindAsync(e => true)).ToList();
-            List<BazaarItemsAll> currentItems = (await ItemsAll.FindAsync(e => true)).ToList();
+            List<AuctionBuy> currentAuctionBuy = (await AuctionBuy.FindAsync(e => true)).ToList();
+            List<AuctionItemsAll> currentAuctionItems = (await AuctionItemsAll.FindAsync(e => true)).ToList();
+            List<AuctionTags> currentAuctionTags = (await AuctionTags.FindAsync(e => true)).ToList();
+            List<BazaarItem> currentBazaarBuys = (await BazaarBuy.FindAsync(e => true)).ToList();
+            List<BazaarItemsAll> currentBazaarItems = (await BazaarItemsAll.FindAsync(e => true)).ToList();
             List<BazaarItem> currentSells = (await BazaarSell.FindAsync(e => true)).ToList();
 
             // Reset the cache just in case
-            CachedBuys = currentBuys.Aggregate(new List<BazaarItem>(), (pV, cV) => { pV.Add(cV); return pV; });
-            CachedItems = currentItems.Aggregate(new Dictionary<string, BazaarItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
-            CachedSells = currentSells.Aggregate(new List<BazaarItem>(), (pV, cV) => { pV.Add(cV); return pV; });
+            CachedAuctionBuy = currentAuctionBuy.Aggregate(new Dictionary<string, AuctionBuy>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
+            CachedAuctionItems = currentAuctionItems.Aggregate(new Dictionary<string, AuctionItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
+            CachedAuctionTags = currentAuctionTags.Aggregate(new Dictionary<string, AuctionTags>(), (pV, cV) => { pV.Add(cV.Name, cV); return pV; });
+            CachedBazaarBuys = currentBazaarBuys.Aggregate(new List<BazaarItem>(), (pV, cV) => { pV.Add(cV); return pV; });
+            CachedBazaarItems = currentBazaarItems.Aggregate(new Dictionary<string, BazaarItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
+            CachedBazaarSells = currentSells.Aggregate(new List<BazaarItem>(), (pV, cV) => { pV.Add(cV); return pV; });
 
             Program.Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");
         }
@@ -85,7 +84,7 @@ public class MongoBot
         }
 
         // resetting the cached items
-        CachedItems = new Dictionary<string, BazaarItemsAll>();
+        CachedBazaarItems = new Dictionary<string, BazaarItemsAll>();
         // dictionary here to prevent o^2 notation, and with how many items there are, probably a billion+ operation
         Dictionary<string, JsonNode> kvAllItems = new Dictionary<string, JsonNode>();
 
@@ -103,14 +102,16 @@ public class MongoBot
             else
                 name = id;
 
-            CachedItems.Add(id, new BazaarItemsAll(id, name));
+            CachedBazaarItems.Add(id, new BazaarItemsAll(id, name));
         }
 
-        await ItemsAll.InsertManyAsync(CachedItems.Select(e => e.Value));
+        await BazaarItemsAll.InsertManyAsync(CachedBazaarItems.Select(e => e.Value));
         Program.Utility.Log(Enums.LogLevel.NONE, "Updated bazaar items to database!");
     }
 
     /// <summary>
+    /// TODO: add reset functionality
+    /// <br></br>
     /// Fetches all pages from /auctions?page={x} and does the following:
     /// <br></br>
     /// <br>- Adds new items to the database</br>
@@ -118,12 +119,10 @@ public class MongoBot
     /// <br>- Updates existing items where new extra attributes are found</br>
     /// <br>- Updates extra attributes (tag) where new values (references) are found</br>
     /// </summary>
-    /// <param name="reset">Whether or not the database will be reset</param>
+    /// <param name="reset">Whether or not the database will be reset. Used when a major patch happens.</param>
     /// <returns></returns>
     public static async Task LoadAuctionItems(bool reset = false)
     {
-        // TODO: add reset functionality
-
         List<AuctionsRouteProduct>? auctions = await AuctionsRoute.GetRoute();
 
         if (auctions == null)
@@ -131,6 +130,9 @@ public class MongoBot
             Program.Utility.Log(Enums.LogLevel.WARN, "Failed to load auctions!");
             return;
         }
+
+        // resetting the cached items
+        CachedAuctionItems = new Dictionary<string, AuctionItemsAll>();
 
 
         List<string> auctionIDs = auctions.Select(e => e.NBT.ID.Value).ToList();
@@ -212,9 +214,9 @@ public class MongoBot
                 if (!item.ExtraAttributes.Contains(tag.Name))
                     item.ExtraAttributes.Add(tag.Name);
             }
-        }
 
-        List<AuctionTags> newTags = newTagsDict.Select(e => e.Value).ToList();
+            CachedAuctionItems.Add(item.ID, item);
+        }
 
         await AuctionItemsAll.InsertManyAsync(newItemsDict.Select(e => e.Value));
         await AuctionTags.InsertManyAsync(newTagsDict.Select(e => e.Value));

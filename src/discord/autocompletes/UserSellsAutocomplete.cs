@@ -10,7 +10,7 @@ public class UserSellsAutocomplete : AutocompleteHandler
         string value = autocompleteInteraction.Data.Current.Value.ToString()!;
 
         // there are two ".Where" that increases compute time but are negligible. for readability.
-        IEnumerable<AutocompleteResult> results = MongoBot.CachedSells
+        IEnumerable<AutocompleteResult> results = MongoBot.CachedBazaarSells
             .Where(e => e.UserId == context.User.Id)
             .Where(e => e.Name.ToLower().Contains(value.ToLower()))
             .OrderBy(e => e.Name)

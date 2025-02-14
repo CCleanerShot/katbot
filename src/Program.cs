@@ -42,13 +42,11 @@ public class Program
             Client = new HttpClient();
 
             Settings.Load();
-            // await DiscordBot.Initialize();
+            await DiscordBot.Initialize();
             await MongoBot.Load();
 
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
-
-            await MongoBot.LoadAuctionItems();
 
             // keeps program running
             await Task.Delay(-1);
