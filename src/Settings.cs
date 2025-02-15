@@ -34,6 +34,7 @@ public class Settings
     public static string MONGODB_DATABASE_HYPIXEL = "";
     public static string MONGODB_URI = "";
     public static string PATH_OBAMA = "";
+    public static ulong TEST_DISCORD_GUILD_ID = 0;
     #endregion
 
     #region PUBLIC idc if these are exposed
@@ -138,6 +139,8 @@ public class Settings
                 MONGODB_DATABASE_HYPIXEL = lines[1];
             else if (lines[0] == "MONGODB_URI")
                 MONGODB_URI = lines[1];
+            else if (lines[0] == "TEST_DISCORD_GUILD_ID")
+                TEST_DISCORD_GUILD_ID = UInt64.Parse(lines[1]);
             else
                 Program.Utility.Log(Enums.LogLevel.WARN, "The key was not implemented yet. Intentional?");
 

@@ -29,6 +29,14 @@ public partial class DiscordEvents
 
     async Task Starboards_ReactionChanged(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, Discord.WebSocket.SocketReaction reaction, ReactionCase reactionCase)
     {
+        RestUserMessage restMessage = ((await message.GetOrDownloadAsync()) as RestUserMessage)!;
+
+        if (restMessage.Channel is not SocketGuildChannel guildChannel)
+            return;
+
+        if (guildChannel.Guild.Id == Settings.TEST_DISCORD_GUILD_ID)
+            return;
+
         if (reaction.Emote.Name != Starboards_Emote)
             return;
 
