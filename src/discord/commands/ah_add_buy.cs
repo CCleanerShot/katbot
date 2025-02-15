@@ -4,38 +4,42 @@ using MongoDB.Driver;
 
 public partial class DiscordCommands : InteractionModuleBase
 {
-    [SlashCommand("ah_add_buy", "adds an auction item to your list for buying. NOTE: you can specify properties after!")]
+    [SlashCommand("ah_add_buy", "adds an auction item to your list for buying. NOTE: /ah_add_property to add properties")]
     public async Task ah_add_buy(
-    [Summary("item", "the item to track (AUTOCOMPLETE => MAX 25)"), Autocomplete(typeof(AuctionItemAutocomplete))] string itemID,
+    [Summary("item", "the item to track"), Autocomplete(typeof(AuctionItemAutocomplete))] string itemID,
     [Summary("buy_price", "the maximum buy price (alerts if lower)")] ulong buyPrice,
     [Summary("remove_after", "whether or not to remove this item after it alerts the user")] bool removeAfter = true
     )
     {
         try
         {
-            ButtonBuilder addButton = new ButtonBuilder()
-                .WithCustomId(Settings.PUBLIC_AH_PROPERTY_ADD_PROPERTY_BUTTON)
-                .WithStyle(ButtonStyle.Primary)
-                .WithLabel("ADD PROPERTY");
+            List<AuctionBuy> response = (await MongoBot.AuctionBuy.FindAsync(e => e.ID == itemID)).ToList();
 
-            SelectMenuBuilder addSelect = new SelectMenuBuilder()
-                .WithCustomId(Settings.PUBLIC_AH_PROPERTY_ADD_PROPERTY_MENU)
-                .WithPlaceholder("Choose a property...");
+            if (response.Count != 0)
+            {
+                AuctionBuy existingItem = response[0];
+                existingItem.Price = buyPrice;
+                existingItem.RemovedAfter = removeAfter;
+                await MongoBot.AuctionBuy.ReplaceOneAsync(e => e.ID == itemID && e.UserId == Context.User.Id, existingItem);
+            }
 
-            AuctionItemsAll item = MongoBot.CachedAuctionItems[itemID];
-            List<AuctionTags> tags = item.ExtraAttributes.Select(e => MongoBot.CachedAuctionTags[e]).ToList();
+            else
+            {
+                AuctionBuy newItem = new AuctionBuy()
+                {
+                    ID = itemID,
+                    ExtraAttributes = new List<AuctionBuy.ExtraAttribute>(),
+                    Name = MongoBot.CachedAuctionItems[itemID].Name,
+                    Price = buyPrice,
+                    RemovedAfter = removeAfter,
+                    UserId = Context.User.Id,
+                };
 
-            foreach (AuctionTags tag in tags)
-                addSelect.AddOption(new SelectMenuOptionBuilder()
-                    .WithLabel(tag.Name)
-                    .WithValue(tag.Name));
+                await MongoBot.AuctionBuy.InsertOneAsync(newItem);
+                MongoBot.CachedAuctionBuys.Add(newItem);
+            }
 
-            MessageComponent response = new ComponentBuilder()
-                .WithRows([new ActionRowBuilder().WithButton(addButton)])
-                .WithSelectMenu(addSelect)
-                .Build();
-
-            await RespondAsync("Done. Here, you can add properties for your item:", null, false, false, null, null, response);
+            await RespondAsync($"Started watching the '{MongoBot.CachedAuctionItems[itemID].Name}'!\nYou can add properties to it with the command, `/ah_add_property`.");
         }
 
         catch (Exception e)

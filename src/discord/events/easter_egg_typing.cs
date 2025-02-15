@@ -6,12 +6,12 @@ using MongoDB.Driver;
 public partial class DiscordEvents
 {
     [DiscordEvents]
-    public void typing_easter_egg()
+    public void easter_egg_typing()
     {
-        _Client.UserIsTyping += (_1, _2) => UserIsTyping(_1, _2);
+        _Client.UserIsTyping += (_1, _2) => EE_Typing_UserIsTyping(_1, _2);
     }
 
-    async Task UserIsTyping(Cacheable<IUser, ulong> user, Cacheable<IMessageChannel, ulong> channel)
+    async Task EE_Typing_UserIsTyping(Cacheable<IUser, ulong> user, Cacheable<IMessageChannel, ulong> channel)
     {
         int chance = Program.Utility.NextRange(1, 2000);
 

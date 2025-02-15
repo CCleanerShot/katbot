@@ -3,7 +3,7 @@
 using Discord;
 using Discord.Interactions;
 
-public class UserBuysAutocomplete : AutocompleteHandler
+public class UserBazaarBuysAutocomplete : AutocompleteHandler
 {
     public override async Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context, IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
     {

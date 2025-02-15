@@ -5,14 +5,14 @@ public partial class DiscordCommands : InteractionModuleBase
 {
     [SlashCommand("bz_remove_buy", "removes a bazaar item from your list")]
     public async Task bz_remove_buy(
-        [Summary("item", "the item to remove from tracking (AUTOCOMPLETE => MAX 25)"), Autocomplete(typeof(UserBuysAutocomplete))] string itemID
+        [Summary("item", "the item to remove from tracking"), Autocomplete(typeof(UserBazaarBuysAutocomplete))] string itemID
     )
     {
         try
         {
-            await MongoBot.BazaarBuy.DeleteOneAsync(e => e.ID == itemID && e.UserId.ToString() == Context.User.Id.ToString());
+            await MongoBot.BazaarBuy.DeleteOneAsync(e => e.ID == itemID && e.UserId == Context.User.Id);
             await RespondAsync($"{MongoBot.CachedBazaarItems[itemID].Name} removed from your watchlist!");
-            MongoBot.CachedBazaarBuys.Remove(MongoBot.CachedBazaarBuys.Find(e => e.ID == itemID && e.UserId.ToString() == Context.User.Id.ToString())!);
+            MongoBot.CachedBazaarBuys.Remove(MongoBot.CachedBazaarBuys.Find(e => e.ID == itemID && e.UserId == Context.User.Id)!);
         }
 
         catch (Exception e)

@@ -17,10 +17,10 @@ public partial class DiscordEvents
     [DiscordEvents]
     public void watch_bazaar()
     {
-        _Timer.Elapsed += _Elapsed;
+        _Timer.Elapsed += Watch_Bazaar_Elapsed;
     }
 
-    async void _Elapsed(object? obj, System.Timers.ElapsedEventArgs args)
+    async void Watch_Bazaar_Elapsed(object? obj, System.Timers.ElapsedEventArgs args)
     {
         Dictionary<string, BazaarRouteProduct>? liveItems = await BazaarRoute.GetRoute();
 

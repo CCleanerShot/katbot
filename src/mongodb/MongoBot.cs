@@ -9,7 +9,7 @@ public class MongoBot
     private static IMongoDatabase _HypixelDB = default!;
     private static string _Uri = default!;
 
-    public static Dictionary<string, AuctionBuy> CachedAuctionBuy = new Dictionary<string, AuctionBuy>();
+    public static List<AuctionBuy> CachedAuctionBuys = new List<AuctionBuy>();
     public static Dictionary<string, AuctionItemsAll> CachedAuctionItems = new Dictionary<string, AuctionItemsAll>();
     public static Dictionary<string, AuctionTags> CachedAuctionTags = new Dictionary<string, AuctionTags>();
     public static List<BazaarItem> CachedBazaarBuys = new List<BazaarItem>();
@@ -52,7 +52,7 @@ public class MongoBot
             List<BazaarItem> currentSells = (await BazaarSell.FindAsync(e => true)).ToList();
 
             // Reset the cache just in case
-            CachedAuctionBuy = currentAuctionBuy.Aggregate(new Dictionary<string, AuctionBuy>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
+            CachedAuctionBuys = currentAuctionBuy.Aggregate(new List<AuctionBuy>(), (pV, cV) => { pV.Add(cV); return pV; });
             CachedAuctionItems = currentAuctionItems.Aggregate(new Dictionary<string, AuctionItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
             CachedAuctionTags = currentAuctionTags.Aggregate(new Dictionary<string, AuctionTags>(), (pV, cV) => { pV.Add(cV.Name, cV); return pV; });
             CachedBazaarBuys = currentBazaarBuys.Aggregate(new List<BazaarItem>(), (pV, cV) => { pV.Add(cV); return pV; });

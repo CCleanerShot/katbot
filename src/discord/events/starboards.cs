@@ -23,11 +23,11 @@ public partial class DiscordEvents
     [DiscordEvents]
     public void starboards()
     {
-        _Client.ReactionAdded += (_1, _2, _3) => ReactionChanged(_1, _2, _3, ReactionCase.ADD);
-        _Client.ReactionRemoved += (_1, _2, _3) => ReactionChanged(_1, _2, _3, ReactionCase.REMOVE);
+        _Client.ReactionAdded += (_1, _2, _3) => Starboards_ReactionChanged(_1, _2, _3, ReactionCase.ADD);
+        _Client.ReactionRemoved += (_1, _2, _3) => Starboards_ReactionChanged(_1, _2, _3, ReactionCase.REMOVE);
     }
 
-    async Task ReactionChanged(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, Discord.WebSocket.SocketReaction reaction, ReactionCase reactionCase)
+    async Task Starboards_ReactionChanged(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, Discord.WebSocket.SocketReaction reaction, ReactionCase reactionCase)
     {
         if (reaction.Emote.Name != Starboards_Emote)
             return;
