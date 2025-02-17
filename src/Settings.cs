@@ -42,6 +42,7 @@ public class Settings
     public static string PUBLIC_AH_PROPERTY_ADD_PROPERTY_MENU = "add-menu";
     public static string PUBLIC_AH_PROPERTY_REMOVE_PROPERTY_BUTTON = "remove-button";
     public static string PUBLIC_PATH_MONDAY_GIF_URL = "https://media1.tenor.com/m/eB9Egjcaa_QAAAAd/evangelion.gif";
+    public static string PUBLIC_PATH_MONDAY_GIF_URL_2 = "https://tenor.com/view/tuesday-gif-2772718664341031920";
     public static string PUBLIC_PATH_RAMOJUSD_GIF_URL = "https://cdn.discordapp.com/attachments/1210132113358065695/1236680414597222411/ramojusd.gif?ex=679c3023&is=679adea3&hm=5f03113120db858cb71fcd7715f4ca75ffeda1a5de2a284639034d90fc97e07c&";
     public static int PUBLIC_HYPIXEL_TIMER_MINUTES = 4;
     #endregion

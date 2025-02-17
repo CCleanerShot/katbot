@@ -1,6 +1,7 @@
 using System.Reflection;
 using Discord;
 using Discord.Interactions;
+using MongoDB.Driver;
 
 public partial class DiscordCommands : InteractionModuleBase
 {
@@ -14,10 +15,14 @@ public partial class DiscordCommands : InteractionModuleBase
 
         else
         {
+            int chance = Program.Utility.NextRange(1, 3);
+
+            string path = chance != 1 ? Settings.PUBLIC_PATH_MONDAY_GIF_URL : Settings.PUBLIC_PATH_MONDAY_GIF_URL_2;
+
             Embed embed = new EmbedBuilder()
                 .WithColor(Color.Red)
                 .WithTitle("ramojusd — Yesterday at 23:34 omg midaro monsaaty")
-                .WithImageUrl(Settings.PUBLIC_PATH_MONDAY_GIF_URL)
+                .WithImageUrl(path)
                 .Build();
 
             await RespondAsync("", [embed]);
