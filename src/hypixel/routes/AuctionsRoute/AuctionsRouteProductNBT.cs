@@ -1,8 +1,22 @@
 using System.Reflection;
 using Cyotek.Data.Nbt;
 
-public class AuctionsRouteProductNBT
+public partial class AuctionsRouteProductNBT
 {
+    static List<string> BANNED_ATTRIBUTES = new List<string>()
+    {
+        "bossId",
+        // "builder's_wand_data",
+        // "date",
+        "id",
+        // "PERSONAL_DELETOR_ACTIVE",
+        "spawnedFor",
+        "recipient_id",
+        // "recipient_name",
+        // "tickets",
+        "timestamp",
+        "uuid",
+    };
     static NbtDocument document = new NbtDocument();
     public static Dictionary<string, Tag> Tags = new Dictionary<string, Tag>();
 
@@ -240,9 +254,10 @@ public class AuctionsRouteProductNBT
 
         foreach (Tag tag in EXTRA_ATTRIBUTES.Value)
         {
-            // NOTE: we're not adding the id to the mix
-            if (tag.Name == "id")
+            if (BANNED_ATTRIBUTES.Contains(tag.Name))
                 continue;
+
+            Translate(tag);
 
             ExtraTags[tag.Name] = tag;
 

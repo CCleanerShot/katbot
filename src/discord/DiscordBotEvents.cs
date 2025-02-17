@@ -1,6 +1,7 @@
 using System.Reflection;
 using Discord;
 using Discord.Interactions;
+using Discord.Rest;
 using Discord.WebSocket;
 
 public partial class DiscordBot
@@ -26,7 +27,16 @@ public partial class DiscordBot
 
     static async Task _InteractionCreated(SocketInteraction socketInteraction)
     {
-        Program.Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.User.GlobalName} used a command in {socketInteraction.Data}.");
+        string name;
+
+        if (socketInteraction is SocketAutocompleteInteraction socket1)
+            name = socket1.Data.CommandName;
+        else if (socketInteraction is SocketSlashCommand socket2)
+            name = socket2.CommandName;
+        else
+            name = "N/A";
+
+        Program.Utility.Log(Enums.LogLevel.NONE, $"{socketInteraction.User.GlobalName} used the command: '{name}'.");
 
         SocketInteractionContext context = new SocketInteractionContext(_Client, socketInteraction);
         await _InteractionService.ExecuteCommandAsync(context, null);

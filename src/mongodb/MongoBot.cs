@@ -147,69 +147,28 @@ public class MongoBot
         List<AuctionTags> existingTags = existingTagsResult.Current?.ToList() ?? new List<AuctionTags>();
 
         // theres actually alot of extra attributes, reducing from o^2
-
+        // NOTE: key representation: Tags => Name, Items => ID
         Dictionary<string, AuctionTags> existingTagsDict = existingTags.Aggregate(new Dictionary<string, AuctionTags>(), (pV, cV) => { pV.Add(cV.Name, cV); return pV; });
         Dictionary<string, AuctionItemsAll> existingItemsDict = existingItems.Aggregate(new Dictionary<string, AuctionItemsAll>(), (pV, cV) => { pV.Add(cV.Name, cV); return pV; });
-        // these will be added to the database after the fact.
-        // key representation: Tags => Name, Items => ID
         Dictionary<string, AuctionTags> newTagsDict = new Dictionary<string, AuctionTags>();
         Dictionary<string, AuctionItemsAll> newItemsDict = new Dictionary<string, AuctionItemsAll>();
 
         foreach (var (k, v) in existingItemsDict)
             CachedAuctionItems.Add(v.ID, v);
 
-        // recursive function
-        void EvalTag(Cyotek.Data.Nbt.Tag tag)
-        {
-            AuctionTags auctionTag;
-
-            // check to update the tags if there are new values
-            if (existingTagsDict.ContainsKey(tag.Name))
-            {
-                auctionTag = existingTagsDict[tag.Name];
-                if (auctionTag.Type == TagType.String && !auctionTag.Values.Contains(tag.GetValue().ToString()!))
-                    auctionTag.Values.Add(tag.GetValue().ToString()!);
-            }
-
-            // add the new tag
-            else
-            {
-                auctionTag = new AuctionTags(tag.Name, tag.Type, tag.GetValue().ToString()!);
-                newTagsDict.Add(tag.Name, auctionTag);
-                // NOTE: this is to prevent duplicate tags in the adding. the mongo operation should check
-                // if the tag is in new tag before updating, to prevent redundency
-                existingTagsDict.Add(tag.Name, auctionTag);
-            }
-
-            if (tag is not TagCompound tagCompound)
-                return;
-
-            foreach (Cyotek.Data.Nbt.Tag innerTag in tagCompound.Value)
-            {
-                EvalTag(innerTag);
-
-                if (!auctionTag.Tags.Contains(tag.Name))
-                    auctionTag.Tags.Add(innerTag.Name);
-            }
-        }
 
         foreach (AuctionsRouteProduct auction in auctions)
         {
             AuctionItemsAll item;
 
-            // update the item with new tags if present
             if (existingItemsDict.ContainsKey(auction.NBT.ID.Value))
-            {
                 item = existingItemsDict[auction.NBT.ID.Value.ToString()];
-            }
 
-            // add new items that havent been seen before
             else
             {
                 string id = auction.NBT.ID.Value;
                 string name = auction.NBT.NAME.Value;
-                List<string> tags = auction.NBT.ExistingTags.Select(e => e.Name).ToList();
-                item = new AuctionItemsAll(id, name, tags);
+                item = new AuctionItemsAll(id, name);
                 newItemsDict.Add(item.ID, item);
                 existingItemsDict.Add(item.ID, item);
                 CachedAuctionItems.Add(item.ID, item);
@@ -217,11 +176,39 @@ public class MongoBot
 
             foreach (Cyotek.Data.Nbt.Tag tag in auction.NBT.ExistingTags)
             {
-                EvalTag(tag);
+                AuctionTags auctionTag;
 
-                // NOTE: slightly unoptimized atm but idc this hopefully never matters
-                if (!item.ExtraAttributes.Contains(tag.Name))
-                    item.ExtraAttributes.Add(tag.Name);
+                if (existingTagsDict.ContainsKey(tag.Name))
+                    auctionTag = existingTagsDict[tag.Name];
+
+                else
+                {
+                    auctionTag = new AuctionTags(tag.Name, tag.Type);
+                    newTagsDict.Add(tag.Name, auctionTag);
+                    // NOTE: this is to prevent duplicate tags in the adding. the mongo operation should check
+                    // if the tag is in new tag before updating, to prevent redundency
+                    existingTagsDict.Add(tag.Name, auctionTag);
+                }
+
+                if (!item.ExtraAttributes.Contains(auctionTag.Name))
+                    item.ExtraAttributes.Add(auctionTag.Name);
+
+                if (tag is TagCompound tagCompound)
+                {
+                    foreach (Cyotek.Data.Nbt.Tag innerTag in tagCompound.Value)
+                    {
+                        string phrase = $"{innerTag.Name} {innerTag.GetValue()}";
+
+                        if (!auctionTag.Values.Contains(phrase))
+                            auctionTag.Values.Add(phrase);
+                    }
+                }
+
+                else
+                {
+                    if (!auctionTag.Values.Contains(tag.GetValue().ToString()!))
+                        auctionTag.Values.Add(tag.GetValue().ToString()!);
+                }
             }
         }
 
@@ -246,7 +233,6 @@ public class MongoBot
                 continue;
 
             UpdateDefinition<AuctionTags> update = Builders<AuctionTags>.Update
-                .Set(e => e.Tags, v.Tags)
                 .Set(e => e.Values, v.Values);
 
             await AuctionTags.FindOneAndUpdateAsync(e => e.Name == v.Name, update);

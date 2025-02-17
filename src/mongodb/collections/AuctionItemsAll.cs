@@ -20,10 +20,12 @@ public class AuctionItemsAll
     /// </summary>
     public List<string> ExtraAttributes = new List<string>();
 
-    public AuctionItemsAll(string _ID, string _Name, List<string> _ExtraAttributes)
+    public AuctionItemsAll(string _ID, string _Name, List<string>? _ExtraAttributes = null)
     {
         ID = _ID;
         Name = _Name;
-        ExtraAttributes = _ExtraAttributes;
+
+        if (_ExtraAttributes != null)
+            ExtraAttributes = _ExtraAttributes;
     }
 }

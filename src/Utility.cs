@@ -88,4 +88,16 @@ public class Utility
     {
         return SpaceString(input, maxSpacing);
     }
+
+    /// <summary>
+    /// Strips the string of extraneous characters such as "
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public string StripSpecial(string input)
+    {
+        Regex regex = new Regex("§.");
+
+        return regex.Replace(input, "");
+    }
 }

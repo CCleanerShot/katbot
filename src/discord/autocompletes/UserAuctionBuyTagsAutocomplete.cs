@@ -10,7 +10,6 @@ public class UserAuctionBuyTagsAutocomplete : AutocompleteHandler
     {
         string itemID = (context.Interaction.Data as SocketAutocompleteInteractionData)!.Options.ElementAt(0).Value.ToString()!;
         string value = autocompleteInteraction.Data.Current.Value.ToString()!;
-        Console.WriteLine($"remove {itemID}");
 
         IEnumerable<AutocompleteResult> results = MongoBot.CachedAuctionBuys
             .Find(e => e.ID == itemID && e.UserId == context.User.Id)!.ExtraAttributes

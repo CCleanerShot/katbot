@@ -3,8 +3,8 @@ using MongoDB.Driver;
 
 public partial class DiscordCommands : InteractionModuleBase
 {
-    [SlashCommand("bz_force", "forces the timer for checking the bazaar to finish instantly (same as '/ah_force')")]
-    public async Task bz_force()
+    [SlashCommand("ah_force", "forces the timer for checking the bazaar to finish instantly (same as '/bz_force')")]
+    public async Task ah_force()
     {
         try
         {

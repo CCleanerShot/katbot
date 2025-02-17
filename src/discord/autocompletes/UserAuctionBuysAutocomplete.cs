@@ -13,6 +13,7 @@ public class UserAuctionBuysAutocomplete : AutocompleteHandler
         IEnumerable<AutocompleteResult> results = MongoBot.CachedAuctionBuys
             .Where(e => e.UserId == context.User.Id)
             .Where(e => e.Name.ToLower().Contains(value.ToLower()))
+            .Where(e => MongoBot.CachedAuctionItems[e.ID].ExtraAttributes.Count > 0)
             .OrderBy(e => e.Name)
             .Select(e => new AutocompleteResult(e.Name, e.ID));
 

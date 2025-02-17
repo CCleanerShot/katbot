@@ -6,13 +6,13 @@ using MongoDB.Driver;
 public partial class DiscordEvents
 {
     /// <summary>
-    /// List of tracked buys that have already been alerted.
+    /// List of tracked bazaar buys that have already been alerted.
     /// </summary>
-    List<BazaarItem> WatchBuy_CachedBuyAlerts = new List<BazaarItem>();
+    List<BazaarItem> WatchBuy_CachedBazaarBuyAlerts = new List<BazaarItem>();
     /// <summary>
-    /// List of tracked sells that have already been alerted.
+    /// List of tracked bazaar sells that have already been alerted.
     /// </summary>
-    List<BazaarItem> WatchSell_CachedSellAlerts = new List<BazaarItem>();
+    List<BazaarItem> WatchSell_CachedBazaarSellAlerts = new List<BazaarItem>();
 
     [DiscordEvents]
     public void watch_bazaar()
@@ -32,7 +32,7 @@ public partial class DiscordEvents
 
         List<BazaarItem> elgibleBuys = trackedBuys.Where(t =>
         {
-            if (WatchBuy_CachedBuyAlerts.Select(e => e.ID).Contains(t.ID))
+            if (WatchBuy_CachedBazaarBuyAlerts.Select(e => e.ID).Contains(t.ID))
                 return false;
 
             switch (t.OrderType)
@@ -54,7 +54,7 @@ public partial class DiscordEvents
 
         List<BazaarItem> elgibleSells = trackedSells.Where(t =>
         {
-            if (WatchSell_CachedSellAlerts.Select(e => e.ID).Contains(t.ID))
+            if (WatchSell_CachedBazaarSellAlerts.Select(e => e.ID).Contains(t.ID))
                 return false;
 
             switch (t.OrderType)
@@ -75,7 +75,7 @@ public partial class DiscordEvents
         }).ToList();
 
 
-        if (elgibleSells.Count == 0 && elgibleSells.Count == 0)
+        if (elgibleBuys.Count == 0 && elgibleSells.Count == 0)
             return;
 
         SocketTextChannel? channel = (await DiscordBot._Client.GetChannelAsync(Settings.DISCORD_HYPIXEL_ALERTS_CHANNEL_ID)) as SocketTextChannel;
@@ -166,7 +166,7 @@ public partial class DiscordEvents
 
         foreach (BazaarItem tracked in elgibleBuys)
         {
-            WatchBuy_CachedBuyAlerts.Add(tracked);
+            WatchBuy_CachedBazaarBuyAlerts.Add(tracked);
 
             if (tracked.RemovedAfter)
                 toRemoveBuys.Add(tracked);
@@ -177,7 +177,7 @@ public partial class DiscordEvents
             if (tracked.RemovedAfter)
                 toRemoveSells.Add(tracked);
 
-            WatchSell_CachedSellAlerts.Add(tracked);
+            WatchSell_CachedBazaarSellAlerts.Add(tracked);
         }
 
         // NOTE: o^2 notation, refactor if needed.
