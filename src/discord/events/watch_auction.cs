@@ -15,7 +15,7 @@ public partial class DiscordEvents
     [DiscordEvents]
     public void watch_auction()
     {
-        _Timer.Elapsed += Watch_Auction_Elapsed;
+        // _Timer.Elapsed += Watch_Auction_Elapsed;
     }
 
     async void Watch_Auction_Elapsed(object? obj, System.Timers.ElapsedEventArgs args)
