@@ -17,11 +17,24 @@ public partial class DiscordCommands : InteractionModuleBase
         {
             int chance = Program.Utility.NextRange(1, 3);
 
-            string path = chance != 1 ? Settings.PUBLIC_PATH_MONDAY_GIF_URL : Settings.PUBLIC_PATH_MONDAY_GIF_URL_2;
+            string title;
+            string path;
+
+            if (chance == 1)
+            {
+                title = "tommorow is wednesday";
+                path = Settings.PUBLIC_PATH_MONDAY_GIF_URL_2;
+            }
+
+            else
+            {
+                title = "ramojusd — Yesterday at 23:34 omg midaro monsaaty";
+                path = Settings.PUBLIC_PATH_MONDAY_GIF_URL;
+            }
 
             Embed embed = new EmbedBuilder()
                 .WithColor(Color.Red)
-                .WithTitle("ramojusd — Yesterday at 23:34 omg midaro monsaaty")
+                .WithTitle(title)
                 .WithImageUrl(path)
                 .Build();
 
