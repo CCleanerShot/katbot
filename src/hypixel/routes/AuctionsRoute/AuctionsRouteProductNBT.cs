@@ -45,10 +45,7 @@ public partial class AuctionsRouteProductNBT
     #region /tag/ExtraAttributes
     public TagString ID = default!; // somehow the only non-optional tag
 
-    public List<Tag> ExistingTags
-    {
-        get => ExtraTags.Where(e => e.Value != null).Select(e => e.Value).ToList()!;
-    }
+    public Dictionary<string, Tag> ExistingTags = new Dictionary<string, Tag>();
 
     protected Dictionary<string, Tag?> ExtraTags = new Dictionary<string, Tag?>()
     {
@@ -252,14 +249,15 @@ public partial class AuctionsRouteProductNBT
         // /tag/ExtraAttributes
         ID = (EXTRA_ATTRIBUTES.Value["id"] as TagString)!;
 
+        Clean();
+
         foreach (Tag tag in EXTRA_ATTRIBUTES.Value)
         {
             if (BANNED_ATTRIBUTES.Contains(tag.Name))
                 continue;
 
-            Translate(tag);
-
             ExtraTags[tag.Name] = tag;
+            ExistingTags.Add(tag.Name, tag);
 
             if (!Tags.ContainsKey(tag.Name))
                 Tags.Add(tag.Name, tag);

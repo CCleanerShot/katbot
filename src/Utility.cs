@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Cyotek.Data.Nbt;
 
 /// <summary>
 /// Random class for helper functions
@@ -97,7 +98,6 @@ public class Utility
     public string StripSpecial(string input)
     {
         Regex regex = new Regex("§.");
-
         return regex.Replace(input, "");
     }
 }

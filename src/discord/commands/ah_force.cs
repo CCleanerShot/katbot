@@ -10,7 +10,7 @@ public partial class DiscordCommands : InteractionModuleBase
         {
             DiscordBot._DiscordEvents._Timer.Interval = 100;
             DiscordBot._DiscordEvents._Timer.Elapsed += OneTime;
-            await RespondAsync("Forcing...");
+            await RespondAsync("Forcing (this will take a bit)...");
         }
 
         catch (Exception e)

@@ -5,6 +5,19 @@ using Discord;
 using Discord.WebSocket;
 using MongoDB.Driver;
 
+struct Auctioneer
+{
+    public string Name;
+    public string ID;
+}
+
+enum AuctionTable
+{
+    SELLER,
+    LIVE_PRICE,
+    LIVE_PROPERTIES,
+}
+
 public partial class DiscordEvents
 {
     /// <summary>
@@ -15,7 +28,7 @@ public partial class DiscordEvents
     [DiscordEvents]
     public void watch_auction()
     {
-        // _Timer.Elapsed += Watch_Auction_Elapsed;
+        _Timer.Elapsed += Watch_Auction_Elapsed;
     }
 
     async void Watch_Auction_Elapsed(object? obj, System.Timers.ElapsedEventArgs args)
@@ -26,13 +39,13 @@ public partial class DiscordEvents
         if (liveItems == null)
             return;
 
-        List<AuctionBuy> trackedBuys = (await MongoBot.AuctionBuy.FindAsync(e => MongoBot.CachedAuctionBuys.Any(ee => ee.ID == e.ID))).ToList();
+        List<AuctionBuy> elgibleBuys = (await MongoBot.AuctionBuy.FindAsync(e => MongoBot.CachedAuctionBuys.Any(ee => ee.ID == e.ID))).ToList();
 
         Dictionary<AuctionBuy, List<AuctionsRouteProduct>> matchingProducts = new Dictionary<AuctionBuy, List<AuctionsRouteProduct>>();
 
-        void AddToTrackedBuys(AuctionBuy target, AuctionsRouteProduct source, Cyotek.Data.Nbt.Tag tag, bool fromCompound)
+        void AddToMatchingProducts(AuctionBuy target, AuctionsRouteProduct source, Cyotek.Data.Nbt.Tag tag, bool fromCompound)
         {
-            List<AuctionBuy.ExtraAttribute> similarAttr = target.ExtraAttributes.Where(targetAttr => source.NBT.ExistingTags.Select(e => e.Name).Contains(targetAttr.Name)).ToList();
+            List<AuctionBuy.ExtraAttribute> similarAttr = target.ExtraAttributes.Where(targetAttr => source.NBT.ExistingTags.ContainsKey(targetAttr.Name)).ToList();
 
             switch (tag)
             {
@@ -40,7 +53,7 @@ public partial class DiscordEvents
 
                     if (target.ExtraAttributes.Any(e => e.Name == tagCompound.Name))
                         foreach (Cyotek.Data.Nbt.Tag innerTag in tagCompound.Value)
-                            AddToTrackedBuys(target, source, innerTag, true);
+                            AddToMatchingProducts(target, source, innerTag, true);
                     break;
                 case TagString tagString:
                     if (fromCompound)
@@ -101,7 +114,7 @@ public partial class DiscordEvents
             }
         }
 
-        foreach (AuctionBuy trackedBuy in trackedBuys)
+        foreach (AuctionBuy trackedBuy in elgibleBuys)
         {
             // items where the ID of an item from the API matches the same ID as a tracked item
             List<AuctionsRouteProduct> similarLive = liveItems.Where(e => e.NBT.ID.Value == trackedBuy.ID).ToList();
@@ -111,8 +124,8 @@ public partial class DiscordEvents
 
             // check if all the properties are matching
             foreach (AuctionsRouteProduct item in similarLive)
-                foreach (Cyotek.Data.Nbt.Tag tag in item.NBT.ExistingTags)
-                    AddToTrackedBuys(trackedBuy, item, tag, false);
+                foreach (var (k, v) in item.NBT.ExistingTags)
+                    AddToMatchingProducts(trackedBuy, item, v, false);
         }
 
         if (matchingProducts.Count == 0)
@@ -126,63 +139,101 @@ public partial class DiscordEvents
             return;
         }
 
-        int maxName = "NAME".Length;
-        int maxPrice = "LIVE_PRICE".Length;
+        Dictionary<string, Auctioneer> cachedSellers = new Dictionary<string, Auctioneer>();
         Dictionary<ulong, SocketGuildUser> cacheUsers = new Dictionary<ulong, SocketGuildUser>();
+        List<AuctionBuy> allItems = [.. elgibleBuys];
 
-        // CHECKING MAX BUY STRING LENGTHS
-        foreach (var (tracked, matchingItems) in matchingProducts)
+        foreach (var (k, v) in matchingProducts)
         {
-            int itemMaxPrice = (int)matchingItems.Max(e => MathF.Max(e.starting_bid, e.highest_bid_amount));
+            foreach (AuctionsRouteProduct product in v)
+            {
+                if (!cachedSellers.ContainsKey(product.auctioneer))
+                {
+                    string id = product.auctioneer;
 
-            if (maxName < tracked.Name.Length)
-                maxName = tracked.Name.Length;
-            if (maxPrice < itemMaxPrice)
-                maxPrice = itemMaxPrice;
+                    PlayerRoutePlayer? player = await PlayerRoute.GetRoute(id);
 
-            SocketGuildUser user;
-            // preventing spam to discord
+                    if (player == null)
+                    {
+                        Program.Utility.Log(Enums.LogLevel.WARN, $"Received null when expected a player ({id})!");
+                        return;
+                    }
+
+                    cachedSellers.Add(id, new Auctioneer() { Name = player.displayname, ID = id });
+                }
+            }
+        }
+
+        foreach (AuctionBuy tracked in allItems)
+        {
             if (!cacheUsers.Keys.Contains(tracked.UserId))
             {
-                user = (await (await DiscordBot._Client.GetChannelAsync(Settings.DISCORD_HYPIXEL_ALERTS_CHANNEL_ID)).GetUserAsync(tracked.UserId) as SocketGuildUser)!;
+                SocketGuildUser user = (await (await DiscordBot._Client.GetChannelAsync(Settings.DISCORD_HYPIXEL_ALERTS_CHANNEL_ID)).GetUserAsync(tracked.UserId) as SocketGuildUser)!;
                 cacheUsers.Add(user.Id, user);
             }
         }
 
         string response = "";
 
-        // // NOTE: contains unneeded o^2 notation, refactor if necessary.
-        // foreach (var (k, v) in cacheUsers)
-        // {
-        //     response += $"<@{v.Id}>\n";
-        //     response += $"```\n";
+        // NOTE: contains unneeded o^2 notation, refactor if necessary.
+        foreach (var (k, v) in cacheUsers)
+        {
+            response += $"<@{v.Id}>\n";
+            response += "****BUYS****";
 
-        //     response += $"{"**BUYS**"}\n";
-        //     List<AuctionBuy> buys = matchingProducts.Where(e => e.UserId == k).ToList();
-        //     response += $"{Program.Utility.SS("NAME", maxName)}|{Program.Utility.SS("LIVE_PRICE", maxPrice)}|WANTED_PRICE\n";
-        //     foreach (AuctionBuy tracked in buys)
-        //     {
-        //         string name = Program.Utility.SS(tracked.Name, maxName);
-        //         string livePrice = Program.Utility.SS(liveItems[tracked.ID].sell_summary.First().pricePerUnit.ToString(), maxPrice);
-        //         string wantedPrice = tracked.Price.ToString();
-        //         response += $"{name}|{livePrice}|{wantedPrice}\n";
-        //     }
+            foreach (var (wanted, liveProducts) in matchingProducts)
+            {
+                DiscordTable<AuctionTable> itemTable = new DiscordTable<AuctionTable>(wanted.Name);
 
-        //     response += $"```\n";
-        // }
+                foreach (AuctionsRouteProduct product in liveProducts)
+                {
+                    itemTable.Table[AuctionTable.SELLER].Add(cachedSellers[product.auctioneer].Name);
+                    itemTable.Table[AuctionTable.LIVE_PRICE].Add(MathF.Max(product.highest_bid_amount, product.starting_bid).ToString());
+
+                    string liveProperties = "";
+
+                    foreach (var (key, tag) in product.NBT.ExistingTags)
+                    {
+                        if (!wanted.ExtraAttributes.Select(e => e.Name).Contains(key))
+                            continue;
+
+                        if (tag is TagCompound tagCompound)
+                        {
+                            liveProperties += $"{tag.Name} [";
+                            for (int i = 0; i < tagCompound.Value.Count; i++)
+                            {
+                                Cyotek.Data.Nbt.Tag innerTag = tagCompound.Value[i];
+                                liveProperties += $"{innerTag.Name} {innerTag.GetValue()}";
+
+                                if (i != tagCompound.Count - 1)
+                                    liveProperties += ", ";
+                            }
+                        }
+
+                        else
+                        {
+                            liveProperties += $"{tag.Name} {tag.GetValue()}";
+                        }
+                    }
+
+                    itemTable.Table[AuctionTable.LIVE_PROPERTIES].Add(liveProperties);
+                }
+
+                response += itemTable.Construct();
+            }
+        }
 
         await channel.SendMessageAsync(response);
 
-        // caching items + removing after for those who can
+        // caching items + removing after for those who want to be removed
         List<AuctionBuy> toRemoveBuys = new List<AuctionBuy>();
-        List<AuctionBuy> toRemoveSells = new List<AuctionBuy>();
 
-        foreach (var (k, v) in matchingProducts)
+        foreach (AuctionBuy tracked in elgibleBuys)
         {
-            WatchBuy_CachedAuctionBuyAlerts.Add(k);
+            WatchBuy_CachedAuctionBuyAlerts.Add(tracked);
 
-            if (k.RemovedAfter)
-                toRemoveBuys.Add(k);
+            if (tracked.RemovedAfter)
+                toRemoveBuys.Add(tracked);
         }
 
         // NOTE: o^2 notation, refactor if needed.

@@ -64,32 +64,22 @@ public partial class DiscordEvents
         }
 
 
-        List<Starboards>? response = (await MongoBot.Starboards.FindAsync(e => e.MessageStarredId == message.Id)).ToList();
         IUserMessage userMessage = await message.GetOrDownloadAsync();
-        EmbedFooterBuilder footer = new EmbedFooterBuilder()
-            .WithText($"{Starboards_Emote}{users!.Count()} • {userMessage.CreatedAt.UtcDateTime.ToString("M/d/yyyy HH:mm:ss")}");
+        List<Starboards>? response = (await MongoBot.Starboards.FindAsync(e => e.MessageStarredId == message.Id)).ToList();
+        RestUserMessage? existingMessage = await starboardsChannel!.GetMessageAsync(response.First().MessageId) as RestUserMessage;
+        EmbedFooterBuilder footer = new EmbedFooterBuilder().WithText($"{Starboards_Emote}{users!.Count()} • {userMessage.CreatedAt.UtcDateTime.ToString("M/d/yyyy HH:mm:ss")}");
 
-        // helper function
-        async Task _ModifyMessage()
+        if (existingMessage == null)
         {
-            RestUserMessage? existingMessage = await starboardsChannel!.GetMessageAsync(response[0].MessageId) as RestUserMessage;
-
-            if (existingMessage == null)
-            {
-                Program.Utility.Log(Enums.LogLevel.WARN, "Found the message in the database, but the message has disappeared.");
-                return;
-            }
-
-            Embed newEmbed = existingMessage.Embeds.First().ToEmbedBuilder().WithFooter(footer).Build();
-            await existingMessage.ModifyAsync((e) =>
-            {
-                e.Embed = newEmbed;
-            });
+            Program.Utility.Log(Enums.LogLevel.WARN, "Found the message in the database, but the message has disappeared.");
+            return;
         }
 
         switch (reactionCase)
         {
             case ReactionCase.ADD:
+                Program.Utility.Log(Enums.LogLevel.NONE, $"{existingMessage.Author.GlobalName} added a star (message: {existingMessage.Content}, id: {existingMessage.Id}).");
+
                 if (response.Count != 0)
                     break;
 
@@ -140,10 +130,16 @@ public partial class DiscordEvents
 
                 break;
             case ReactionCase.REMOVE:
+                Program.Utility.Log(Enums.LogLevel.NONE, $"{existingMessage.Author.GlobalName} removed a star (message: {existingMessage.Content}, id: {existingMessage.Id}).");
+                break;
             default:
                 break;
         }
 
-        await _ModifyMessage();
+        Embed newEmbed = existingMessage.Embeds.First().ToEmbedBuilder().WithFooter(footer).Build();
+        await existingMessage.ModifyAsync((e) =>
+        {
+            e.Embed = newEmbed;
+        });
     }
 }

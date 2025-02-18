@@ -98,7 +98,7 @@ public class MongoBot
 
             // if for some reason, the name does not exist, set the name as the ID by default
             if (kvAllItems.ContainsKey(id))
-                name = kvAllItems[id]["name"]!.ToString();
+                name = Program.Utility.StripSpecial(kvAllItems[id]["name"]!.ToString());
             else
                 name = id;
 
@@ -174,7 +174,7 @@ public class MongoBot
                 CachedAuctionItems.Add(item.ID, item);
             }
 
-            foreach (Cyotek.Data.Nbt.Tag tag in auction.NBT.ExistingTags)
+            foreach (var (k, tag) in auction.NBT.ExistingTags)
             {
                 AuctionTags auctionTag;
 
@@ -192,6 +192,7 @@ public class MongoBot
 
                 if (!item.ExtraAttributes.Contains(auctionTag.Name))
                     item.ExtraAttributes.Add(auctionTag.Name);
+
 
                 if (tag is TagCompound tagCompound)
                 {

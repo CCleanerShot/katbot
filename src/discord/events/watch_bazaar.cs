@@ -3,6 +3,13 @@ using Discord;
 using Discord.WebSocket;
 using MongoDB.Driver;
 
+enum BazaarTable
+{
+    NAME,
+    LIVE_PRICE,
+    WANTED_PRICE,
+}
+
 public partial class DiscordEvents
 {
     /// <summary>
@@ -86,40 +93,15 @@ public partial class DiscordEvents
             return;
         }
 
-        int maxName = "NAME".Length;
-        int maxPrice = "LIVE_PRICE".Length;
         Dictionary<ulong, SocketGuildUser> cacheUsers = new Dictionary<ulong, SocketGuildUser>();
 
-        // CHECKING MAX BUY STRING LENGTHS
-        foreach (BazaarItem tracked in elgibleBuys)
-        {
-            if (maxName < tracked.Name.Length)
-                maxName = tracked.Name.Length;
-            if (maxPrice < liveItems[tracked.ID].sell_summary.First().pricePerUnit.ToString().Length)
-                maxPrice = liveItems[tracked.ID].sell_summary.First().pricePerUnit.ToString().Length;
+        List<BazaarItem> allItems = [.. elgibleBuys, .. elgibleSells];
 
-            SocketGuildUser user;
-            // preventing spam to discord
+        foreach (BazaarItem tracked in allItems)
+        {
             if (!cacheUsers.Keys.Contains(tracked.UserId))
             {
-                user = (await (await DiscordBot._Client.GetChannelAsync(Settings.DISCORD_HYPIXEL_ALERTS_CHANNEL_ID)).GetUserAsync(tracked.UserId) as SocketGuildUser)!;
-                cacheUsers.Add(user.Id, user);
-            }
-        }
-
-        // CHECKING MAX SELL STRING LENGTHS
-        foreach (BazaarItem tracked in elgibleSells)
-        {
-            if (maxName < tracked.Name.Length)
-                maxName = tracked.Name.Length;
-            if (maxPrice < liveItems[tracked.ID].buy_summary.First().pricePerUnit.ToString().Length)
-                maxPrice = liveItems[tracked.ID].buy_summary.First().pricePerUnit.ToString().Length;
-
-            SocketGuildUser user;
-            // preventing spam to discord
-            if (!cacheUsers.Keys.Contains(tracked.UserId))
-            {
-                user = (await (await DiscordBot._Client.GetChannelAsync(Settings.DISCORD_HYPIXEL_ALERTS_CHANNEL_ID)).GetUserAsync(tracked.UserId) as SocketGuildUser)!;
+                SocketGuildUser user = (await (await DiscordBot._Client.GetChannelAsync(Settings.DISCORD_HYPIXEL_ALERTS_CHANNEL_ID)).GetUserAsync(tracked.UserId) as SocketGuildUser)!;
                 cacheUsers.Add(user.Id, user);
             }
         }
@@ -129,38 +111,31 @@ public partial class DiscordEvents
         // NOTE: contains unneeded o^2 notation, refactor if necessary.
         foreach (var (k, v) in cacheUsers)
         {
+            DiscordTable<BazaarTable> buyTable = new DiscordTable<BazaarTable>("BUYS");
+            DiscordTable<BazaarTable> sellTable = new DiscordTable<BazaarTable>("SELLS");
+
+            foreach (BazaarItem tracked in elgibleBuys.Where(e => e.UserId == k))
+            {
+                buyTable.Table[BazaarTable.NAME].Add(tracked.Name);
+                buyTable.Table[BazaarTable.LIVE_PRICE].Add(liveItems[tracked.ID].sell_summary.First().pricePerUnit.ToString());
+                buyTable.Table[BazaarTable.WANTED_PRICE].Add(tracked.Price.ToString());
+            }
+
+            foreach (BazaarItem tracked in elgibleSells.Where(e => e.UserId == k))
+            {
+                sellTable.Table[BazaarTable.NAME].Add(tracked.Name);
+                sellTable.Table[BazaarTable.LIVE_PRICE].Add(liveItems[tracked.ID].buy_summary.First().pricePerUnit.ToString());
+                sellTable.Table[BazaarTable.WANTED_PRICE].Add(tracked.Price.ToString());
+            }
+
+            string result = DiscordTable<BazaarTable>.ConstructCombine(buyTable, sellTable);
             response += $"<@{v.Id}>\n";
-            response += $"```\n";
-
-            response += $"{"**BUYS**"}\n";
-            List<BazaarItem> buys = elgibleBuys.Where(e => e.UserId == k).ToList();
-            response += $"{Program.Utility.SS("NAME", maxName)}|{Program.Utility.SS("LIVE_PRICE", maxPrice)}|WANTED_PRICE\n";
-            foreach (BazaarItem tracked in buys)
-            {
-                string name = Program.Utility.SS(tracked.Name, maxName);
-                string livePrice = Program.Utility.SS(liveItems[tracked.ID].sell_summary.First().pricePerUnit.ToString(), maxPrice);
-                string wantedPrice = tracked.Price.ToString();
-                response += $"{name}|{livePrice}|{wantedPrice}\n";
-            }
-
-            response += $"{"**SELLS**"}\n";
-            List<BazaarItem> sells = elgibleSells.Where(e => e.UserId == k).ToList();
-            response += $"{Program.Utility.SS("NAME", maxName)}|{Program.Utility.SS("LIVE_PRICE", maxPrice)}|WANTED_PRICE\n";
-            foreach (BazaarItem tracked in sells)
-            {
-
-                string name = Program.Utility.SS(tracked.Name, maxName);
-                string livePrice = Program.Utility.SS(liveItems[tracked.ID].buy_summary.First().pricePerUnit.ToString(), maxPrice);
-                string wantedPrice = tracked.Price.ToString();
-                response += $"{name}|{livePrice}|{wantedPrice}\n";
-            }
-
-            response += $"```\n";
+            response += result;
         }
 
         await channel.SendMessageAsync(response);
 
-        // caching items + removing after for those who can
+        // caching items + removing after for those who want to be removed
         List<BazaarItem> toRemoveBuys = new List<BazaarItem>();
         List<BazaarItem> toRemoveSells = new List<BazaarItem>();
 
@@ -174,6 +149,8 @@ public partial class DiscordEvents
 
         foreach (BazaarItem tracked in elgibleSells)
         {
+            WatchSell_CachedBazaarSellAlerts.Add(tracked);
+
             if (tracked.RemovedAfter)
                 toRemoveSells.Add(tracked);
 
