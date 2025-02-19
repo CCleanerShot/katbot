@@ -27,7 +27,7 @@ public class AuctionsRoute
             {
 
                 long proc1 = GC.GetTotalMemory(true);
-                Program.Utility.Log(Enums.LogLevel.NONE, $"{proc1 / 1000000}MB (Total Start)");
+                Program.Utility.Log(Enums.LogLevel.NONE, $"{proc1 / 1000000}MB (Total Start)", false, false);
 
 
                 string json = "";
