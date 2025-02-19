@@ -16,7 +16,7 @@ public class AuctionsRoute
         try
         {
             List<AuctionsRouteProduct> auctions = new List<AuctionsRouteProduct>();
-            int PAGES = 50;
+            int PAGES = 15;
 
             for (int i = 0; i < PAGES; i++)
             {
