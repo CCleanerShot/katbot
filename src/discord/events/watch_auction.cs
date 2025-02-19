@@ -33,11 +33,13 @@ public partial class DiscordEvents
 
     async void Watch_Auction_Elapsed(object? obj, System.Timers.ElapsedEventArgs args)
     {
-
         List<AuctionsRouteProduct>? liveItems = await AuctionsRoute.GetRoute(WatchBuy_CachedAuctionBuyAlerts);
 
         if (liveItems == null)
+        {
+            Program.Utility.Log(Enums.LogLevel.ERROR, "Failed to fetch live items from the auction!");
             return;
+        }
 
         List<AuctionBuy> elgibleBuys = (await MongoBot.AuctionBuy.FindAsync(e => MongoBot.CachedAuctionBuys.Any(ee => ee.ID == e.ID))).ToList();
 
@@ -129,7 +131,10 @@ public partial class DiscordEvents
         }
 
         if (matchingProducts.Count == 0)
+        {
+            Program.Utility.Log(Enums.LogLevel.NONE, "0 matching products, returning...", false, false);
             return;
+        }
 
         SocketTextChannel? channel = (await DiscordBot._Client.GetChannelAsync(Settings.DISCORD_HYPIXEL_ALERTS_CHANNEL_ID)) as SocketTextChannel;
 

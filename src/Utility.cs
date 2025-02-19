@@ -20,7 +20,7 @@ public class Utility
     /// </summary>
     /// <param name="logLevel"></param>
     /// <param name="message"></param>
-    public void Log(Enums.LogLevel logLevel, string message, bool timeStamp = false)
+    public void Log(Enums.LogLevel logLevel, string message, bool timeStamp = false, bool addToLogFile = true)
     {
         string prefix = "";
         switch (logLevel)
@@ -44,7 +44,12 @@ public class Utility
             fullMessage = $"{prefix} [{DateTime.Now}] {message}";
         else
             fullMessage = $"{prefix} {message}";
-        LogLine += fullMessage + "\n";
+
+        if (addToLogFile)
+            LogLine += fullMessage + "\n";
+        else
+            fullMessage = "(TEMP) " + message;
+
         Console.WriteLine(fullMessage);
     }
 
