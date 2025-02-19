@@ -47,9 +47,6 @@ public partial class DiscordEvents
 
         bool AddToMatchingProducts(AuctionBuy target, AuctionsRouteProduct source)
         {
-            if (WatchBuy_CachedAuctionBuyAlerts.ContainsKey(source.uuid))
-                return false;
-
             bool TagIsValid(AuctionBuy.ExtraAttribute attribute, Cyotek.Data.Nbt.TagCompound? parentTag = null)
             {
                 if (parentTag == null)

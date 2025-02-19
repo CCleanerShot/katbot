@@ -7,7 +7,7 @@ public partial class DiscordCommands : InteractionModuleBase
     [SlashCommand("ah_add_buy", "adds an auction item to your list for buying. NOTE: /ah_add_property to add properties")]
     public async Task ah_add_buy(
     [Summary("item", "the item to track"), Autocomplete(typeof(AuctionItemAutocomplete))] string itemID,
-    [Summary("buy_price", "the maximum buy price (alerts if lower)")] ulong buyPrice,
+    [Summary("buy_price", "the minimum buy price (alerts if higher)")] ulong buyPrice,
     [Summary("remove_after", "whether or not to remove this item after it alerts the user")] bool removeAfter = true
     )
     {
