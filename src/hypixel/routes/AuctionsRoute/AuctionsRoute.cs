@@ -96,7 +96,7 @@ public class AuctionsRoute
                 }
 
                 // NOTE: this is for the memory limit on the instance
-                if (auctions.Count > 5000)
+                if (auctions.Count > 10000)
                     break;
 
                 await Task.Delay(10); // make sure we dont request too fast
