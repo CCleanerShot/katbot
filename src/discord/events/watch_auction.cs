@@ -21,9 +21,9 @@ enum AuctionTable
 public partial class DiscordEvents
 {
     /// <summary>
-    /// List of tracked auction buys that have already been alerted.
+    /// List of tracked auction IDs that have already been alerted for.
     /// </summary>
-    List<AuctionBuy> WatchBuy_CachedAuctionBuyAlerts = new List<AuctionBuy>();
+    Dictionary<string, string> WatchBuy_CachedAuctionBuyAlerts = new Dictionary<string, string>();
 
     [DiscordEvents]
     public void watch_auction()
@@ -45,6 +45,9 @@ public partial class DiscordEvents
 
         bool AddToMatchingProducts(AuctionBuy target, AuctionsRouteProduct source)
         {
+            if (WatchBuy_CachedAuctionBuyAlerts.ContainsKey(source.uuid))
+                return false;
+
             bool TagIsValid(AuctionBuy.ExtraAttribute attribute, Cyotek.Data.Nbt.TagCompound? parentTag = null)
             {
                 if (parentTag == null)
@@ -142,8 +145,11 @@ public partial class DiscordEvents
 
         foreach (var (k, v) in matchingProducts)
         {
+
             foreach (AuctionsRouteProduct product in v)
             {
+                WatchBuy_CachedAuctionBuyAlerts.Add(product.uuid, product.uuid);
+
                 if (!cachedSellers.ContainsKey(product.auctioneer))
                 {
                     string id = product.auctioneer;
@@ -175,8 +181,6 @@ public partial class DiscordEvents
         // NOTE: contains unneeded o^2 notation, refactor if necessary.
         foreach (var (k, v) in cacheUsers)
         {
-
-
             foreach (var (wanted, liveProducts) in matchingProducts)
             {
                 string response = "";
@@ -233,12 +237,8 @@ public partial class DiscordEvents
         List<AuctionBuy> toRemoveBuys = new List<AuctionBuy>();
 
         foreach (AuctionBuy tracked in elgibleBuys)
-        {
-            WatchBuy_CachedAuctionBuyAlerts.Add(tracked);
-
             if (tracked.RemovedAfter)
                 toRemoveBuys.Add(tracked);
-        }
 
         // NOTE: o^2 notation, refactor if needed.
         await MongoBot.AuctionBuy.DeleteManyAsync(e => toRemoveBuys.Select(buy => buy.ID).Contains(e.ID));
