@@ -10,8 +10,12 @@ public class AuctionsRoute
     public double lastUpdated;
     public AuctionsRouteProduct[] auctions = default!;
 
-
-    public static async Task<List<AuctionsRouteProduct>?> GetRoute()
+    /// <summary>
+    /// Note: The optional cache is meant to be used on all incoming items, hopefully making subsequent actions easier.
+    /// </summary>
+    /// <param name="CachedItems"></param>
+    /// <returns></returns>
+    public static async Task<List<AuctionsRouteProduct>?> GetRoute(Dictionary<string, double?>? CachedItems = null)
     {
         try
         {
@@ -73,7 +77,15 @@ public class AuctionsRoute
                 }
 
                 foreach (AuctionsRouteProduct product in auctionsRoute.auctions)
+                {
+                    if (CachedItems != null)
+                        if (!CachedItems.ContainsKey(product.uuid))
+                            CachedItems.Add(product.uuid, default);
+                        else
+                            continue;
+
                     auctions.Add(product);
+                }
 
                 Program.Utility.Log(Enums.LogLevel.NONE, $"Page {i + 1} of auctions fetched.");
 

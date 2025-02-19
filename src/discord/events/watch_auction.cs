@@ -23,7 +23,7 @@ public partial class DiscordEvents
     /// <summary>
     /// List of tracked auction IDs that have already been alerted for.
     /// </summary>
-    Dictionary<string, string> WatchBuy_CachedAuctionBuyAlerts = new Dictionary<string, string>();
+    Dictionary<string, double?> WatchBuy_CachedAuctionBuyAlerts = new Dictionary<string, double?>();
 
     [DiscordEvents]
     public void watch_auction()
@@ -34,7 +34,7 @@ public partial class DiscordEvents
     async void Watch_Auction_Elapsed(object? obj, System.Timers.ElapsedEventArgs args)
     {
 
-        List<AuctionsRouteProduct>? liveItems = await AuctionsRoute.GetRoute();
+        List<AuctionsRouteProduct>? liveItems = await AuctionsRoute.GetRoute(WatchBuy_CachedAuctionBuyAlerts);
 
         if (liveItems == null)
             return;
@@ -148,8 +148,6 @@ public partial class DiscordEvents
 
             foreach (AuctionsRouteProduct product in v)
             {
-                WatchBuy_CachedAuctionBuyAlerts.Add(product.uuid, product.uuid);
-
                 if (!cachedSellers.ContainsKey(product.auctioneer))
                 {
                     string id = product.auctioneer;
