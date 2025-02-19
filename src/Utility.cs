@@ -11,7 +11,7 @@ public class Utility
     ~Utility()
     {
         Program.Utility.Log(Enums.LogLevel.NONE, "Closing...");
-        using StreamWriter writer = new StreamWriter($"{DateTime.Now.ToString()}.txt");
+        using StreamWriter writer = new StreamWriter($"{DateTime.Now}.txt");
         writer.Write(Program.Utility.LogLine);
     }
 
@@ -20,7 +20,7 @@ public class Utility
     /// </summary>
     /// <param name="logLevel"></param>
     /// <param name="message"></param>
-    public void Log(Enums.LogLevel logLevel, string message)
+    public void Log(Enums.LogLevel logLevel, string message, bool timeStamp = false)
     {
         string prefix = "";
         switch (logLevel)
@@ -38,7 +38,12 @@ public class Utility
                 throw new NotImplementedException("Implement this");
         }
 
-        string fullMessage = $"{prefix} {message}";
+        string fullMessage;
+
+        if (timeStamp)
+            fullMessage = $"{prefix} [{DateTime.Now}] {message}";
+        else
+            fullMessage = $"{prefix} {message}";
         LogLine += fullMessage + "\n";
         Console.WriteLine(fullMessage);
     }

@@ -160,5 +160,7 @@ public partial class DiscordEvents
         // NOTE: o^2 notation, refactor if needed.
         await MongoBot.BazaarBuy.DeleteManyAsync(e => toRemoveBuys.Select(buy => buy.ID).Contains(e.ID));
         await MongoBot.BazaarSell.DeleteManyAsync(e => toRemoveSells.Select(sell => sell.ID).Contains(e.ID));
+
+        Program.Utility.Log(Enums.LogLevel.NONE, "'watch_bazaar' ran successfully!");
     }
 }
