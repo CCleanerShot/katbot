@@ -8,7 +8,7 @@ public partial class DiscordCommands : InteractionModuleBase
     [SlashCommand("monday", "tuesday")]
     public async Task monday()
     {
-        if (DateTime.UtcNow.DayOfWeek != DayOfWeek.Monday)
+        if (DateTime.UtcNow.DayOfWeek != DayOfWeek.Sunday || DateTime.UtcNow.DayOfWeek != DayOfWeek.Monday || DateTime.UtcNow.DayOfWeek != DayOfWeek.Tuesday)
         {
             await RespondAsync("It's not Monday yet 😦.");
         }
