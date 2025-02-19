@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
 
@@ -24,6 +25,10 @@ public class AuctionsRoute
 
             for (int i = 0; i < PAGES; i++)
             {
+
+                long proc1 = GC.GetTotalMemory(true);
+                Program.Utility.Log(Enums.LogLevel.NONE, $"{proc1 / 1000000}MB (Total Start)");
+
 
                 string json = "";
                 int maxRetry = 3;
@@ -98,6 +103,7 @@ public class AuctionsRoute
                 // NOTE: this is for the memory limit on the instance
                 if (auctions.Count > 10000)
                     break;
+
 
                 await Task.Delay(10); // make sure we dont request too fast
             }
