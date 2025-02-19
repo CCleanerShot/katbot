@@ -20,7 +20,7 @@ public class AuctionsRoute
         try
         {
             List<AuctionsRouteProduct> auctions = new List<AuctionsRouteProduct>();
-            int PAGES = 15;
+            int PAGES = 50;
 
             for (int i = 0; i < PAGES; i++)
             {
@@ -94,6 +94,10 @@ public class AuctionsRoute
                     Program.Utility.Log(Enums.LogLevel.NONE, $"Found end of length at page {i + 1}. Closing...");
                     break;
                 }
+
+                // NOTE: this is for the memory limit on the instance
+                if (auctions.Count > 5000)
+                    break;
 
                 await Task.Delay(10); // make sure we dont request too fast
             }
