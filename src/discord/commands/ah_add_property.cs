@@ -13,7 +13,7 @@ public partial class DiscordCommands : InteractionModuleBase
     {
         try
         {
-            AuctionBuy.ExtraAttribute attribute = new AuctionBuy.ExtraAttribute(property, value);
+            ExtraAttribute attribute = new ExtraAttribute(property, MongoBot.CachedAuctionTags[property].Type, value);
             UpdateDefinition<AuctionBuy> update = new UpdateDefinitionBuilder<AuctionBuy>()
                 .Push(e => e.ExtraAttributes, attribute);
 

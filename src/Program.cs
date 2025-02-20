@@ -14,6 +14,7 @@ public class Program
     public static HttpClient Client = default!;
     public static Utility Utility = default!;
 
+
 #if WINDOWS
     // related to catching program exit method #2
     [DllImport("kernel32.dll", SetLastError = true)]
@@ -41,10 +42,10 @@ public class Program
             Utility = new Utility();
             Client = new HttpClient();
 
+            // WebBot.Start();
             Settings.Load();
             await DiscordBot.Initialize();
             await MongoBot.Load();
-            // await MongoBot.LoadAuctionItems(true);
 
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);

@@ -8,24 +8,6 @@ using MongoDB.Bson.Serialization.Attributes;
 
 public class AuctionBuy
 {
-    public class ExtraAttribute
-    {
-        /// <summary>
-        /// The name of the tag.
-        /// </summary>
-        public string Name;
-        /// <summary>
-        /// The value for this tag.
-        /// </summary>
-        public string Value;
-
-        public ExtraAttribute(string _Name, string _Value)
-        {
-            Name = _Name;
-            Value = _Value;
-        }
-    }
-
     [BsonId]
     [DataMember]
     public ObjectId _id { get; set; }

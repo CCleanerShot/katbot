@@ -41,72 +41,14 @@ public partial class DiscordEvents
             return;
         }
 
-        List<AuctionBuy> elgibleBuys = (await MongoBot.AuctionBuy.FindAsync(e => MongoBot.CachedAuctionBuys.Any(ee => ee.ID == e.ID))).ToList();
+        List<AuctionBuy> eligibleBuys = (await MongoBot.AuctionBuy.FindAsync(e => MongoBot.CachedAuctionBuys.Any(ee => ee.ID == e.ID))).ToList();
 
         Dictionary<AuctionBuy, List<AuctionsRouteProduct>> matchingProducts = new Dictionary<AuctionBuy, List<AuctionsRouteProduct>>();
 
-        bool AddToMatchingProducts(AuctionBuy target, AuctionsRouteProduct source)
-        {
-            bool TagIsValid(AuctionBuy.ExtraAttribute attribute, Cyotek.Data.Nbt.TagCompound? parentTag = null)
-            {
-                if (parentTag == null)
-                {
-                    if (!source.NBT.ExistingTags.ContainsKey(attribute.Name))
-                        return false;
-
-                    Cyotek.Data.Nbt.Tag tag = source.NBT.ExistingTags[attribute.Name];
-
-                    switch (tag)
-                    {
-                        case TagCompound tagCompound:
-                            string[] splitText = attribute.Value.Split(" ");
-                            AuctionBuy.ExtraAttribute childAttribute = new AuctionBuy.ExtraAttribute(splitText[0], splitText[1]);
-                            return TagIsValid(childAttribute, tagCompound);
-                        case TagString tagString:
-                            return tagString.Value == attribute.Value;
-                        case TagInt tagInt:
-                            Regex regex = new Regex($"[1-{tagInt.Value}]");
-                            return regex.Match(tagInt.Value.ToString()).Success;
-                        default:
-                            Program.Utility.Log(Enums.LogLevel.WARN, $"Unimplemented tag type at {tag.Type} (from {source.NBT.ID})!");
-                            return false;
-                    }
-                }
-
-                else
-                {
-                    if (!parentTag.Value.Select(e => e.Name).Contains(attribute.Name))
-                        return false;
-
-                    Cyotek.Data.Nbt.Tag tag = parentTag.Value[attribute.Name];
-
-                    switch (tag)
-                    {
-                        case TagString tagString:
-                            return $"{tagString.Name} {tagString.Value}" == $"{attribute.Name} {attribute.Value}";
-                        case TagInt tagInt:
-                            Regex regex = new Regex($"{tagInt.Name} [1-{tagInt.Value}]");
-                            return regex.Match($"{tagInt.Name} {tagInt.Value}").Success;
-                        default:
-                            Program.Utility.Log(Enums.LogLevel.WARN, $"Unimplemented tag type at {tag.Type} (from {source.NBT.ID})!");
-                            return false;
-                    }
-                }
-
-            }
-
-            List<AuctionBuy.ExtraAttribute> similarAttr = target.ExtraAttributes.Where(targetAttr => source.NBT.ExistingTags.ContainsKey(targetAttr.Name)).ToList();
-
-            if (target.ExtraAttributes.All(e => TagIsValid(e)))
-                return true;
-            else
-                return false;
-        }
-
-        foreach (AuctionBuy trackedBuy in elgibleBuys)
+        foreach (AuctionBuy trackedBuy in eligibleBuys)
         {
             // items where the ID of an item from the API matches the same ID as a tracked item
-            List<AuctionsRouteProduct> similarLive = liveItems.Where(e => e.NBT.ID.Value == trackedBuy.ID).ToList();
+            List<AuctionsRouteProduct> similarLive = liveItems.Where(e => e.ITEM_ID == trackedBuy.ID).ToList();
 
             if (similarLive.Count == 0)
                 continue;
@@ -114,9 +56,9 @@ public partial class DiscordEvents
             // check if all the properties are matching
             foreach (AuctionsRouteProduct item in similarLive)
             {
-                foreach (var (k, v) in item.NBT.ExistingTags)
+                foreach (ExtraAttribute attribute in item.ExtraAttributes)
                 {
-                    if (AddToMatchingProducts(trackedBuy, item))
+                    if (trackedBuy.ExtraAttributes.All(attribute => item.ExtraAttributes.Any(e => e == attribute)))
                     {
                         if (!matchingProducts.ContainsKey(trackedBuy))
                             matchingProducts.Add(trackedBuy, new List<AuctionsRouteProduct>());
@@ -143,7 +85,7 @@ public partial class DiscordEvents
 
         Dictionary<string, Auctioneer> cachedSellers = new Dictionary<string, Auctioneer>();
         Dictionary<ulong, SocketGuildUser> cacheUsers = new Dictionary<ulong, SocketGuildUser>();
-        List<AuctionBuy> allItems = [.. elgibleBuys];
+        List<AuctionBuy> allItems = [.. eligibleBuys];
 
         foreach (var (k, v) in matchingProducts)
         {
@@ -195,31 +137,12 @@ public partial class DiscordEvents
 
                     string liveProperties = "";
 
-                    foreach (var (key, tag) in product.NBT.ExistingTags)
+                    foreach (ExtraAttribute attribute in product.ExtraAttributes)
                     {
-                        if (!wanted.ExtraAttributes.Select(e => e.Name).Contains(key))
+                        if (!wanted.ExtraAttributes.Select(e => e.Name).Contains(attribute.Name))
                             continue;
 
-                        if (tag is TagCompound tagCompound)
-                        {
-                            liveProperties += $"{tag.Name} [";
-
-                            for (int i = 0; i < tagCompound.Value.Count; i++)
-                            {
-                                Cyotek.Data.Nbt.Tag innerTag = tagCompound.Value[i];
-                                liveProperties += $"{innerTag.Name} {innerTag.GetValue()}";
-
-                                if (i != tagCompound.Count - 1)
-                                    liveProperties += ", ";
-                            }
-
-                            liveProperties += $"]";
-                        }
-
-                        else
-                        {
-                            liveProperties += $"{tag.Name} {tag.GetValue()}";
-                        }
+                        liveProperties += $"{attribute.Name} {attribute.Value}";
                     }
 
                     itemTable.Table[AuctionTable.LIVE_PROPERTIES].Add(liveProperties);
@@ -236,7 +159,7 @@ public partial class DiscordEvents
         // caching items + removing after for those who want to be removed
         List<AuctionBuy> toRemoveBuys = new List<AuctionBuy>();
 
-        foreach (AuctionBuy tracked in elgibleBuys)
+        foreach (AuctionBuy tracked in eligibleBuys)
             if (tracked.RemovedAfter)
                 toRemoveBuys.Add(tracked);
 

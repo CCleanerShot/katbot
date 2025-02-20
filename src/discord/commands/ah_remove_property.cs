@@ -12,7 +12,7 @@ public partial class DiscordCommands : InteractionModuleBase
     {
         try
         {
-            AuctionBuy.ExtraAttribute attribute = MongoBot.CachedAuctionBuys
+            ExtraAttribute attribute = MongoBot.CachedAuctionBuys
                 .Find(e => e.ID == itemID && e.UserId == Context.User.Id)!.ExtraAttributes
                 .Find(e => e.Name == property)!;
             UpdateDefinition<AuctionBuy> update = new UpdateDefinitionBuilder<AuctionBuy>()

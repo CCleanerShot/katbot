@@ -37,7 +37,7 @@ public partial class DiscordEvents
         List<BazaarItem> trackedBuys = (await MongoBot.BazaarBuy.FindAsync(e => MongoBot.CachedBazaarItems.Keys.Contains(e.ID))).ToList();
         List<BazaarItem> trackedSells = (await MongoBot.BazaarSell.FindAsync(e => MongoBot.CachedBazaarItems.Keys.Contains(e.ID))).ToList();
 
-        List<BazaarItem> elgibleBuys = trackedBuys.Where(t =>
+        List<BazaarItem> eligibleBuys = trackedBuys.Where(t =>
         {
             if (WatchBuy_CachedBazaarBuyAlerts.Select(e => e.ID).Contains(t.ID))
                 return false;
@@ -59,7 +59,7 @@ public partial class DiscordEvents
             }
         }).ToList();
 
-        List<BazaarItem> elgibleSells = trackedSells.Where(t =>
+        List<BazaarItem> eligibleSells = trackedSells.Where(t =>
         {
             if (WatchSell_CachedBazaarSellAlerts.Select(e => e.ID).Contains(t.ID))
                 return false;
@@ -82,7 +82,7 @@ public partial class DiscordEvents
         }).ToList();
 
 
-        if (elgibleBuys.Count == 0 && elgibleSells.Count == 0)
+        if (eligibleBuys.Count == 0 && eligibleSells.Count == 0)
             return;
 
         SocketTextChannel? channel = (await DiscordBot._Client.GetChannelAsync(Settings.DISCORD_HYPIXEL_ALERTS_CHANNEL_ID)) as SocketTextChannel;
@@ -95,7 +95,7 @@ public partial class DiscordEvents
 
         Dictionary<ulong, SocketGuildUser> cacheUsers = new Dictionary<ulong, SocketGuildUser>();
 
-        List<BazaarItem> allItems = [.. elgibleBuys, .. elgibleSells];
+        List<BazaarItem> allItems = [.. eligibleBuys, .. eligibleSells];
 
         foreach (BazaarItem tracked in allItems)
         {
@@ -114,14 +114,14 @@ public partial class DiscordEvents
             DiscordTable<BazaarTable> buyTable = new DiscordTable<BazaarTable>("BUYS");
             DiscordTable<BazaarTable> sellTable = new DiscordTable<BazaarTable>("SELLS");
 
-            foreach (BazaarItem tracked in elgibleBuys.Where(e => e.UserId == k))
+            foreach (BazaarItem tracked in eligibleBuys.Where(e => e.UserId == k))
             {
                 buyTable.Table[BazaarTable.NAME].Add(tracked.Name);
                 buyTable.Table[BazaarTable.LIVE_PRICE].Add(liveItems[tracked.ID].sell_summary.First().pricePerUnit.ToString());
                 buyTable.Table[BazaarTable.WANTED_PRICE].Add(tracked.Price.ToString());
             }
 
-            foreach (BazaarItem tracked in elgibleSells.Where(e => e.UserId == k))
+            foreach (BazaarItem tracked in eligibleSells.Where(e => e.UserId == k))
             {
                 sellTable.Table[BazaarTable.NAME].Add(tracked.Name);
                 sellTable.Table[BazaarTable.LIVE_PRICE].Add(liveItems[tracked.ID].buy_summary.First().pricePerUnit.ToString());
@@ -139,7 +139,7 @@ public partial class DiscordEvents
         List<BazaarItem> toRemoveBuys = new List<BazaarItem>();
         List<BazaarItem> toRemoveSells = new List<BazaarItem>();
 
-        foreach (BazaarItem tracked in elgibleBuys)
+        foreach (BazaarItem tracked in eligibleBuys)
         {
             WatchBuy_CachedBazaarBuyAlerts.Add(tracked);
 
@@ -147,7 +147,7 @@ public partial class DiscordEvents
                 toRemoveBuys.Add(tracked);
         }
 
-        foreach (BazaarItem tracked in elgibleSells)
+        foreach (BazaarItem tracked in eligibleSells)
         {
             WatchSell_CachedBazaarSellAlerts.Add(tracked);
 

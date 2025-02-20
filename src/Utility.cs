@@ -48,7 +48,7 @@ public class Utility
         if (addToLogFile)
             LogLine += fullMessage + "\n";
         else
-            fullMessage = "(TEMP) " + message;
+            fullMessage = "(TEMP) " + fullMessage;
 
         Console.WriteLine(fullMessage);
     }

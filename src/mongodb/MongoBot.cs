@@ -122,7 +122,7 @@ public class MongoBot
     /// <returns></returns>
     public static async Task LoadAuctionItems(bool reset = false)
     {
-        List<AuctionsRouteProduct>? auctions = await AuctionsRoute.GetRoute();
+        List<AuctionsRouteProduct>? auctions = await AuctionsRoute.GetRoute(null, 40);
 
         if (auctions == null)
         {
@@ -139,7 +139,7 @@ public class MongoBot
         // resetting the cached items
         CachedAuctionItems = new Dictionary<string, AuctionItemsAll>();
 
-        List<string> auctionIDs = auctions.Select(e => e.NBT.ID.Value).ToList();
+        List<string> auctionIDs = auctions.Select(e => e.ITEM_ID).ToList();
         IAsyncCursor<AuctionItemsAll> existingItemsResult = await AuctionItemsAll.FindAsync(e => auctionIDs.Contains(e.ID));
         IAsyncCursor<AuctionTags> existingTagsResult = await AuctionTags.FindAsync(e => e.Name != "");
 
@@ -161,55 +161,43 @@ public class MongoBot
         {
             AuctionItemsAll item;
 
-            if (existingItemsDict.ContainsKey(auction.NBT.ID.Value))
-                item = existingItemsDict[auction.NBT.ID.Value.ToString()];
+            if (existingItemsDict.ContainsKey(auction.ITEM_ID))
+            {
+                item = existingItemsDict[auction.ITEM_ID];
+            }
 
             else
             {
-                string id = auction.NBT.ID.Value;
-                string name = auction.NBT.NAME.Value;
+                string id = auction.ITEM_ID;
+                string name = auction.ITEM_NAME;
                 item = new AuctionItemsAll(id, name);
                 newItemsDict.Add(item.ID, item);
                 existingItemsDict.Add(item.ID, item);
                 CachedAuctionItems.Add(item.ID, item);
             }
 
-            foreach (var (k, tag) in auction.NBT.ExistingTags)
+            foreach (ExtraAttribute attribute in auction.ExtraAttributes)
             {
                 AuctionTags auctionTag;
 
-                if (existingTagsDict.ContainsKey(tag.Name))
-                    auctionTag = existingTagsDict[tag.Name];
+                if (existingTagsDict.ContainsKey(attribute.Name))
+                    auctionTag = existingTagsDict[attribute.Name];
 
                 else
                 {
-                    auctionTag = new AuctionTags(tag.Name, tag.Type);
-                    newTagsDict.Add(tag.Name, auctionTag);
+                    auctionTag = new AuctionTags(attribute.Name, attribute.Type);
+                    newTagsDict.Add(attribute.Name, auctionTag);
                     // NOTE: this is to prevent duplicate tags in the adding. the mongo operation should check
                     // if the tag is in new tag before updating, to prevent redundency
-                    existingTagsDict.Add(tag.Name, auctionTag);
+                    existingTagsDict.Add(attribute.Name, auctionTag);
                 }
 
                 if (!item.ExtraAttributes.Contains(auctionTag.Name))
                     item.ExtraAttributes.Add(auctionTag.Name);
 
 
-                if (tag is TagCompound tagCompound)
-                {
-                    foreach (Cyotek.Data.Nbt.Tag innerTag in tagCompound.Value)
-                    {
-                        string phrase = $"{innerTag.Name} {innerTag.GetValue()}";
-
-                        if (!auctionTag.Values.Contains(phrase))
-                            auctionTag.Values.Add(phrase);
-                    }
-                }
-
-                else
-                {
-                    if (!auctionTag.Values.Contains(tag.GetValue().ToString()!))
-                        auctionTag.Values.Add(tag.GetValue().ToString()!);
-                }
+                if (!auctionTag.Values.Contains(attribute.Value))
+                    auctionTag.Values.Add(attribute.Value);
             }
         }
 

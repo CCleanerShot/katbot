@@ -16,14 +16,15 @@ public class AuctionsRoute
     /// </summary>
     /// <param name="CachedItems"></param>
     /// <returns></returns>
-    public static async Task<List<AuctionsRouteProduct>?> GetRoute(Dictionary<string, double?>? CachedItems = null)
+    public static async Task<List<AuctionsRouteProduct>?> GetRoute(Dictionary<string, double?>? CachedItems = null, int pages = 100)
     {
+        int i = 0;
+
         try
         {
             List<AuctionsRouteProduct> auctions = new List<AuctionsRouteProduct>();
-            int PAGES = 50;
 
-            for (int i = 0; i < PAGES; i++)
+            for (i = 0; i < pages; i++)
             {
 
                 long proc1 = GC.GetTotalMemory(true);
@@ -92,18 +93,13 @@ public class AuctionsRoute
                     auctions.Add(product);
                 }
 
-                Program.Utility.Log(Enums.LogLevel.NONE, $"Page {i + 1} of auctions fetched.");
+                Program.Utility.Log(Enums.LogLevel.NONE, $"Page {i + 1} of auctions fetched.", true, false);
 
                 if (auctionsRoute.auctions.Length < 1000)
                 {
                     Program.Utility.Log(Enums.LogLevel.NONE, $"Found end of length at page {i + 1}. Closing...");
                     break;
                 }
-
-                // NOTE: this is for the memory limit on the instance
-                if (auctions.Count > 10000)
-                    break;
-
 
                 await Task.Delay(10); // make sure we dont request too fast
             }
@@ -113,7 +109,7 @@ public class AuctionsRoute
 
         catch (Exception e)
         {
-            Program.Utility.Log(Enums.LogLevel.ERROR, e.ToString());
+            Program.Utility.Log(Enums.LogLevel.ERROR, $"Unexpected error on page {i}: {e}");
             return null;
         }
     }

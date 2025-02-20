@@ -24,7 +24,7 @@ public partial class DiscordCommands : InteractionModuleBase
 
                 for (int i = 0; i < auctionBuy.ExtraAttributes.Count; i++)
                 {
-                    AuctionBuy.ExtraAttribute attribute = auctionBuy.ExtraAttributes[i];
+                    ExtraAttribute attribute = auctionBuy.ExtraAttributes[i];
 
                     if (MongoBot.CachedAuctionTags[attribute.Name].Type == Cyotek.Data.Nbt.TagType.Compound)
                         wantedProperties += $"{attribute.Name} [{attribute.Value}]";
