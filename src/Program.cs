@@ -7,8 +7,6 @@
     using System.Runtime.InteropServices;
 #endif
 
-using Cyotek.Data.Nbt;
-
 public class Program
 {
     public static HttpClient Client = default!;

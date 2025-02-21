@@ -6,7 +6,7 @@ public class AuctionsRouteProduct
     static List<string> BANNED_ATTRIBUTES = new List<string>()
     {
         "bossId",
-        // "builder's_wand_data",
+        "builder's_wand_data",
         // "date",
         "id",
         // "PERSONAL_DELETOR_ACTIVE",
@@ -31,16 +31,13 @@ public class AuctionsRouteProduct
     public string ITEM_NAME = default!;
     public List<ExtraAttribute> ExtraAttributes = new List<ExtraAttribute>();
 
-    private string _item_bytes = default!;
     public string item_bytes
     {
-        get => _item_bytes;
         set
         {
-            _item_bytes = value;
             DOCUMENT = new NbtDocument();
 
-            using MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(item_bytes));
+            using MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(value));
             DOCUMENT.Load(memoryStream);
 
             TagCompound ROOT = DOCUMENT.DocumentRoot;

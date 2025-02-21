@@ -122,7 +122,7 @@ public class MongoBot
     /// <returns></returns>
     public static async Task LoadAuctionItems(bool reset = false)
     {
-        List<AuctionsRouteProduct>? auctions = await AuctionsRoute.GetRoute(null, 40);
+        List<AuctionsRouteProduct>? auctions = await AuctionsRoute.GetRoute(null, 50);
 
         if (auctions == null)
         {
