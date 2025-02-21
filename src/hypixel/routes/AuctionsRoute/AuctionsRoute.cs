@@ -26,10 +26,7 @@ public class AuctionsRoute
 
             for (i = 0; i < pages; i++)
             {
-
-                long proc1 = GC.GetTotalMemory(true);
-                Program.Utility.Log(Enums.LogLevel.NONE, $"{proc1 / 1000000}MB (Total Start)", false, false);
-
+                Program.Utility.LogPerformance("Total Start");
 
                 string json = "";
                 int maxRetry = 3;

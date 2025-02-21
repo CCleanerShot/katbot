@@ -23,6 +23,7 @@ public class Utility
     public void Log(Enums.LogLevel logLevel, string message, bool timeStamp = false, bool addToLogFile = true)
     {
         string prefix = "";
+
         switch (logLevel)
         {
             case Enums.LogLevel.NONE:
@@ -51,6 +52,16 @@ public class Utility
             fullMessage = "(TEMP) " + fullMessage;
 
         Console.WriteLine(fullMessage);
+    }
+
+    /// <summary>
+    /// Logs the current RAM usage into the console.
+    /// </summary>
+    /// <param name="additionalMessage"></param>
+    public void LogPerformance(string additionalMessage = "", bool addToLogFile = false)
+    {
+        long memory = GC.GetTotalMemory(true);
+        Log(Enums.LogLevel.NONE, $"{memory / 1000000}MB ({additionalMessage})", false, addToLogFile);
     }
 
     /// <summary>
