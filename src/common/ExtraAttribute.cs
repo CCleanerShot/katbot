@@ -13,6 +13,7 @@ public class ExtraAttribute
     /// <summary>
     /// The type of tag.
     /// </summary>
+    [BsonRepresentation(BsonType.String)]
     public TagType Type = TagType.None;
     /// <summary>
     /// The value for this tag.
