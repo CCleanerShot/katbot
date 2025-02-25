@@ -13,7 +13,7 @@ public partial class DiscordEvents
 
     async Task EE_Typing_UserIsTyping(Cacheable<IUser, ulong> user, Cacheable<IMessageChannel, ulong> channel)
     {
-        int chance = Program.Utility.NextRange(1, 2000);
+        int chance = Program.Utility.NextRange(1, 1000);
 
         if (chance != 1)
             return;

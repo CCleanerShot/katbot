@@ -10,6 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
+            
             "program": "${workspaceFolder}/bin/Debug/net8.0/skyblock-bot.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
@@ -25,6 +26,6 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
-        }
+        },
     ]
 }

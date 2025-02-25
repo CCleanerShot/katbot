@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,12 +7,18 @@
     <RootNamespace>skyblock_bot</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <NoWarn>IDE1006</NoWarn>
+    <NoWarn>IDE0019,IDE0028,IDE0090,IDE1006,CA1822</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Htmx" Version="1.8.1" />
+    <PackageReference Include="Htmx.TagHelpers" Version="1.1.1" />
     <PackageReference Include="Discord.Net" Version="3.14.1" />
     <PackageReference Include="MongoDB.Driver" Version="3.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Cyotek.Data.Nbt" Version="3.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+	  <None Include="wwwroot\js\htmx.min.js" />
+	  <None Include="wwwroot\js\_hyperscript.min.js" />
   </ItemGroup>
 </Project>

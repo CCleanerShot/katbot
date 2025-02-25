@@ -13,12 +13,12 @@ public partial class DiscordEvents
 
     async Task EE_Ping_MessageReceived(SocketMessage message)
     {
-        int chance = Program.Utility.NextRange(1, 100);
+        int chance = Program.Utility.NextRange(1, 20);
 
         if (chance != 1)
             return;
 
-        if (message.MentionedUsers.Any(e => e.Id.ToString() == Settings.ID_BOT))
+        if (!message.MentionedUsers.Any(e => e.Id.ToString() == Settings.ID_BOT))
             return;
 
         await message.Channel.SendMessageAsync("Who ping me?");
