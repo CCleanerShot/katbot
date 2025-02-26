@@ -3,43 +3,14 @@
 // 2. abrupt program exit
 // the purpose of this is to log the session into /logs
 
-#if WINDOWS
-    using System.Runtime.InteropServices;
-#endif
-
 public class Program
 {
     public static HttpClient Client = default!;
     public static Utility Utility = default!;
 
-
-#if WINDOWS
-    delegate bool ConsoleEventDelegate(int eventType);
-
-    static ConsoleEventDelegate Handler;
-    [DllImport("kernel32.dll", SetLastError = true)]
-    static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
-
-    private static bool ConsoleEventCallback(int eventType)
-    {
-        if (eventType == 2)
-        {
-            Console.WriteLine(eventType);
-            SaveSession();
-        }
-
-        return false;
-    }
-#endif
-
     static async Task Main()
     {
         Console.CancelKeyPress += (sender, e) => SaveSession();
-
-#if WINDOWS
-    Handler = ConsoleEventCallback;
-    SetConsoleCtrlHandler(Handler, true);
-#endif
 
         await Run();
     }
@@ -59,7 +30,7 @@ public class Program
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
 
-            // keeps program running
+            // // keeps program running
             await Task.Delay(-1);
         }
 
@@ -76,9 +47,5 @@ public class Program
         using StreamWriter writer = new StreamWriter("./logs/" + DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm") + ".txt");
         writer.Write(Utility.LogLine);
     }
-
-
-
-
 }
 

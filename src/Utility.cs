@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Cyotek.Data.Nbt;
 
@@ -23,11 +24,12 @@ public class Utility
     /// <returns></returns>
     public string GetASPPath(string relativePath)
     {
-#if WINDOWS
-        return relativePath;
-#else
-        return Environment.CurrentDirectory + relativePath;
-#endif
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            return relativePath;
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            return Environment.CurrentDirectory + relativePath;
+        else
+            throw new NotImplementedException("Detected application launch in something not Windows/Linux, throwing!");
     }
 
 
