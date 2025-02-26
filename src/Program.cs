@@ -14,11 +14,22 @@ public class Program
 
 
 #if WINDOWS
-    // related to catching program exit method #2
+    delegate bool ConsoleEventDelegate(int eventType);
+
+    static ConsoleEventDelegate Handler;
     [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
-    private delegate bool ConsoleEventDelegate(int eventType);
-    static ConsoleEventDelegate? handler; // Nullable for conditional use
+    static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
+
+    private static bool ConsoleEventCallback(int eventType)
+    {
+        if (eventType == 2)
+        {
+            Console.WriteLine(eventType);
+            SaveSession();
+        }
+
+        return false;
+    }
 #endif
 
     static async Task Main()
@@ -26,8 +37,8 @@ public class Program
         Console.CancelKeyPress += (sender, e) => SaveSession();
 
 #if WINDOWS
-    handler = ConsoleEventCallback;
-    SetConsoleCtrlHandler(handler, true);
+    Handler = ConsoleEventCallback;
+    SetConsoleCtrlHandler(Handler, true);
 #endif
 
         await Run();
@@ -67,17 +78,7 @@ public class Program
     }
 
 
-#if WINDOWS
-    private static bool ConsoleEventCallback(int eventType)
-    {
-        if (eventType == 2)
-        {
-            Console.WriteLine(eventType);
-            SaveSession();
-        }
 
-        return false;
-    }
-#endif
+
 }
 
