@@ -12,10 +12,19 @@ public class AspnetBot
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
         builder.Services.AddRazorPages((options) => options.RootDirectory = $"{fullPath}/Pages");
 
-        if (Settings.ENVIRONMENT == "production")
-            builder.WebHost.UseUrls([Settings.SITE_URL_1]);
-        else
+        if (Settings.ENVIRONMENT == "development")
             builder.WebHost.UseUrls(["http://localhost:3000"]);
+        else
+        {
+            builder.WebHost.UseUrls([Settings.SITE_URL_1]);
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CloudFlare Site Policy", policy => policy
+                    .WithOrigins(Settings.SITE_URL_1)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+        }
 
         builder.Logging.ClearProviders();
         WebApplication = builder.Build();
