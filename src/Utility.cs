@@ -16,6 +16,22 @@ public class Utility
     }
 
     /// <summary>
+    /// Returns either the relative or absolute path, depending on the environment.
+    /// Useful for when some functions require absolute paths on Windows, and relative on Linux. 
+    /// </summary>
+    /// <param name="relativePath"></param>
+    /// <returns></returns>
+    public string GetASPPath(string relativePath)
+    {
+#if WINDOWS
+        return relativePath;
+#else
+        return Environment.CurrentDirectory + relativePath;
+#endif
+    }
+
+
+    /// <summary>
     /// Current way of logging. Will do some other stuff later.
     /// </summary>
     /// <param name="logLevel"></param>

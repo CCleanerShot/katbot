@@ -1,6 +1,5 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.FileProviders;
 
 public class AspnetBot
 {
@@ -9,8 +8,9 @@ public class AspnetBot
 
     public static void Start()
     {
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions() { WebRootPath = $"{Settings.ASPNET_ROOT_DIRECTORY}/wwwroot" });
-        Action<RazorPagesOptions> razerOptions = new Action<RazorPagesOptions>((options) => options.RootDirectory = $"{Settings.ASPNET_ROOT_DIRECTORY}");
+        string fullPath = Program.Utility.GetASPPath(Settings.ASPNET_ROOT_DIRECTORY);
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions() { WebRootPath = $"{fullPath}/wwwroot" });
+        Action<RazorPagesOptions> razerOptions = new Action<RazorPagesOptions>((options) => options.RootDirectory = $"{fullPath}");
         builder.Services.AddRazorPages(razerOptions);
         WebApplication = builder.Build();
         WebApplication.UseHttpsRedirection();

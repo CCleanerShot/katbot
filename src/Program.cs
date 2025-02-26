@@ -40,7 +40,6 @@ public class Program
             Utility = new Utility();
             Client = new HttpClient();
 
-            // WebBot.Start();
             Settings.Load();
             await DiscordBot.Initialize();
             await MongoBot.Load();
