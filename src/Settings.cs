@@ -16,6 +16,7 @@ public class Settings
     public static ulong DISCORD_SEND_CHANNEL_ID = 0;
     public static ulong DISCORD_STARBOARDS_CHANNEL_ID = 0;
     public static string DISCORD_TOKEN = "";
+    public static string ENVIRONMENT = "";
     public static string HYPIXEL_API_BASE_URL = "";
     public static string HYPIXEL_BOT_KEY = "";
     public static string ID_BOT = "";
@@ -35,6 +36,7 @@ public class Settings
     public static string MONGODB_DATABASE_HYPIXEL = "";
     public static string MONGODB_URI = "";
     public static string PATH_OBAMA = "";
+    public static string SITE_URL_1 = "";
     public static ulong TEST_DISCORD_GUILD_ID = 0;
     #endregion
 
@@ -107,6 +109,8 @@ public class Settings
                 DISCORD_STARBOARDS_CHANNEL_ID = UInt64.Parse(lines[1]);
             else if (lines[0] == "DISCORD_TOKEN")
                 DISCORD_TOKEN = lines[1];
+            else if (lines[0] == "ENVIRONMENT")
+                ENVIRONMENT = lines[1];
             else if (lines[0] == "HYPIXEL_API_BASE_URL")
                 HYPIXEL_API_BASE_URL = lines[1];
             else if (lines[0] == "HYPIXEL_BOT_KEY")
@@ -143,6 +147,8 @@ public class Settings
                 MONGODB_DATABASE_HYPIXEL = lines[1];
             else if (lines[0] == "MONGODB_URI")
                 MONGODB_URI = lines[1];
+            else if (lines[0] == "SITE_URL_1")
+                SITE_URL_1 = lines[1];
             else if (lines[0] == "TEST_DISCORD_GUILD_ID")
                 TEST_DISCORD_GUILD_ID = UInt64.Parse(lines[1]);
             else
