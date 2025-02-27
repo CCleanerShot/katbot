@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,7 +6,7 @@
     <RootNamespace>skyblock_bot</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <NoWarn>IDE0019,IDE0028,IDE0090,IDE1006,CA1822</NoWarn>
+    <NoWarn></NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Htmx" Version="1.8.1" />
@@ -17,4 +16,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Cyotek.Data.Nbt" Version="3.1.1" />
   </ItemGroup>
+  <!-- <Target Name="CSS" BeforeTargets="Build" Inputs=".env" Outputs="te">
+      <Exec Command="npm run css:build"/>
+  </Target> -->
 </Project>

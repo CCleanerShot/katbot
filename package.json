@@ -1,0 +1,16 @@
+{
+  "author": "",
+  "dependencies": {},
+  "description": "",
+  "devDependencies": {
+    "tailwindcss": "3.1.6"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "skyblock_bot",
+  "scripts": {
+    "css:build": "npx tailwindcss -i ./tailwind.css -o ./wwwroot/css/tailwind.css"
+  },
+  "version": "1.0.0"
+}

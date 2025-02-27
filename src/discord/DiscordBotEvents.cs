@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Discord;
 using Discord.Interactions;
 using Discord.Rest;
@@ -44,7 +45,15 @@ public partial class DiscordBot
 
     static Task _Log(LogMessage message)
     {
-        Program.Utility.Log(Enums.LogLevel.NONE, message.ToString());
+        string finalMessage = message.ToString();
+
+        if (finalMessage.Contains("The remote party closed the WebSocket connection without completing the close handshake."))
+        {
+            Regex regex = new Regex(".+WebSocket connection was closed");
+            finalMessage = regex.Match(finalMessage).Value;
+        }
+
+        Program.Utility.Log(Enums.LogLevel.NONE, finalMessage);
         return Task.CompletedTask;
     }
 

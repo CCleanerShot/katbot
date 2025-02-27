@@ -4,17 +4,20 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace skyblock_bot.Pages;
 
-public class IndexModel : PageModel
+public class DiscordModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
 
-    public IndexModel(ILogger<IndexModel> logger)
+    public DiscordModel(ILogger<IndexModel> logger)
     {
         _logger = logger;
     }
 
     public IActionResult OnGet()
     {
-        return Page();
+        if (Request.IsHtmx())
+            return Content("hello");
+        else
+            return Page();
     }
 }

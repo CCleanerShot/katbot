@@ -1,0 +1,16 @@
+@{
+    Layout = "_Layout";
+    RouteButton bazaarButton = new RouteButton("/skyblock/bazaar", "Bazaar");
+    RouteButton auctionsButton = new RouteButton("/skyblock/auctions", "Auctions");
+    RouteButton[] routeButtons = [bazaarButton, auctionsButton];
+}
+
+<div>
+    <div class="border-t-2 border-b-2 border-black m-2 flex gap-2 justify-center p-2 items-center *:w-24">
+        @foreach (RouteButton routeButton in routeButtons)
+        {
+            <partial name="_RouteButton" model="@(routeButton)" />
+        }
+    </div>
+    @RenderBody()
+</div>

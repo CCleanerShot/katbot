@@ -1,0 +1,19 @@
+@model RouteButton
+
+@{
+    string className;
+    if (Model.Route == Context.Request.Path)
+        className = "bg-cyan-500";
+    else
+        className = "";
+}
+
+<a class="button flex justify-between items-center gap-1 @(className)" href="@(Model.Route)">
+
+    @if (Model.ImageUrl != null)
+    {
+        <img class="w-4 h-auto" src="@(Model.ImageUrl)" />
+    }
+
+    <span class="m-auto">@(Model.Title)</span>
+</a>

@@ -1,0 +1,52 @@
+@{
+    RouteButton discordButton = new RouteButton("/discord", "Discord", "/content/discord.png");
+    RouteButton skyblockButton = new RouteButton("/skyblock", "Skyblock", "/content/grass_block.png");
+    RouteButton[] routeButtons = [discordButton, skyblockButton];
+    string logoID = "logo";
+    string className = "";
+
+    if (Context.Request.Path == "/")
+        className = "relative";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title class="bg-red-500">Document</title>
+        <link rel="stylesheet" href="~/css/animations.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/tailwind.css" asp-append-version="true" />
+        <script src="~/js/htmx.min.js"></script>
+        <script src="~/js/_hyperscript.min.js"></script>
+        <script src="~/js/site.js" defer></script>
+
+        @if (Settings.ENVIRONMENT != "production")
+        {
+            <script src="https://unpkg.com/@@tailwindcss/browser@4"></script>
+        }
+
+
+    </head>
+    <body class="p-2 flex flex-col">
+        <header class="flex flex-col self-center w-full gap-2">
+            <div class="flex flex-col justify-center items-center">
+                <a href="/">
+                    <img id="@logoID" class="logo w-16 h-16" src="/content/katbot.png" />
+                </a>
+                <h1 class="font-bold text-center">KatBot</h1>
+                <p class="text-xs">here lies: useless crap</p>
+            </div>
+            <div class="flex justify-center gap-5 *:w-32">
+                @foreach (RouteButton routeButton in routeButtons)
+                {
+                    <partial name="_RouteButton" model="@(routeButton)" />
+                }
+            </div>
+        </header>
+        <main class="flex-1 @className">
+            @RenderBody()
+        </main>
+    </body>
+</html>

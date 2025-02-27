@@ -12,11 +12,17 @@ public class AspnetBot
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
         builder.Services.AddRazorPages((options) => options.RootDirectory = $"{fullPath}/Pages");
 
+        string url;
+
         if (Settings.ENVIRONMENT == "development")
-            builder.WebHost.UseUrls(["http://localhost:3000"]);
+        {
+            url = "http://localhost:3000";
+        }
+
         else
         {
-            builder.WebHost.UseUrls([Settings.SITE_URL_1]);
+            url = Settings.SITE_URL_1;
+            builder.Logging.ClearProviders();
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("CloudFlare Site Policy", policy => policy
@@ -26,12 +32,13 @@ public class AspnetBot
             });
         }
 
-        builder.Logging.ClearProviders();
+        builder.WebHost.UseStaticWebAssets();
+        builder.WebHost.UseUrls([url]);
         WebApplication = builder.Build();
         WebApplication.UseHttpsRedirection();
         WebApplication.UseStaticFiles();
         WebApplication.MapRazorPages();
-        Program.Utility.Log(Enums.LogLevel.NONE, "Razor Pages has built!");
+        Program.Utility.Log(Enums.LogLevel.NONE, $"Razor Pages has built! (URL: {url})");
         WebApplication.Run();
     }
 }

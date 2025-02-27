@@ -1,3 +1,48 @@
-button {
-    background-color: red;
+:root {
+    --transition-time: 0.1s;
+    --primary-color: #FFDDFF;
+    --secondary-color: #DDFFDD;
+}
+
+body {
+    background-image: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+    font-family: monospace;
+    min-height: 100vh;
+}
+
+.animate-jump-text {
+    animation-duration: 0.5s;
+    animation-iteration-count: 1;
+    animation-name: jump-text;
+}
+
+.animate-spin-logo {
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-name: spin-logo;
+}
+
+.button {
+    background-color: white;
+    border: 0.2rem solid black;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    padding: 0.3rem;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
+    transition: all;
+    transition-duration: var(--transition-time);
+}
+
+.button:hover {
+    background-color: cyan;
+    rotate: 2deg;
+    scale: 105%;
+}
+
+.relative-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
