@@ -14,7 +14,7 @@ public partial class DiscordCommands : InteractionModuleBase
 
             result = "";
 
-            List<RollStats> allStats = (await MongoBot.RollStats.FindAsync(e => e.UserId != 1)).ToList();
+            List<RollStats> allStats = await MongoBot.RollStats.FindList(e => e.UserId != 1);
             allStats.Sort((a, b) => b.Wins - a.Wins);
 
             foreach (RollStats stats in allStats)

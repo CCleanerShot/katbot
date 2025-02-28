@@ -3,7 +3,7 @@ using System.Timers;
 using Discord.WebSocket;
 
 /// <summary>
-/// For usage inside DiscordEvent methods. NOTE: The method must be public!
+/// For usage inside DiscordEvents methods. NOTE: The method must be public!
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]
 public partial class DiscordEventsAttribute : Attribute { }

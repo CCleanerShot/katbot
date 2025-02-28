@@ -34,8 +34,8 @@ public partial class DiscordEvents
         if (liveItems == null)
             return;
 
-        List<BazaarItem> trackedBuys = (await MongoBot.BazaarBuy.FindAsync(e => MongoBot.CachedBazaarItems.Keys.Contains(e.ID))).ToList();
-        List<BazaarItem> trackedSells = (await MongoBot.BazaarSell.FindAsync(e => MongoBot.CachedBazaarItems.Keys.Contains(e.ID))).ToList();
+        List<BazaarItem> trackedBuys = await MongoBot.BazaarBuy.FindList(e => MongoBot.CachedBazaarItems.Keys.Contains(e.ID));
+        List<BazaarItem> trackedSells = await MongoBot.BazaarSell.FindList(e => MongoBot.CachedBazaarItems.Keys.Contains(e.ID));
 
         List<BazaarItem> eligibleBuys = trackedBuys.Where(t =>
         {

@@ -30,9 +30,11 @@ public class Settings
     public static string MONGODB_COLLECTION_BAZAAR_BUY = "";
     public static string MONGODB_COLLECTION_BAZAAR_SELL = "";
     public static string MONGODB_COLLECTION_BAZAAR_ITEMS = "";
-    public static string MONGODB_COLLECTION_DISCORD_STARBOARDS = "";
-    public static string MONGODB_COLLECTION_DISCORD_ROLL_STATS = "";
+    public static string MONGODB_COLLECTION_STARBOARDS = "";
+    public static string MONGODB_COLLECTION_ROLL_STATS = "";
+    public static string MONGODB_COLLECTION_USERS = "";
     public static string MONGODB_DATABASE_DISCORD = "";
+    public static string MONGODB_DATABASE_GENERAL = "";
     public static string MONGODB_DATABASE_HYPIXEL = "";
     public static string MONGODB_URI = "";
     public static string PATH_OBAMA = "";
@@ -137,14 +139,18 @@ public class Settings
                 MONGODB_COLLECTION_BAZAAR_ITEMS = lines[1];
             else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_SELL")
                 MONGODB_COLLECTION_BAZAAR_SELL = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_DISCORD_ROLL_STATS")
-                MONGODB_COLLECTION_DISCORD_ROLL_STATS = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_ROLL_STATS")
+                MONGODB_COLLECTION_ROLL_STATS = lines[1];
             else if (lines[0] == "MONGODB_COLLECTION_STARBOARDS")
-                MONGODB_COLLECTION_DISCORD_STARBOARDS = lines[1];
+                MONGODB_COLLECTION_STARBOARDS = lines[1];
+            else if (lines[0] == "MONGODB_COLLECTION_USERS")
+                MONGODB_COLLECTION_USERS = lines[1];
             else if (lines[0] == "MONGODB_DATABASE_DISCORD")
                 MONGODB_DATABASE_DISCORD = lines[1];
             else if (lines[0] == "MONGODB_DATABASE_HYPIXEL")
                 MONGODB_DATABASE_HYPIXEL = lines[1];
+            else if (lines[0] == "MONGODB_DATABASE_GENERAL")
+                MONGODB_DATABASE_GENERAL = lines[1];
             else if (lines[0] == "MONGODB_URI")
                 MONGODB_URI = lines[1];
             else if (lines[0] == "SITE_URL_1")
@@ -152,7 +158,7 @@ public class Settings
             else if (lines[0] == "TEST_DISCORD_GUILD_ID")
                 TEST_DISCORD_GUILD_ID = UInt64.Parse(lines[1]);
             else
-                Program.Utility.Log(Enums.LogLevel.WARN, "The key was not implemented yet. Intentional?");
+                Program.Utility.Log(Enums.LogLevel.WARN, $"The key was not implemented yet. Intentional? (at {lines[0]})");
 
         } while (line != null);
     }

@@ -1,29 +1,14 @@
-using System.Threading.Tasks;
-using Htmx;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace skyblock_bot.Pages;
 
-public class SkyblockModel : PageModel
+public class SkyblockModel : SkyblockBaseModel
 {
-    public List<BazaarItem> BazaarItems = new List<BazaarItem>();
-    private readonly ILogger<IndexModel> _logger;
+    public SkyblockModel(ILogger<SkyblockModel> logger) : base(logger) { }
 
-    public SkyblockModel(ILogger<IndexModel> logger)
+    public sealed override async Task<IActionResult> CustomCustomGet()
     {
-        _logger = logger;
-    }
-
-    public IActionResult OnGet()
-    {
-        if (Request.IsHtmx())
-        {
-            return Content("hello");
-        }
-        else
-        {
-            return Page();
-        }
+        return Redirect(UtilityP.Routes[RouteP.SKYBLOCK_BAZAAR]);
     }
 }

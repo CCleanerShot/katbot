@@ -23,14 +23,12 @@ public class Program
             Client = new HttpClient();
 
             Settings.Load();
-            await DiscordBot.Initialize();
-            await MongoBot.Load();
-
-            AspnetBot.Start();
-
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
 
+            await DiscordBot.Initialize();
+            await MongoBot.Load();
+            // AspnetBot.Start();
 
             // // keeps program running
             await Task.Delay(-1);

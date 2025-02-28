@@ -1,12 +1,12 @@
 @{
     Layout = "_Layout";
-    RouteButton bazaarButton = new RouteButton("/skyblock/bazaar", "Bazaar");
-    RouteButton auctionsButton = new RouteButton("/skyblock/auctions", "Auctions");
-    RouteButton[] routeButtons = [bazaarButton, auctionsButton];
+    RouteButton bazaar = new RouteButton(UtilityP.Routes[RouteP.SKYBLOCK_BAZAAR], "Bazaar");
+    RouteButton auctions = new RouteButton(UtilityP.Routes[RouteP.SKYBLOCK_AUCTIONS], "Auctions");
+    RouteButton[] routeButtons = [bazaar, auctions];
 }
 
 <div>
-    <div class="border-t-2 border-b-2 border-black m-2 flex gap-2 justify-center p-2 items-center *:w-24">
+    <div class="border-t-2 border-b-2 border-black m-2 flex gap-2 justify-center p-2 items-center [&>*]:w-24">
         @foreach (RouteButton routeButton in routeButtons)
         {
             <partial name="_RouteButton" model="@(routeButton)" />

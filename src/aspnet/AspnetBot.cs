@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 public class AspnetBot
 {
+    public static AspnetRoutes AspnetRoutes = default!;
     public static HttpListener HttpListener = new HttpListener();
     public static WebApplication WebApplication = default!;
 
@@ -38,6 +39,9 @@ public class AspnetBot
         WebApplication.UseHttpsRedirection();
         WebApplication.UseStaticFiles();
         WebApplication.MapRazorPages();
+        AspnetRoutes = new AspnetRoutes(WebApplication);
+        AspnetRoutes.MapAPIRoutes();
+
         Program.Utility.Log(Enums.LogLevel.NONE, $"Razor Pages has built! (URL: {url})");
         WebApplication.Run();
     }

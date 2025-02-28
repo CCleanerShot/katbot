@@ -41,8 +41,7 @@ public partial class DiscordEvents
             return;
         }
 
-        List<AuctionBuy> eligibleBuys = (await MongoBot.AuctionBuy.FindAsync(e => MongoBot.CachedAuctionBuys.Any(ee => ee.ID == e.ID))).ToList();
-
+        List<AuctionBuy> eligibleBuys = await MongoBot.AuctionBuy.FindList(e => MongoBot.CachedAuctionBuys.Any(ee => ee.ID == e.ID));
         Dictionary<AuctionBuy, List<AuctionsRouteProduct>> matchingProducts = new Dictionary<AuctionBuy, List<AuctionsRouteProduct>>();
 
         foreach (AuctionBuy trackedBuy in eligibleBuys)

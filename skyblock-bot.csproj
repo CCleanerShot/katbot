@@ -6,7 +6,7 @@
     <RootNamespace>skyblock_bot</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <NoWarn></NoWarn>
+    <NoWarn>IDE0028,CS1998</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Htmx" Version="1.8.1" />

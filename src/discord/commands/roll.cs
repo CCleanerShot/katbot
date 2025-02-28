@@ -85,8 +85,8 @@ class RollMatch
 
         SocketGuildUser winnerDiscord = Users.Find(e => e.Id == PlayerTurn.Id)!;
         SocketGuildUser loserDiscord = Users.Find(e => e.Id != PlayerTurn.Id)!;
-        List<RollStats> winner = (await MongoBot.RollStats.FindAsync(e => e.UserId == winnerDiscord.Id)).ToList();
-        List<RollStats> loser = (await MongoBot.RollStats.FindAsync(e => e.UserId == loserDiscord.Id)).ToList();
+        List<RollStats> winner = await MongoBot.RollStats.FindList(e => e.UserId == winnerDiscord.Id);
+        List<RollStats> loser = await MongoBot.RollStats.FindList(e => e.UserId == loserDiscord.Id);
 
         if (winner.Count == 0)
         {

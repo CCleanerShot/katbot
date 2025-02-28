@@ -1,7 +1,9 @@
+@model RootModel
+
 @{
-    RouteButton discordButton = new RouteButton("/discord", "Discord", "/content/discord.png");
-    RouteButton skyblockButton = new RouteButton("/skyblock", "Skyblock", "/content/grass_block.png");
-    RouteButton[] routeButtons = [discordButton, skyblockButton];
+    RouteButton discord = new RouteButton(UtilityP.Routes[RouteP.DISCORD], "Discord", "/content/discord.png");
+    RouteButton skyblock = new RouteButton(UtilityP.Routes[RouteP.SKYBLOCK], "Skyblock", "/content/grass_block.png");
+    RouteButton[] routeButtons = [discord, skyblock];
     string logoID = "logo";
     string className = "";
 
@@ -21,13 +23,6 @@
         <script src="~/js/htmx.min.js"></script>
         <script src="~/js/_hyperscript.min.js"></script>
         <script src="~/js/site.js" defer></script>
-
-        @if (Settings.ENVIRONMENT != "production")
-        {
-            <script src="https://unpkg.com/@@tailwindcss/browser@4"></script>
-        }
-
-
     </head>
     <body class="p-2 flex flex-col">
         <header class="flex flex-col self-center w-full gap-2">
@@ -38,7 +33,7 @@
                 <h1 class="font-bold text-center">KatBot</h1>
                 <p class="text-xs">here lies: useless crap</p>
             </div>
-            <div class="flex justify-center gap-5 *:w-32">
+            <div class="flex justify-center gap-2 [&>*]:w-32">
                 @foreach (RouteButton routeButton in routeButtons)
                 {
                     <partial name="_RouteButton" model="@(routeButton)" />

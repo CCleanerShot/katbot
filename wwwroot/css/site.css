@@ -1,13 +1,17 @@
 :root {
     --transition-time: 0.1s;
-    --primary-color: #FFDDFF;
-    --secondary-color: #DDFFDD;
+    --primary-color: #FFCCFF;
+    --secondary-color: #CCFFCC;
 }
 
 body {
     background-image: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
     font-family: monospace;
     min-height: 100vh;
+}
+
+input {
+    outline: auto;
 }
 
 .animate-jump-text {
@@ -35,9 +39,17 @@ body {
 }
 
 .button:hover {
-    background-color: cyan;
+    background-color: var(--primary-color);
     rotate: 2deg;
     scale: 105%;
+}
+
+.form input {
+    padding: 0.2rem;
+}
+
+.form input:focus {
+    background-color: var(--secondary-color);
 }
 
 .relative-center {
@@ -46,3 +58,4 @@ body {
     top: 50%;
     transform: translate(-50%, -50%);
 }
+

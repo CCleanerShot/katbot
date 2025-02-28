@@ -13,7 +13,7 @@ public partial class DiscordCommands : InteractionModuleBase
     {
         try
         {
-            List<AuctionBuy> response = (await MongoBot.AuctionBuy.FindAsync(e => e.ID == itemID && e.UserId == Context.User.Id)).ToList();
+            List<AuctionBuy> response = await MongoBot.AuctionBuy.FindList(e => e.ID == itemID && e.UserId == Context.User.Id);
 
             if (response.Count != 0)
             {

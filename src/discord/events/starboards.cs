@@ -63,71 +63,53 @@ public partial class DiscordEvents
                 break;
         }
 
-
         IUserMessage userMessage = await message.GetOrDownloadAsync();
-        List<Starboards>? response = (await MongoBot.Starboards.FindAsync(e => e.MessageStarredId == message.Id)).ToList();
-        RestUserMessage? existingMessage = await starboardsChannel!.GetMessageAsync(response.First().MessageId) as RestUserMessage;
+        List<Starboards> response = await MongoBot.Starboards.FindList(e => e.MessageStarredId == message.Id);
         EmbedFooterBuilder footer = new EmbedFooterBuilder().WithText($"{Starboards_Emote}{users!.Count()} • {userMessage.CreatedAt.UtcDateTime.ToString("M/d/yyyy HH:mm:ss")}");
+        RestUserMessage existingMessage;
 
-        if (existingMessage == null)
+        if (response.Count != 0)
+            existingMessage = (await starboardsChannel!.GetMessageAsync(response.First().MessageId) as RestUserMessage)!;
+        else
         {
-            Program.Utility.Log(Enums.LogLevel.WARN, "Found the message in the database, but the message has disappeared.");
-            return;
+            // a new starboard should never be below
+            if (users.Count() < Starboards_Threshold)
+                return;
+
+            EmbedFieldBuilder authorField = new EmbedFieldBuilder()
+                .WithName("Author")
+                .WithIsInline(true)
+                .WithValue($"<@{userMessage.Author.Id}>");
+            EmbedFieldBuilder sourceField = new EmbedFieldBuilder()
+                .WithName("Channel")
+                .WithIsInline(true)
+                .WithValue($"{userMessage.GetJumpUrl()}");
+            EmbedFieldBuilder messageField = new EmbedFieldBuilder()
+                .WithName("Message")
+                .WithValue("N/A");
+            EmbedBuilder embedBuilder = new EmbedBuilder()
+                .WithColor(Color.Red)
+                .WithFields([authorField, sourceField, messageField])
+                .WithFooter(footer);
+
+            if (userMessage.Content != "" && userMessage.Content != null)
+                messageField.WithValue($"{userMessage.Content}");
+
+            if (userMessage.Attachments.Count > 0)
+                embedBuilder.WithImageUrl(userMessage.Attachments.First().Url);
+
+            if (userMessage.Embeds.Count > 0)
+                if (userMessage.Embeds.First().Url != null && userMessage.Embeds.First().Url != "")
+                    embedBuilder.WithImageUrl(userMessage.Embeds.First().Url);
+
+            existingMessage = await starboardsChannel.SendMessageAsync("", false, embedBuilder.Build());
+            await MongoBot.Starboards.InsertOneAsync(new Starboards() { MessageId = existingMessage.Id, MessageStarredId = message.Id });
         }
 
         switch (reactionCase)
         {
             case ReactionCase.ADD:
                 Program.Utility.Log(Enums.LogLevel.NONE, $"{existingMessage.Author.GlobalName} added a star (message: {existingMessage.Content}, id: {existingMessage.Id}).");
-
-                if (response.Count != 0)
-                    break;
-
-                try
-                {
-                    EmbedFieldBuilder authorField = new EmbedFieldBuilder()
-                        .WithName("Author")
-                        .WithIsInline(true)
-                        .WithValue($"<@{userMessage.Author.Id}>");
-                    EmbedFieldBuilder sourceField = new EmbedFieldBuilder()
-                        .WithName("Channel")
-                        .WithIsInline(true)
-                        .WithValue($"{userMessage.GetJumpUrl()}");
-                    EmbedFieldBuilder messageField = new EmbedFieldBuilder()
-                        .WithName("Message")
-                        .WithValue("N/A");
-                    EmbedBuilder embedBuilder = new EmbedBuilder()
-                        .WithColor(Color.Red)
-                        .WithFields([authorField, sourceField, messageField])
-                        .WithFooter(footer);
-
-                    if (userMessage.Content != "" && userMessage.Content != null)
-                        messageField.WithValue($"{userMessage.Content}");
-
-                    if (userMessage.Attachments.Count > 0)
-                        embedBuilder.WithImageUrl(userMessage.Attachments.First().Url);
-
-                    if (userMessage.Embeds.Count > 0)
-                        if (userMessage.Embeds.First().Url != null && userMessage.Embeds.First().Url != "")
-                            embedBuilder.WithImageUrl(userMessage.Embeds.First().Url);
-
-                    RestUserMessage discordResponse = await starboardsChannel.SendMessageAsync("", false, embedBuilder.Build());
-
-                    Starboards starboardMessage = new Starboards()
-                    {
-                        MessageId = discordResponse.Id,
-                        MessageStarredId = message.Id,
-                    };
-
-                    await MongoBot.Starboards.InsertOneAsync(starboardMessage);
-                }
-
-                catch (Exception)
-                {
-                    Program.Utility.Log(Enums.LogLevel.ERROR, $"An unexpected error has occured while creating the starboard message! (Message ID: {userMessage.Id})");
-                    throw;
-                }
-
                 break;
             case ReactionCase.REMOVE:
                 Program.Utility.Log(Enums.LogLevel.NONE, $"{existingMessage.Author.GlobalName} removed a star (message: {existingMessage.Content}, id: {existingMessage.Id}).");
