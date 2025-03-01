@@ -2,7 +2,18 @@
 @model SkyblockBazaarModel
 
 <div>
-    <button hx-post="/items" hx-headers="{'test': 'myvalue'}">asdads</button>
+    <button hx-post="@(UtilityP.Routes[RouteP.SKYBLOCK_BAZAAR])" hx-target="#results"
+        hx-indicator="#test">asdads</button>
     <span>test</span>
     <span>testing</span>
+    <div class="flex flex-col">
+        @foreach (BazaarItem item in Model.BazaarBuy)
+        {
+            <span>@(item.Name)</span>
+        }
+    </div>
+    <span>@(Model.BazaarBuy.Count)</span>
+    <span>@(Model.Test)</span>
+    <span id="results">PUT HERE</span>
+    <span id="test" class="htmx-indicator bg-red-500">block</span>
 </div>

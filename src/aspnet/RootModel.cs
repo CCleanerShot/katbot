@@ -15,9 +15,9 @@ public abstract class RootModel : PageModel
     }
 
     public virtual async Task<IActionResult> CustomGet() { return Page(); }
-    public virtual async Task CustomPost() { return; }
+    public virtual async Task<IActionResult> CustomPost() { return BadRequest("No such route exists!"); }
     public virtual async Task<IActionResult> HTMX_Get() { return BadRequest("No such HTMX route exists!"); }
-    public virtual async Task HTMX_Post() { return; }
+    public virtual async Task<IActionResult> HTMX_Post() { return BadRequest("No such HTMX route exists!"); }
 
     public async Task<IActionResult> OnGet()
     {
@@ -27,11 +27,11 @@ public abstract class RootModel : PageModel
             return await CustomGet();
     }
 
-    public async Task OnPost()
+    public async Task<IActionResult> OnPost()
     {
         if (Request.IsHtmx())
-            await HTMX_Post();
+            return await HTMX_Post();
         else
-            await CustomPost();
+            return await CustomPost();
     }
 }

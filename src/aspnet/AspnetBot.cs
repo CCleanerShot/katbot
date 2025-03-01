@@ -11,8 +11,8 @@ public class AspnetBot
     {
         string fullPath = Program.Utility.GetASPPath(Settings.ASPNET_ROOT_DIRECTORY);
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
+        builder.Services.AddAntiforgery();
         builder.Services.AddRazorPages((options) => options.RootDirectory = $"{fullPath}/Pages");
-
         string url;
 
         if (Settings.ENVIRONMENT == "development")
@@ -36,6 +36,7 @@ public class AspnetBot
         builder.WebHost.UseStaticWebAssets();
         builder.WebHost.UseUrls([url]);
         WebApplication = builder.Build();
+        WebApplication.UseAntiforgery();
         WebApplication.UseHttpsRedirection();
         WebApplication.UseStaticFiles();
         WebApplication.MapRazorPages();

@@ -52,10 +52,17 @@ input {
     background-color: var(--secondary-color);
 }
 
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request.htmx-indicator {
+    display: block;
+}
+
 .relative-center {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
 }
-
