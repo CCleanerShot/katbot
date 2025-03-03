@@ -21,6 +21,9 @@ document.addEventListener("htmx:configRequest", (evt) => {
     }
 });
 
+//////////////////////////////////////////////////////////////
+// keep animation playing even after you move ur mouse away //
+//////////////////////////////////////////////////////////////
 const logoElement = document.getElementById("logo");
 logoElement.addEventListener("mouseover", () => logoElement.classList.add("animate-spin-logo"), {once: false})
 logoElement.addEventListener("animationiteration", () => logoElement.classList.remove("animate-spin-logo"), {once: false})

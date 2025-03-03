@@ -19,30 +19,38 @@
         <meta name="htmx-config" includeAspNetAntiforgeryToken="true" />
         <title class="bg-red-500">Document</title>
         <link rel="stylesheet" href="~/css/animations.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/media-query.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/selectors.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/css/tailwind.css" asp-append-version="true" />
         <script src="~/js/htmx.min.js"></script>
         <script src="~/js/_hyperscript.min.js"></script>
         <script src="~/js/site.js" defer></script>
     </head>
-    <body class="p-2 flex flex-col">
-        <header class="flex flex-col self-center w-full gap-2">
-            <div class="flex flex-col justify-center items-center">
-                <a href="/">
-                    <img id="@logoID" class="logo w-16 h-16" src="/content/katbot.png" />
-                </a>
-                <h1 class="font-bold text-center">KatBot</h1>
-                <p class="text-xs">here lies: useless crap</p>
-            </div>
-            <div class="flex justify-center gap-2 [&>*]:w-32">
-                @foreach (RouteButton routeButton in routeButtons)
-                {
-                    <partial name="_RouteButton" model="@(routeButton)" />
-                }
-            </div>
-        </header>
-        <main class="flex-1 @className">
-            @RenderBody()
-        </main>
+    <body>
+        <partial name="_Modal" />
+        <div class="flex flex-col h-screen">
+            <header class="flex flex-col self-center w-full gap-2 pt-2">
+                <div class="flex flex-col justify-center items-center">
+                    <a href="/">
+                        <img id="@logoID" class="logo w-12 h-12" src="/content/katbot.png" />
+                    </a>
+                    <h1 class="font-bold text-center">KatBot</h1>
+                    @if (Context.Request.Path == "/")
+                    {
+                        <p class="text-xs">here lies: useless crap</p>
+                    }
+                </div>
+                <div class="flex justify-center gap-2 [&>*]:w-32">
+                    @foreach (RouteButton routeButton in routeButtons)
+                    {
+                        <partial name="_RouteButton" model="@(routeButton)" />
+                    }
+                </div>
+            </header>
+            <main class="flex-1 @className">
+                @RenderBody()
+            </main>
+        </div>
     </body>
 </html>

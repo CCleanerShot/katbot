@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace skyblock_bot.Pages;
 
-public class SkyblockModel : SkyblockBaseModel
+public class SkyblockModel : AuthorizedModel
 {
     public SkyblockModel(ILogger<SkyblockModel> logger) : base(logger) { }
 

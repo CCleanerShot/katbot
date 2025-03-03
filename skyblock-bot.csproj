@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NoWarn>IDE0028,CS1998</NoWarn>
+    <ScopedCssEnabled>true</ScopedCssEnabled>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Htmx" Version="1.8.1" />

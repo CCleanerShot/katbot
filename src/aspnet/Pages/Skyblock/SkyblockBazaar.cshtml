@@ -1,19 +1,21 @@
 @page "/skyblock/bazaar"
 @model SkyblockBazaarModel
 
-<div>
-    <button hx-post="@(UtilityP.Routes[RouteP.SKYBLOCK_BAZAAR])" hx-target="#results"
-        hx-indicator="#test">asdads</button>
-    <span>test</span>
-    <span>testing</span>
-    <div class="flex flex-col">
-        @foreach (BazaarItem item in Model.BazaarBuy)
-        {
-            <span>@(item.Name)</span>
-        }
+<div class="flex">
+    <div id="bazaar-buys" class="bazaar-column relative">
+        <button class="button w-24 group relative" hx-get="@(UtilityP.Routes[RouteP.HTMX_BAZAAR_BUY])"
+            hx-target="#@(UtilityP.HTMX[Target.BZ_BUY_RESULTS])" hx-indicator="#@(UtilityP.HTMX[Target.LOADING_ICON])">
+            <span class="visible group-hover:invisible">BUYS</span>
+            <span class="absolute-center invisible group-hover:visible">REFRESH</span>
+        </button>
+        <div id="@(UtilityP.HTMX[Target.BZ_BUY_RESULTS])"></div>
     </div>
-    <span>@(Model.BazaarBuy.Count)</span>
-    <span>@(Model.Test)</span>
-    <span id="results">PUT HERE</span>
-    <span id="test" class="htmx-indicator bg-red-500">block</span>
+    <div id="bazaar-sells" class="bazaar-column relative">
+        <button class="button w-24 group relative" hx-get="@(UtilityP.Routes[RouteP.HTMX_BAZAAR_SELL])"
+            hx-target="#@(UtilityP.HTMX[Target.BZ_SELL_RESULTS])" hx-indicator="#@(UtilityP.HTMX[Target.LOADING_ICON])">
+            <span class="visible group-hover:invisible">SELLS</span>
+            <span class="absolute-center invisible group-hover:visible">REFRESH</span>
+        </button>
+        <div id="@(UtilityP.HTMX[Target.BZ_SELL_RESULTS])"></div>
+    </div>
 </div>

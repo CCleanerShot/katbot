@@ -5,8 +5,8 @@
     RouteButton[] routeButtons = [bazaar, auctions];
 }
 
-<div>
-    <div class="border-t-2 border-b-2 border-black m-2 flex gap-2 justify-center p-2 items-center [&>*]:w-24">
+<div class="border-2 border-black border-x-0 mt-2">
+    <div class="border-b-2 border-black flex gap-2 justify-center p-2 items-center [&>*]:w-24">
         @foreach (RouteButton routeButton in routeButtons)
         {
             <partial name="_RouteButton" model="@(routeButton)" />

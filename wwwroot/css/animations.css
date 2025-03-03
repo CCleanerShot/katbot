@@ -1,6 +1,6 @@
 @keyframes spin-logo {
     0% { rotate: 0deg; }
-    50% { rotate: 365deg; scale: 110%; width: 4.5rem;  }
+    50% { rotate: 365deg; scale: 110%; width: 4.0rem;  }
     100% { rotate: 360deg;  }
 }
 

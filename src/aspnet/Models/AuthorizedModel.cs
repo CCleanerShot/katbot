@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using skyblock_bot.Pages;
 
-public abstract class SkyblockBaseModel : RootModel
+public abstract class AuthorizedModel : RootModel
 {
-    public SkyblockBaseModel(ILogger<RootModel> logger) : base(logger) { }
+    public AuthorizedModel(ILogger<RootModel> logger) : base(logger) { }
 
     public virtual async Task<IActionResult> CustomCustomGet()
     {

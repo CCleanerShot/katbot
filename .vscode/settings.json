@@ -8,4 +8,5 @@
 	"html.format.indentInnerHtml": true,
 	"html.format.extraLiners": "",
 	"omnisharp.disableMSBuildDiagnosticWarning": true,
+	"html-css-class-completion.includeGlobPattern": "**/*.{css,html}"
 }
