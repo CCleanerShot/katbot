@@ -8,7 +8,6 @@ public class Settings
     #region  PRIVATE should not be exposed
     public static string ADMIN_1 = "";
     public static string ADMIN_2 = "";
-    public static string ASPNET_ROOT_DIRECTORY = "";
     public static ulong DISCORD_APPLICATION_ID = 0;
     public static ulong DISCORD_HYPIXEL_ALERTS_CHANNEL_ID = 0;
     public static ulong DISCORD_MAIN_CHANNEL_ID = 0;
@@ -95,8 +94,6 @@ public class Settings
                 ADMIN_1 = lines[1];
             else if (lines[0] == "ADMIN_2")
                 ADMIN_2 = lines[1];
-            else if (lines[0] == "ASPNET_ROOT_DIRECTORY")
-                ASPNET_ROOT_DIRECTORY = lines[1];
             else if (lines[0] == "DISCORD_APPLICATION_ID")
                 DISCORD_APPLICATION_ID = UInt64.Parse(lines[1]);
             else if (lines[0] == "DISCORD_HYPIXEL_ALERTS_CHANNEL_ID")

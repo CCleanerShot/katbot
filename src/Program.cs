@@ -28,7 +28,6 @@ public class Program
 
             // await DiscordBot.Initialize();
             await MongoBot.Load();
-            // AspnetBot.Start();
 
             // // keeps program running
             await Task.Delay(-1);
