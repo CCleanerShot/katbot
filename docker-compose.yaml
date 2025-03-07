@@ -1,0 +1,12 @@
+version: "27"
+services:
+  discord-bot:
+    build: ./apps/discord-bot
+    env_file:
+      - ./apps/discord-bot/.env
+  website:
+    build: ./apps/website
+    env_file:
+      - ./apps/website/.env
+    ports:
+      - "80:5050"

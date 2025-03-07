@@ -1,7 +1,31 @@
+###############
+# DISCORD-BOT #
+###############
 .env*
 bin
-obj
 logs/*
 node_modules
+obj
 package-lock.json
-/tailwind.config.js
+tailwind.config.js
+
+###########
+# WEBSITE #
+###########
+node_modules
+
+!.env.example
+!.env.test
+.DS_Store
+.env
+.env.*
+.output
+.svelte-kit
+.netlify
+.vercel
+.wrangler
+build
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+

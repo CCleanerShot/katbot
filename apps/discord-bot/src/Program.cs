@@ -25,8 +25,7 @@ public class Program
             Settings.Load();
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
-
-            // await DiscordBot.Initialize();
+            await DiscordBot.Initialize();
             await MongoBot.Load();
 
             // // keeps program running
@@ -43,7 +42,7 @@ public class Program
     static void SaveSession()
     {
         Utility.Log(Enums.LogLevel.NONE, "Saving log to file...");
-        using StreamWriter writer = new StreamWriter("./logs/" + DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm") + ".txt");
+        using StreamWriter writer = new StreamWriter("./logs/" + DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm") + ".txt", true);
         writer.Write(Utility.LogLine);
     }
 }

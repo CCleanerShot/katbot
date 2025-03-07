@@ -15,7 +15,6 @@ public class Settings
     public static ulong DISCORD_SEND_CHANNEL_ID = 0;
     public static ulong DISCORD_STARBOARDS_CHANNEL_ID = 0;
     public static string DISCORD_TOKEN = "";
-    public static string ENVIRONMENT = "";
     public static string HYPIXEL_API_BASE_URL = "";
     public static string HYPIXEL_BOT_KEY = "";
     public static string ID_BOT = "";
@@ -75,6 +74,7 @@ public class Settings
     /// </summary>
     static void LoadENV()
     {
+#if DEBUG
         using StreamReader streamReader = new StreamReader(".env");
         string? line = null;
 
@@ -108,8 +108,6 @@ public class Settings
                 DISCORD_STARBOARDS_CHANNEL_ID = UInt64.Parse(lines[1]);
             else if (lines[0] == "DISCORD_TOKEN")
                 DISCORD_TOKEN = lines[1];
-            else if (lines[0] == "ENVIRONMENT")
-                ENVIRONMENT = lines[1];
             else if (lines[0] == "HYPIXEL_API_BASE_URL")
                 HYPIXEL_API_BASE_URL = lines[1];
             else if (lines[0] == "HYPIXEL_BOT_KEY")
@@ -150,14 +148,44 @@ public class Settings
                 MONGODB_DATABASE_GENERAL = lines[1];
             else if (lines[0] == "MONGODB_URI")
                 MONGODB_URI = lines[1];
-            else if (lines[0] == "SITE_URL_1")
-                SITE_URL_1 = lines[1];
             else if (lines[0] == "TEST_DISCORD_GUILD_ID")
                 TEST_DISCORD_GUILD_ID = UInt64.Parse(lines[1]);
             else
                 Program.Utility.Log(Enums.LogLevel.WARN, $"The key was not implemented yet. Intentional? (at {lines[0]})");
-
         } while (line != null);
+#else
+            Console.WriteLine(Environment.GetEnvironmentVariables());
+            ADMIN_1 = Environment.GetEnvironmentVariable("ADMIN_1");
+            ADMIN_2 = Environment.GetEnvironmentVariable("ADMIN_2");
+            DISCORD_APPLICATION_ID = UInt64.Parse(Environment.GetEnvironmentVariable("DISCORD_APPLICATION_ID"));
+            DISCORD_HYPIXEL_ALERTS_CHANNEL_ID = UInt64.Parse(Environment.GetEnvironmentVariable("DISCORD_HYPIXEL_ALERTS_CHANNEL_ID"));
+            DISCORD_MAIN_CHANNEL_ID = UInt64.Parse(Environment.GetEnvironmentVariable("DISCORD_MAIN_CHANNEL_ID"));
+            DISCORD_PUBLIC_KEY = Environment.GetEnvironmentVariable("DISCORD_PUBLIC_KEY");
+            DISCORD_SEND_CHANNEL_ID = UInt64.Parse(Environment.GetEnvironmentVariable("DISCORD_SEND_CHANNEL_ID"));
+            DISCORD_STARBOARDS_CHANNEL_ID = UInt64.Parse(Environment.GetEnvironmentVariable("DISCORD_STARBOARDS_CHANNEL_ID"));
+            DISCORD_TOKEN = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+            HYPIXEL_API_BASE_URL = Environment.GetEnvironmentVariable("HYPIXEL_API_BASE_URL");
+            HYPIXEL_BOT_KEY = Environment.GetEnvironmentVariable("HYPIXEL_BOT_KEY");
+            ID_BOT = Environment.GetEnvironmentVariable("ID_BOT");
+            ID_CARLOS = Environment.GetEnvironmentVariable("ID_CARLOS");
+            ID_KELINIMO = Environment.GetEnvironmentVariable("ID_KELINIMO");
+            ID_RAMOJUSD = Environment.GetEnvironmentVariable("ID_RAMOJUSD");
+            ID_VOLATILE = Environment.GetEnvironmentVariable("ID_VOLATILE");
+            MONGODB_COLLECTION_AUCTION_BUY = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_AUCTION_BUY");
+            MONGODB_COLLECTION_AUCTION_ITEMS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_AUCTION_ITEMS");
+            MONGODB_COLLECTION_AUCTION_TAGS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_AUCTION_TAGS");
+            MONGODB_COLLECTION_BAZAAR_BUY = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_BAZAAR_BUY");
+            MONGODB_COLLECTION_BAZAAR_ITEMS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_BAZAAR_ITEMS");
+            MONGODB_COLLECTION_BAZAAR_SELL = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_BAZAAR_SELL");
+            MONGODB_COLLECTION_ROLL_STATS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_ROLL_STATS");
+            MONGODB_COLLECTION_STARBOARDS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_STARBOARDS");
+            MONGODB_COLLECTION_USERS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_USERS");
+            MONGODB_DATABASE_DISCORD = Environment.GetEnvironmentVariable("MONGODB_DATABASE_DISCORD");
+            MONGODB_DATABASE_HYPIXEL = Environment.GetEnvironmentVariable("MONGODB_DATABASE_HYPIXEL");
+            MONGODB_DATABASE_GENERAL = Environment.GetEnvironmentVariable("MONGODB_DATABASE_GENERAL");
+            MONGODB_URI = Environment.GetEnvironmentVariable("MONGODB_URI");
+            TEST_DISCORD_GUILD_ID = UInt64.Parse(Environment.GetEnvironmentVariable("TEST_DISCORD_GUILD_ID"));
+#endif
     }
 }
 

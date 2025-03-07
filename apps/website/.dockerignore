@@ -1,0 +1,9 @@
+.dockerignore
+.prettierignore
+.prettierrc
+.svelte-kit
+Dockerfile
+build
+e2e
+node-modules
+playwright.config.ts

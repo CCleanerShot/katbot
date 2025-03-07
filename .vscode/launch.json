@@ -11,9 +11,9 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             
-            "program": "${workspaceFolder}/bin/Debug/net8.0/skyblock-bot.dll",
+            "program": "${workspaceFolder}/apps/discord-bot/bin/Debug/net8.0/skyblock-bot.dll",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/apps/discord-bot",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
             "stopAtEntry": false,
