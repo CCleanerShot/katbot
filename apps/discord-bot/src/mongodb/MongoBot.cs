@@ -33,7 +33,7 @@ public class MongoBot
     {
         try
         {
-            _Uri = Settings.MONGODB_URI;
+            _Uri = Settings.MONGODB_BASE_URI + Settings.MONGODB_OPTIONS;
             _Client = new MongoClient(_Uri);
             _DiscordDB = _Client.GetDatabase(Settings.MONGODB_DATABASE_DISCORD);
             _GeneralDB = _Client.GetDatabase(Settings.MONGODB_DATABASE_GENERAL);

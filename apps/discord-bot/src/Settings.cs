@@ -22,6 +22,7 @@ public class Settings
     public static string ID_KELINIMO = "";
     public static string ID_RAMOJUSD = "";
     public static string ID_VOLATILE = "";
+    public static string MONGODB_BASE_URI = "";
     public static string MONGODB_COLLECTION_AUCTION_BUY = "";
     public static string MONGODB_COLLECTION_AUCTION_ITEMS = "";
     public static string MONGODB_COLLECTION_AUCTION_TAGS = "";
@@ -34,7 +35,7 @@ public class Settings
     public static string MONGODB_DATABASE_DISCORD = "";
     public static string MONGODB_DATABASE_GENERAL = "";
     public static string MONGODB_DATABASE_HYPIXEL = "";
-    public static string MONGODB_URI = "";
+    public static string MONGODB_OPTIONS = "";
     public static string PATH_OBAMA = "";
     public static string SITE_URL_1 = "";
     public static ulong TEST_DISCORD_GUILD_ID = 0;
@@ -122,6 +123,8 @@ public class Settings
                 ID_RAMOJUSD = lines[1];
             else if (lines[0] == "ID_VOLATILE")
                 ID_VOLATILE = lines[1];
+            else if (lines[0] == "MONGODB_BASE_URI")
+                MONGODB_BASE_URI = lines[1];
             else if (lines[0] == "MONGODB_COLLECTION_AUCTION_BUY")
                 MONGODB_COLLECTION_AUCTION_BUY = lines[1];
             else if (lines[0] == "MONGODB_COLLECTION_AUCTION_ITEMS")
@@ -146,8 +149,8 @@ public class Settings
                 MONGODB_DATABASE_HYPIXEL = lines[1];
             else if (lines[0] == "MONGODB_DATABASE_GENERAL")
                 MONGODB_DATABASE_GENERAL = lines[1];
-            else if (lines[0] == "MONGODB_URI")
-                MONGODB_URI = lines[1];
+            else if (lines[0] == "MONGODB_OPTIONS")
+                MONGODB_OPTIONS = lines[1];
             else if (lines[0] == "TEST_DISCORD_GUILD_ID")
                 TEST_DISCORD_GUILD_ID = UInt64.Parse(lines[1]);
             else

@@ -15,7 +15,7 @@ public class BazaarItem
     /// </summary>
     public string Name = "";
     /// <summary>
-    /// The type of order the watch is, from.
+    /// The type of order the watch is for.
     /// </summary>
     public Enums.OrderType OrderType;
     /// <summary>
