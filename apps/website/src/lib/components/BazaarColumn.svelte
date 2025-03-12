@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { BazaarItem } from '$lib/mongodb/_shared/BazaarItem';
+	import { BazaarItem } from '$lib/mongodb/BazaarItem';
 	import type { API_CONTRACTS } from '$lib/other/apiContracts';
 	import { clientFetch } from '$lib/other/clientFetch';
 	import { bazaarState } from '$lib/states/bazaarState.svelte';
@@ -22,6 +22,7 @@
 		}
 
 		const json = await response.JSON();
+		bazaarState[type] = json.data.map((e) => BazaarItem.ToClass(e));
 	};
 
 	const deleteOnClick = async (item: BazaarItem, index: number) => {
@@ -68,9 +69,8 @@
 							<td>{item.OrderTypeString()}</td>
 							<td>{item.RemovedAfter ? 'YES' : 'NO'}</td>
 							<td class="invisible px-1 group-hover:visible">
-								<button
-									class="remove-button hover:scale:105 button-border bg-red-500 px-1"
-									onclick={() => deleteOnClick(item, index)}>X</button
+								<button class="remove-button hover:scale:105 button-border bg-red-500 px-1" onclick={() => deleteOnClick(item, index)}
+									>X</button
 								>
 							</td>
 						</tr>

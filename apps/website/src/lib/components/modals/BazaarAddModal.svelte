@@ -1,24 +1,22 @@
 <script lang="ts">
+	import Modal from './Modal.svelte';
 	import { API_CONTRACTS } from '$lib/other/apiContracts';
 	import { modalState } from '$lib/states/modalState.svelte';
-	import AutoComplete from '../AutoComplete.svelte';
-	import Modal from './Modal.svelte';
+	import BazaarItemsAllAutoComplete from '../autocompletes/BazaarItemsAllAutoComplete.svelte';
 
 	const { BazaarAddModal } = modalState;
 
 	let action = $derived(
-		BazaarAddModal.type === 'BUYS'
-			? API_CONTRACTS['POST=>/api/bazaar/buy']['route']
-			: API_CONTRACTS['POST=>/api/bazaar/sell']['route']
+		BazaarAddModal.type === 'BUYS' ? API_CONTRACTS['POST=>/api/bazaar/buy']['route'] : API_CONTRACTS['POST=>/api/bazaar/sell']['route']
 	);
 </script>
 
 <Modal modal="BazaarAddModal">
-	<form method="POST" {action} class="flex flex-1 flex-col items-center justify-center gap-1 p-1">
-		<div id="container" class=" flex flex-col gap-1 border border-black p-3">
+	<form method="POST" {action} class="flex flex-1 flex-col items-center justify-center gap-1 p-2">
+		<div id="container" class="flex flex-1 flex-col gap-1 border border-black p-3">
 			<div>
 				<label for="name">Name</label>
-				<AutoComplete type="BAZAAR" inputProps={{ id: 'name', class: 'input' }} />
+				<BazaarItemsAllAutoComplete inputProps={{ class: 'input' }} />
 			</div>
 			<div>
 				<label for="price">Price</label>
@@ -49,7 +47,7 @@
 	}
 
 	#container > div > label {
-		width: 4.5rem;
+		width: 50%;
 		cursor: pointer;
 	}
 </style>

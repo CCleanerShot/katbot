@@ -38,6 +38,6 @@
 		"vitest": "3.0.8"
 	},
 	"dependencies": {
-		"mongoose": "^8.12.1"
+		"mongodb": "^6.14.2"
 	}
 }

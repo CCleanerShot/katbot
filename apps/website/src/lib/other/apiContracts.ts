@@ -1,6 +1,6 @@
 import type { Routes } from "$lib/other/routes";
-import type { BazaarItem } from "$lib/mongodb/_shared/BazaarItem";
-import type { BazaarItemsAll } from "$lib/mongodb/BazaarItemsAll/interface";
+import type { BazaarItem } from "$lib/mongodb/BazaarItem";
+import type { BazaarItemsAll } from "$lib/mongodb/collections/BazaarItemsAll";
 
 type ApiContract = {
 	method: 'GET' | 'POST' | 'DELETE' | 'PATCH';
@@ -25,16 +25,30 @@ const GET_API_BAZAAR = {
 	statusCode: 200,
 	params: {},
 } as const satisfies ApiContract;
+const GET_API_BAZAAR_BUY = {
+	method: 'GET',
+	response: { data: [] as BazaarItem[] } as const,
+	route: '/api/bazaar/buy',
+	statusCode: 200,
+	params: { userId: 0n as bigint } as const
+} as const satisfies ApiContract;
 const GET_API_BAZAAR_SELL = {
 	method: 'GET',
-	response: { data: [] as BazaarItemsAll[] } as const,
+	response: { data: [] as BazaarItem[] } as const,
 	route: '/api/bazaar/sell',
 	statusCode: 200,
 	params: { userId: 0n as bigint } as const
 } as const satisfies ApiContract;
+const DELETE_API_BAZAAR_BUY = {
+	method: 'DELETE',
+	response: "" as string,
+	route: '/api/bazaar/buy',
+	statusCode: 200,
+	params: { Name: '' as string } as const
+} as const satisfies ApiContract;
 const DELETE_API_BAZAAR_SELL = {
 	method: 'DELETE',
-	response: { data: [] as BazaarItemsAll[] } as const,
+	response: "" as string,
 	route: '/api/bazaar/sell',
 	statusCode: 200,
 	params: { Name: '' as string } as const
@@ -58,9 +72,9 @@ const POST_API_BAZAAR_BUY = {
 export const API_CONTRACTS = {
 	'GET=>/api/auctions': GET_API_AUCTIONS,
 	'GET=>/api/bazaar': GET_API_BAZAAR,
-	'GET=>/api/bazaar/buy': GET_API_BAZAAR_SELL, // TODO: implement
+	'GET=>/api/bazaar/buy': GET_API_BAZAAR_BUY,
 	'GET=>/api/bazaar/sell': GET_API_BAZAAR_SELL,
-	'DELETE=>/api/bazaar/buy': DELETE_API_BAZAAR_SELL, // TODO: implement
+	'DELETE=>/api/bazaar/buy': DELETE_API_BAZAAR_BUY,
 	'DELETE=>/api/bazaar/sell': DELETE_API_BAZAAR_SELL,
 	'POST=>/api/bazaar/buy': POST_API_BAZAAR_BUY,
 	'POST=>/api/bazaar/sell': POST_API_BAZAAR_SELL,

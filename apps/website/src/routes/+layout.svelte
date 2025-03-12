@@ -13,7 +13,6 @@
 	});
 
 	let pageData = $derived(pageState.page.data);
-	$inspect(pageData);
 </script>
 
 <svelte:head>
