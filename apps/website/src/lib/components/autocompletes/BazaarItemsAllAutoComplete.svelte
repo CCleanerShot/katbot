@@ -3,6 +3,7 @@
 	import type { ArrayType } from '$lib/types';
 	import type { SvelteHTMLElements } from 'svelte/elements';
 	import AutoComplete from './AutoComplete.svelte';
+	import { getContext } from 'svelte';
 
 	type Props = {
 		containerProps?: SvelteHTMLElements['div'];

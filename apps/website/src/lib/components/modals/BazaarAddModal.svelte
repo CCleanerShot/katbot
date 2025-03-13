@@ -3,32 +3,50 @@
 	import { API_CONTRACTS } from '$lib/other/apiContracts';
 	import { modalState } from '$lib/states/modalState.svelte';
 	import BazaarItemsAllAutoComplete from '../autocompletes/BazaarItemsAllAutoComplete.svelte';
+	import { page } from '$app/state';
 
 	const { BazaarAddModal } = modalState;
 
-	let action = $derived(
-		BazaarAddModal.type === 'BUYS' ? API_CONTRACTS['POST=>/api/bazaar/buy']['route'] : API_CONTRACTS['POST=>/api/bazaar/sell']['route']
-	);
+	let element: HTMLFormElement;
+	let action = $derived(BazaarAddModal.type === 'BUYS' ? API_CONTRACTS['FORM=>/?create/buy'] : API_CONTRACTS['FORM=>/?create/sell']);
+
+	const onsubmit = async (e: SubmitEvent) => {
+		e.preventDefault();
+
+		const response = await fetch(action['route'], {
+			body: new FormData(element),
+			method: 'POST'
+		});
+
+		console.log(response);
+		return e;
+	};
 </script>
 
 <Modal modal="BazaarAddModal">
-	<form method="POST" {action} class="flex flex-1 flex-col items-center justify-center gap-1 p-2">
+	<form bind:this={element} method="POST" class="flex flex-1 flex-col items-center justify-center gap-1 p-2" {onsubmit}>
 		<div id="container" class="flex flex-1 flex-col gap-1 border border-black p-3">
 			<div>
 				<label for="name">Name</label>
-				<BazaarItemsAllAutoComplete inputProps={{ class: 'input' }} />
+				<BazaarItemsAllAutoComplete inputProps={{ class: 'input', name: 'name' }} />
 			</div>
 			<div>
 				<label for="price">Price</label>
-				<input id="price" type="number" class="input" />
+				<input id="price" name="price" type="number" class="input" />
 			</div>
 			<div>
 				<label for="order-type" class="text-[10px]">Order Type</label>
-				<input id="order-type" type="number" class="input" />
+				<select id="order-type" name="order-type" class="input" value="order">
+					<option value="insta">INSTA</option>
+					<option value="order">ORDER</option>
+				</select>
 			</div>
 			<div>
 				<label for="remove-after" class="text-[10px]">Remove After?</label>
-				<input id="remove-after" type="number" class="input" />
+				<select id="remove-after" name="remove-after" class="input" value="true">
+					<option value="true">TRUE</option>
+					<option value="false">FALSE</option>
+				</select>
 			</div>
 		</div>
 		<button class="button-border mt-2 bg-green-500 p-1 px-2" type="submit">Create</button>
