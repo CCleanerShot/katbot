@@ -66,7 +66,7 @@
 						<tr class="group">
 							<td>{item.Name}</td>
 							<td>{item.Price}</td>
-							<td>{item.OrderTypeString()}</td>
+							<td>{BazaarItem.OrderTypeString(item)}</td>
 							<td>{item.RemovedAfter ? 'YES' : 'NO'}</td>
 							<td class="invisible px-1 group-hover:visible">
 								<button class="remove-button hover:scale:105 button-border bg-red-500 px-1" onclick={() => deleteOnClick(item, index)}

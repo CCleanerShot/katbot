@@ -3,15 +3,17 @@
 	import type { ArrayType } from '$lib/types';
 	import type { SvelteHTMLElements } from 'svelte/elements';
 	import AutoComplete from './AutoComplete.svelte';
-	import { getContext } from 'svelte';
+	import type { SvelteComponent } from 'svelte';
 
 	type Props = {
+		value: string;
+		bindInput?: SvelteComponent<HTMLInputElement>;
 		containerProps?: SvelteHTMLElements['div'];
 		inputProps?: SvelteHTMLElements['input'];
 		resultsProps?: SvelteHTMLElements['div'];
 	};
 
-	const { containerProps, inputProps, resultsProps }: Props = $props();
+	let { value = $bindable(''), bindInput = $bindable(), containerProps, inputProps, resultsProps }: Props = $props();
 	let allItems = $derived(cacheState['BAZAAR']);
 
 	const autoCompleteInput = (input: string) => {
@@ -36,4 +38,4 @@
 	};
 </script>
 
-<AutoComplete {autoCompleteInput} {containerProps} {inputProps} {resultsProps} />
+<AutoComplete {autoCompleteInput} {containerProps} {inputProps} {resultsProps} bind:value />

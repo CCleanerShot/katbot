@@ -56,14 +56,14 @@ const DELETE_API_BAZAAR_SELL = {
 const POST_API_BAZAAR_BUY = {
 	method: 'POST',
 	response: '' as string,
-	route: '/?/create-buy-item',
+	route: '/api/bazaar/sell',
 	statusCode: 200,
 	params: { item: {} as BazaarItem } as const
 } as const satisfies ApiContract;
 const POST_API_BAZAAR_SELL = {
 	method: 'POST',
 	response: '' as string,
-	route: '/?/create-sell-item',
+	route: '/api/bazaar/sell',
 	statusCode: 200,
 	params: { item: {} as BazaarItem } as const
 } as const satisfies ApiContract;
@@ -76,6 +76,6 @@ export const API_CONTRACTS = {
 	'GET=>/api/bazaar/sell': GET_API_BAZAAR_SELL,
 	'DELETE=>/api/bazaar/buy': DELETE_API_BAZAAR_BUY,
 	'DELETE=>/api/bazaar/sell': DELETE_API_BAZAAR_SELL,
-	'FORM=>/?create/buy': POST_API_BAZAAR_BUY,
-	'FORM=>/?create/sell': POST_API_BAZAAR_SELL
+	'POST=>/api/bazaar/buy': POST_API_BAZAAR_BUY,
+	'POST=>/api/bazaar/sell': POST_API_BAZAAR_SELL
 } as const satisfies Record<string, ApiContract>;

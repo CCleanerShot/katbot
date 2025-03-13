@@ -12,8 +12,15 @@ export const GET: RequestHandler = async ({ url }) => {
 };
 
 export const DELETE: RequestHandler = async ({ url }) => {
-	const { response, route, statusCode, params } = API_CONTRACTS['DELETE=>/api/bazaar/sell'];
+	const { params, response, route, statusCode } = API_CONTRACTS['DELETE=>/api/bazaar/sell'];
 	const name = url.searchParams.get('Name')! as typeof params.Name;
 	const mongoResponse = await mongoBot.MONGODB_COLLECTION_BAZAAR_SELL.Find({ Name: name });
+	return json('' as typeof response, { status: statusCode });
+};
+
+export const POST: RequestHandler = async ({ request, url }) => {
+	const data = await request.json();
+	console.log(data);
+	const { params, response, route, statusCode } = API_CONTRACTS['POST=>/api/bazaar/sell'];
 	return json('' as typeof response, { status: statusCode });
 };

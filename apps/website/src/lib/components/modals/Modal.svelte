@@ -5,9 +5,10 @@
 	type Props = {
 		children: Snippet<[]>;
 		modal: keyof typeof modalState;
+		id?: string;
 	};
 
-	const { modal, children }: Props = $props();
+	const { modal, children, id }: Props = $props();
 	const current = modalState[modal];
 
 	const onclick = () => {
@@ -16,7 +17,7 @@
 </script>
 
 <div
-	id="modal"
+	{id}
 	class={[
 		'absolute-center z-10 backdrop-blur-sm transition-all',
 		current.isOpened ? 'visible h-screen w-screen' : 'invisible h-[70vh] w-[70vw] rotate-3 opacity-0'

@@ -1,7 +1,7 @@
 export const ROUTES = {
 	API: [
-		'/?/create-buy-item',
-		'/?/create-sell-item',
+		'/skyblock/?/create-buy-item',
+		'/skyblock/?/create-sell-item',
 		'/api/auctions',
 		'/api/auctions/items',
 		'/api/bazaar',

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { ArrayType } from '$lib/types';
-	import { setContext } from 'svelte';
 	import type { SvelteHTMLElements } from 'svelte/elements';
 
 	type Props = {
 		autoCompleteInput: (input: string) => ArrayType;
+		value: string;
 		containerProps?: SvelteHTMLElements['div'];
 		inputProps?: SvelteHTMLElements['input'];
 		resultsProps?: SvelteHTMLElements['div'];
@@ -14,9 +14,8 @@
 		currentTarget: EventTarget & HTMLInputElement;
 	};
 
-	const { autoCompleteInput, containerProps, inputProps, resultsProps }: Props = $props();
+	let { autoCompleteInput, value = $bindable(), containerProps, inputProps, resultsProps }: Props = $props();
 	let autoCompleteResults = $state([] as ArrayType);
-	let value = $state('');
 
 	const onclick = (input: ArrayType[number]) => {
 		value = input.Name;

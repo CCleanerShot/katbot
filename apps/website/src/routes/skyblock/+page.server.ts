@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit';
+import { redirect, type Actions } from '@sveltejs/kit';
 
 export const load = ({}) => {
 	// TODO: add auth check

@@ -32,8 +32,8 @@ export class BazaarItem {
 		return { ID, Name, OrderType, Price, RemovedAfter, UserId } as BazaarItem;
 	}
 
-	public OrderTypeString(): string {
-		switch (this.OrderType) {
+	public static OrderTypeString(item: BazaarItem): string {
+		switch (item.OrderType) {
 			case OrderType.INSTA:
 				return 'INSTA';
 			case OrderType.ORDER:
