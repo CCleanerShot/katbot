@@ -45,6 +45,7 @@ main {
 	background-color: white;
 	border: 0.2rem solid black;
 	border-radius: 0.5rem;
+	cursor: pointer;
 	font-weight: 600;
 	padding: 0.3rem;
 	padding-left: 0.6rem;
@@ -81,4 +82,13 @@ main {
 
 .input:focus {
 	border: 1px solid var(--secondary-color);
+}
+
+.invalid {
+	border-color: red;
+}
+
+label:has(+ * .invalid),
+label:has(+ .invalid) {
+	color: red;
 }

@@ -2,28 +2,69 @@
 	import { toastsState } from '$lib/states/toastsState.svelte';
 	import type { ToastProps } from '$lib/types';
 	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 
-	let toasts = $state(toastsState);
+	let toasts = $derived(toastsState);
 	let { id, message, type }: ToastProps = $props();
+	let timer = $state(0);
 
 	const remove = () => {
 		const index = toasts.findIndex((e) => e.id === id);
-		console.log(index, toasts);
 		toasts.splice(index, 1);
 	};
 
+	const reset = () => {
+		clearTimeout(timer);
+	};
+
+	const setTimer = () => {
+		timer = setTimeout(remove, 5000 + toasts.length * 500);
+	};
+
 	onMount(() => {
-		setTimeout(() => remove, 2000);
+		setTimer();
+		return reset;
 	});
 
-	const onclick = () => remove;
-
-	let element: HTMLElement | undefined = $state();
-
-	const color = type === 'ERROR';
+	const color = type === 'ERROR' ? 'red' : type === 'NONE' ? 'green' : 'yellow';
 </script>
 
-<div bind:this={element} class={['button flex', type === 'ERROR' ? 'bg-red-500' : type === 'NONE' ? 'bg-green-500' : 'bg-yellow-500']}>
-	<span class="flex-1">{message}</span>
-	<button class="border-l-2 border-black" {onclick}>CLOSE</button>
-</div>
+<button onclick={remove} transition:fly={{ y: -100 }} onmouseenter={reset} onmouseleave={setTimer} class={['toast', color]}>
+	<span class="flex-1 p-0.5">{message}</span>
+</button>
+
+<style>
+	.toast {
+		cursor: pointer;
+		background-color: white;
+		border-left: 2px solid;
+		border-right: 2px solid;
+		border-radius: 0.5rem;
+		display: flex;
+		font-size: 0.5rem;
+		transition-property: all;
+		transition-duration: 0.2s;
+	}
+
+	.toast:hover {
+		background-color: black;
+		color: white;
+		padding-left: 2px;
+		padding-right: 2px;
+		border-left-width: 4px;
+		border-right-width: 4px;
+		transform: scale(105%);
+	}
+
+	.green {
+		border-color: green;
+	}
+
+	.yellow {
+		border-color: yellow;
+	}
+
+	.red {
+		border-color: red;
+	}
+</style>

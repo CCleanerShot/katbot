@@ -1,26 +1,47 @@
-import { mongoBot } from '$lib/mongodb/MongoBot';
+import { mongoBot } from '$lib/server/mongoBot';
 import { API_CONTRACTS } from '$lib/other/apiContracts';
-import { json, type Actions, type RequestHandler } from '@sveltejs/kit';
+import { json, type RequestHandler } from '@sveltejs/kit';
+import { utilityServer } from '$lib/server/utilityServer';
 
 // TODO: add middleware that validates the search params
-export const GET: RequestHandler = async ({ url }) => {
-	console.log('hello');
-	const { response, route, statusCode, params } = API_CONTRACTS['GET=>/api/bazaar/sell'];
-	const userId = BigInt(url.searchParams.get('userId')!) as typeof params.userId;
-	const mongoResponse = await mongoBot.MONGODB_COLLECTION_BAZAAR_SELL.Find({ UserId: userId });
+export const GET: RequestHandler = async ({ cookies, route, url }) => {
+	const { response, statusCode, params } = API_CONTRACTS['GET=>/api/bazaar/sell'];
+	const userId = BigInt(cookies.get('discordId') as any)!;
+
+	if (userId === null) {
+		return utilityServer.redirectToLogin(route);
+	}
+
+	const mongoResponse = await mongoBot.MONGODB_C_BAZAAR_SELL.Find({ UserId: userId });
 	return json({ data: mongoResponse } as typeof response, { status: statusCode });
 };
 
-export const DELETE: RequestHandler = async ({ url }) => {
-	const { params, response, route, statusCode } = API_CONTRACTS['DELETE=>/api/bazaar/sell'];
+export const DELETE: RequestHandler = async ({ cookies, url }) => {
+	const { params, response, statusCode } = API_CONTRACTS['DELETE=>/api/bazaar/sell'];
 	const name = url.searchParams.get('Name')! as typeof params.Name;
-	const mongoResponse = await mongoBot.MONGODB_COLLECTION_BAZAAR_SELL.Find({ Name: name });
+	const userId = BigInt(cookies.get('discordId') as any)!;
+	const existingItem = await mongoBot.MONGODB_C_BAZAAR_SELL.Find({ Name: name, UserId: userId });
+
+	if (existingItem !== null) {
+		await mongoBot.MONGODB_C_BAZAAR_SELL.DeleteOne({ Name: name, UserId: userId });
+	}
+
 	return json('' as typeof response, { status: statusCode });
 };
 
-export const POST: RequestHandler = async ({ request, url }) => {
-	const data = await request.json();
-	console.log(data);
-	const { params, response, route, statusCode } = API_CONTRACTS['POST=>/api/bazaar/sell'];
+export const POST: RequestHandler = async ({ cookies, request, route }) => {
+	const { item } = (await request.json()) as typeof params;
+	const userId = BigInt(cookies.get('discordId') as any)!;
+
+	const { params, response, statusCode } = API_CONTRACTS['POST=>/api/bazaar/sell'];
+
+	const alreadyExists = await mongoBot.MONGODB_C_BAZAAR_SELL.FindOne({ ID: item.ID, UserId: userId });
+
+	if (alreadyExists) {
+		await mongoBot.MONGODB_C_BAZAAR_SELL.UpdateOne({ ID: item.ID, UserId: userId }, { $set: { ...item } });
+	} else {
+		await mongoBot.MONGODB_C_BAZAAR_SELL.InsertOne({ ...item, UserId: userId });
+	}
+
 	return json('' as typeof response, { status: statusCode });
 };

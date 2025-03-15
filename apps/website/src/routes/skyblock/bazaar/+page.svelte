@@ -3,6 +3,6 @@
 </script>
 
 <div class="flex">
-	<BazaarColumn action="GET=>/api/bazaar/buy" actionDelete="DELETE=>/api/bazaar/buy" type="BUYS" />
-	<BazaarColumn action="GET=>/api/bazaar/sell" actionDelete="DELETE=>/api/bazaar/sell" type="SELLS" />
+	<BazaarColumn action="GET=>/api/bazaar/buy" actionAdd="POST=>/api/bazaar/buy" actionDelete="DELETE=>/api/bazaar/buy" type="BUYS" />
+	<BazaarColumn action="GET=>/api/bazaar/sell" actionAdd="POST=>/api/bazaar/sell" actionDelete="DELETE=>/api/bazaar/sell" type="SELLS" />
 </div>

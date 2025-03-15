@@ -6,7 +6,8 @@ export const ROUTES = {
 		'/api/auctions/items',
 		'/api/bazaar',
 		'/api/bazaar/buy',
-		'/api/bazaar/sell'
+		'/api/bazaar/sell',
+		'/api/login'
 	] as const,
 	PAGES: ['/discord', '/skyblock', '/skyblock/auctions', '/skyblock/bazaar'] as const
 } as const;

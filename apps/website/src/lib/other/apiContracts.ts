@@ -1,6 +1,7 @@
 import type { Routes } from '$lib/other/routes';
 import type { BazaarItem } from '$lib/mongodb/BazaarItem';
 import type { BazaarItemsAll } from '$lib/mongodb/collections/BazaarItemsAll';
+import type { User } from '$lib/types';
 
 type ApiContract = {
 	method: 'GET' | 'POST' | 'DELETE' | 'PATCH';
@@ -16,7 +17,7 @@ const GET_API_AUCTIONS = {
 	response: '' as string,
 	route: '/api/auctions',
 	statusCode: 200,
-	params: { userId: 0n as bigint } as const
+	params: {} as const
 } as const satisfies ApiContract;
 const GET_API_BAZAAR = {
 	method: 'GET',
@@ -30,7 +31,7 @@ const GET_API_BAZAAR_BUY = {
 	response: { data: [] as BazaarItem[] } as const,
 	route: '/api/bazaar/buy',
 	statusCode: 200,
-	params: { userId: 0n as bigint } as const
+	params: {}
 } as const satisfies ApiContract;
 const GET_API_BAZAAR_SELL = {
 	method: 'GET',
@@ -56,16 +57,23 @@ const DELETE_API_BAZAAR_SELL = {
 const POST_API_BAZAAR_BUY = {
 	method: 'POST',
 	response: '' as string,
-	route: '/api/bazaar/sell',
+	route: '/api/bazaar/buy',
 	statusCode: 200,
-	params: { item: {} as BazaarItem } as const
+	params: { item: {} as Omit<BazaarItem, 'UserId'> } as const
 } as const satisfies ApiContract;
 const POST_API_BAZAAR_SELL = {
 	method: 'POST',
 	response: '' as string,
 	route: '/api/bazaar/sell',
 	statusCode: 200,
-	params: { item: {} as BazaarItem } as const
+	params: { item: {} as Omit<BazaarItem, 'UserId'> } as const
+} as const satisfies ApiContract;
+const POST_API_LOGIN = {
+	method: 'POST',
+	response: '' as string,
+	route: '/api/login',
+	statusCode: 200,
+	params: { user: {} as Pick<User, 'username' | 'password'> } as const
 } as const satisfies ApiContract;
 
 /** Record of API Contracts that map to their cooresponding routes. For now, all routes use the body as params. The status codes represent the normal response. */
@@ -77,5 +85,6 @@ export const API_CONTRACTS = {
 	'DELETE=>/api/bazaar/buy': DELETE_API_BAZAAR_BUY,
 	'DELETE=>/api/bazaar/sell': DELETE_API_BAZAAR_SELL,
 	'POST=>/api/bazaar/buy': POST_API_BAZAAR_BUY,
-	'POST=>/api/bazaar/sell': POST_API_BAZAAR_SELL
+	'POST=>/api/bazaar/sell': POST_API_BAZAAR_SELL,
+	'POST=>/api/login': POST_API_LOGIN
 } as const satisfies Record<string, ApiContract>;

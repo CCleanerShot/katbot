@@ -8,19 +8,15 @@
 
 	type Props = {
 		action: Extract<keyof typeof API_CONTRACTS, `GET${string}/bazaar/${string}`>;
+		actionAdd: Extract<keyof typeof API_CONTRACTS, `POST${string}/bazaar/${string}`>;
 		actionDelete: Extract<keyof typeof API_CONTRACTS, `DELETE${string}/bazaar/${string}`>;
 		type: BazaarType;
 	};
 
-	const { action, actionDelete, type }: Props = $props();
+	const { action, actionAdd, actionDelete, type }: Props = $props();
 
 	const onclick = async () => {
-		const response = await clientFetch(action, { userId: 208963262094639104n });
-
-		if (!response.ok) {
-			console.log(response.status, await response.text());
-		}
-
+		const response = await clientFetch(action, {});
 		const json = await response.JSON();
 		bazaarState[type] = json.data.map((e) => BazaarItem.ToClass(e));
 	};
@@ -34,6 +30,7 @@
 	};
 
 	const addOnClick = () => {
+		modalState.BazaarAddModal.action = actionAdd;
 		modalState.BazaarAddModal.type = type;
 		modalState.BazaarAddModal.isOpened = true;
 	};
