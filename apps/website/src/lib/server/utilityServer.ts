@@ -20,7 +20,7 @@ export const utilityServer = {
 				break;
 		}
 
-		console.log(`${prefix}: `, ...data);
+		console.log(`${prefix}:`, ...data);
 	},
 	redirectToLogin: (route: { id: any }) => {
 		const redirectUrl = `/login?redirect=${route.id}`;

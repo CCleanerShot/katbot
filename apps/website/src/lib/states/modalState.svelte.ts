@@ -6,7 +6,7 @@ type ModalState = { [key: string]: { isOpened: boolean } | { [key: string]: any 
 export const modalState = $state({
 	AuctionAddModal: {
 		action: 'POST=>/api/auctions/buy' as Extract<keyof typeof API_CONTRACTS, `POST${string}/auctions/${string}`>,
-		type: 'BUYS' as BazaarType,
+		type: 'BUYS' as Extract<BazaarType, 'BUYS'>,
 		isOpened: false as boolean
 	},
 	BazaarAddModal: {

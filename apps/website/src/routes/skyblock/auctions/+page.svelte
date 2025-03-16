@@ -1,8 +1,10 @@
 <script lang="ts">
+	import type { AuctionItem } from '$lib/mongodb/AuctionItem';
 	import type { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
 	import { clientFetch } from '$lib/other/clientFetch';
 	import { auctionState } from '$lib/states/auctionState.svelte';
 	import { modalState } from '$lib/states/modalState.svelte';
+	import { panelState } from '$lib/states/panelState.svelte';
 
 	const auctionItems = $derived(auctionState.BUYS);
 
@@ -15,7 +17,10 @@
 		modalState.AuctionAddModal.isOpened = true;
 	};
 
-	const onclickTag = async () => {};
+	const onclickTag = async (item: AuctionItem) => {
+		auctionState.ITEM = item;
+		panelState.AuctionTagPanel.isOpened = true;
+	};
 
 	const onclickDelete = async (item: AuctionBuy, index: number) => {
 		const response = await clientFetch('DELETE=>/api/auctions/buy', { ID: item.ID });
@@ -49,7 +54,7 @@
 							<td>{item.Name}</td>
 							<td>{item.Price}</td>
 							<td>{item.RemovedAfter ? 'YES' : 'NO'}</td>
-							<td class="cursor-pointer hover:font-bold" onclick={onclickTag}>>></td>
+							<td class="cursor-pointer hover:font-bold" onclick={() => onclickTag(item)}>>></td>
 							<td class="invisible px-1 group-hover:visible">
 								<button class="remove-button hover:scale:105 button-border bg-red-500 px-1" onclick={() => onclickDelete(item, index)}>
 									X
