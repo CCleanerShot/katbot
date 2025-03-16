@@ -8,7 +8,6 @@ public class MongoBot
     private static IMongoDatabase _DiscordDB = default!;
     private static IMongoDatabase _GeneralDB = default!;
     private static IMongoDatabase _HypixelDB = default!;
-
     private static string _Uri = default!;
 
     public static List<AuctionBuy> CachedAuctionBuys = new List<AuctionBuy>();
@@ -25,9 +24,9 @@ public class MongoBot
     public static IMongoCollection<BazaarItemsAll> BazaarItemsAll { get; protected set; } = default!;
     public static IMongoCollection<BazaarItem> BazaarSell { get; protected set; } = default!;
     public static IMongoCollection<MongoUser> MongoUser { get; protected set; } = default!;
+    public static IMongoCollection<Session> Session { get; protected set; } = default!;
     public static IMongoCollection<Starboards> Starboards { get; protected set; } = default!;
     public static IMongoCollection<RollStats> RollStats { get; protected set; } = default!;
-
 
     public static async Task Load()
     {
@@ -35,20 +34,20 @@ public class MongoBot
         {
             _Uri = Settings.MONGODB_BASE_URI + Settings.MONGODB_OPTIONS;
             _Client = new MongoClient(_Uri);
-            _DiscordDB = _Client.GetDatabase(Settings.MONGODB_DATABASE_DISCORD);
-            _GeneralDB = _Client.GetDatabase(Settings.MONGODB_DATABASE_GENERAL);
-            _HypixelDB = _Client.GetDatabase(Settings.MONGODB_DATABASE_HYPIXEL);
-            AuctionBuy = _HypixelDB.GetCollection<AuctionBuy>(Settings.MONGODB_COLLECTION_AUCTION_BUY);
-            AuctionItemsAll = _HypixelDB.GetCollection<AuctionItemsAll>(Settings.MONGODB_COLLECTION_AUCTION_ITEMS);
-            AuctionTags = _HypixelDB.GetCollection<AuctionTags>(Settings.MONGODB_COLLECTION_AUCTION_TAGS);
-            BazaarBuy = _HypixelDB.GetCollection<BazaarItem>(Settings.MONGODB_COLLECTION_BAZAAR_BUY);
-            BazaarSell = _HypixelDB.GetCollection<BazaarItem>(Settings.MONGODB_COLLECTION_BAZAAR_SELL);
-            BazaarItemsAll = _HypixelDB.GetCollection<BazaarItemsAll>(Settings.MONGODB_COLLECTION_BAZAAR_ITEMS);
-            MongoUser = _GeneralDB.GetCollection<MongoUser>(Settings.MONGODB_COLLECTION_USERS);
-            Starboards = _DiscordDB.GetCollection<Starboards>(Settings.MONGODB_COLLECTION_STARBOARDS);
-            RollStats = _DiscordDB.GetCollection<RollStats>(Settings.MONGODB_COLLECTION_ROLL_STATS);
+            _DiscordDB = _Client.GetDatabase(Settings.MONGODB_D_DISCORD);
+            _GeneralDB = _Client.GetDatabase(Settings.MONGODB_D_GENERAL);
+            _HypixelDB = _Client.GetDatabase(Settings.MONGODB_D_HYPIXEL);
+            AuctionBuy = _HypixelDB.GetCollection<AuctionBuy>(Settings.MONGODB_C_AUCTION_BUY);
+            AuctionItemsAll = _HypixelDB.GetCollection<AuctionItemsAll>(Settings.MONGODB_C_AUCTION_ITEMS);
+            AuctionTags = _HypixelDB.GetCollection<AuctionTags>(Settings.MONGODB_C_AUCTION_TAGS);
+            BazaarBuy = _HypixelDB.GetCollection<BazaarItem>(Settings.MONGODB_C_BAZAAR_BUY);
+            BazaarSell = _HypixelDB.GetCollection<BazaarItem>(Settings.MONGODB_C_BAZAAR_SELL);
+            BazaarItemsAll = _HypixelDB.GetCollection<BazaarItemsAll>(Settings.MONGODB_C_BAZAAR_ITEMS);
+            MongoUser = _GeneralDB.GetCollection<MongoUser>(Settings.MONGODB_C_USERS);
+            Session = _DiscordDB.GetCollection<Session>(Settings.MONGODB_C_SESSIONS);
+            Starboards = _DiscordDB.GetCollection<Starboards>(Settings.MONGODB_C_STARBOARDS);
+            RollStats = _DiscordDB.GetCollection<RollStats>(Settings.MONGODB_C_ROLL_STATS);
 
-            // Creating the cache
             List<AuctionBuy> currentAuctionBuy = await AuctionBuy.FindList(e => true);
             List<AuctionItemsAll> currentAuctionItems = await AuctionItemsAll.FindList(e => true);
             List<AuctionTags> currentAuctionTags = await AuctionTags.FindList(e => true);
@@ -79,6 +78,12 @@ public class MongoBot
     /// </summary>
     public static async Task LoadBazaarItems()
     {
+        if (_Uri == null)
+        {
+            Program.Utility.Log(Enums.LogLevel.WARN, $"Cannot run 'LoadBazaarItems' without running 'Load' first!");
+            return;
+        }
+
         JsonNode? items = await ItemsRoute.GetRoute();
         Dictionary<string, BazaarRouteProduct>? products = await BazaarRoute.GetRoute();
 
@@ -181,7 +186,7 @@ public class MongoBot
                 CachedAuctionItems.Add(item.ID, item);
             }
 
-            foreach (ExtraAttribute attribute in auction.ExtraAttributes)
+            foreach (AuctionTag attribute in auction.AuctionTags)
             {
                 AuctionTags auctionTag;
 
@@ -197,8 +202,8 @@ public class MongoBot
                     existingTagsDict.Add(attribute.Name, auctionTag);
                 }
 
-                if (!item.ExtraAttributes.Contains(auctionTag.Name))
-                    item.ExtraAttributes.Add(auctionTag.Name);
+                if (!item.AuctionTags.Contains(auctionTag.Name))
+                    item.AuctionTags.Add(auctionTag.Name);
 
 
                 if (!auctionTag.Values.Contains(attribute.Value))
@@ -216,7 +221,7 @@ public class MongoBot
                 continue;
 
             UpdateDefinition<AuctionItemsAll> update = Builders<AuctionItemsAll>.Update
-                .Set(e => e.ExtraAttributes, v.ExtraAttributes);
+                .Set(e => e.AuctionTags, v.AuctionTags);
 
             await AuctionItemsAll.FindOneAndUpdateAsync(e => e.ID == v.ID, update);
         }

@@ -11,7 +11,7 @@ public class AuctionTagsAutocomplete : AutocompleteHandler
         string itemID = (context.Interaction.Data as SocketAutocompleteInteractionData)!.Options.ElementAt(0).Value.ToString()!;
         string value = autocompleteInteraction.Data.Current.Value.ToString()!;
 
-        IEnumerable<AutocompleteResult> results = MongoBot.CachedAuctionItems[itemID].ExtraAttributes
+        IEnumerable<AutocompleteResult> results = MongoBot.CachedAuctionItems[itemID].AuctionTags
             .Where(e => e.ToLower().Contains(value.ToLower()))
             .OrderBy(e => e)
             .Select(e => new AutocompleteResult(e, e));

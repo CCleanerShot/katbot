@@ -18,14 +18,14 @@ public class AuctionItemsAll
     /// <summary>
     /// List of "Name" of the extra attributes that this item has been seen with.
     /// </summary>
-    public List<string> ExtraAttributes = new List<string>();
+    public List<string> AuctionTags = new List<string>();
 
-    public AuctionItemsAll(string _ID, string _Name, List<string>? _ExtraAttributes = null)
+    public AuctionItemsAll(string _ID, string _Name, List<string>? _AuctionTags = null)
     {
         ID = _ID;
         Name = _Name;
 
-        if (_ExtraAttributes != null)
-            ExtraAttributes = _ExtraAttributes;
+        if (_AuctionTags != null)
+            AuctionTags = _AuctionTags;
     }
 }

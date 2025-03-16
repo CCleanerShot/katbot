@@ -29,7 +29,7 @@ public class AuctionsRouteProduct
 
     public string ITEM_ID = default!;
     public string ITEM_NAME = default!;
-    public List<ExtraAttribute> ExtraAttributes = new List<ExtraAttribute>();
+    public List<AuctionTag> AuctionTags = new List<AuctionTag>();
 
     public string item_bytes
     {
@@ -60,10 +60,10 @@ public class AuctionsRouteProduct
                 {
                     case TagCompound tagCompound:
                         foreach (Tag innerTag in tagCompound.Value)
-                            ExtraAttributes.Add(new ExtraAttribute(tag.Name, innerTag.Type, $"{innerTag.Name} {innerTag.GetValue()}"));
+                            AuctionTags.Add(new AuctionTag(tag.Name, innerTag.Type, $"{innerTag.Name} {innerTag.GetValue()}"));
                         break;
                     default:
-                        ExtraAttributes.Add(new ExtraAttribute(tag.Name, tag.Type, $"{tag.GetValue()}"));
+                        AuctionTags.Add(new AuctionTag(tag.Name, tag.Type, $"{tag.GetValue()}"));
                         break;
                 }
             }

@@ -28,7 +28,7 @@ public partial class DiscordEvents
     [DiscordEvents]
     public void watch_auction()
     {
-        // _Timer.Elapsed += Watch_Auction_Elapsed;
+        _Timer.Elapsed += Watch_Auction_Elapsed;
     }
 
     async void Watch_Auction_Elapsed(object? obj, System.Timers.ElapsedEventArgs args)
@@ -55,9 +55,9 @@ public partial class DiscordEvents
             // check if all the properties are matching
             foreach (AuctionsRouteProduct item in similarLive)
             {
-                foreach (ExtraAttribute attribute in item.ExtraAttributes)
+                foreach (AuctionTag attribute in item.AuctionTags)
                 {
-                    if (trackedBuy.ExtraAttributes.All(attribute => item.ExtraAttributes.Any(e => e == attribute)))
+                    if (trackedBuy.AuctionTags.All(attribute => item.AuctionTags.Any(e => e == attribute)))
                     {
                         if (!matchingProducts.ContainsKey(trackedBuy))
                             matchingProducts.Add(trackedBuy, new List<AuctionsRouteProduct>());
@@ -138,9 +138,9 @@ public partial class DiscordEvents
 
                     string liveProperties = "";
 
-                    foreach (ExtraAttribute attribute in product.ExtraAttributes)
+                    foreach (AuctionTag attribute in product.AuctionTags)
                     {
-                        if (!wanted.ExtraAttributes.Select(e => e.Name).Contains(attribute.Name))
+                        if (!wanted.AuctionTags.Select(e => e.Name).Contains(attribute.Name))
                             continue;
 
                         liveProperties += $"{attribute.Name} {attribute.Value}";

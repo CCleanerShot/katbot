@@ -13,12 +13,12 @@ public partial class DiscordCommands : InteractionModuleBase
     {
         try
         {
-            ExtraAttribute attribute = new ExtraAttribute(property, MongoBot.CachedAuctionTags[property].Type, value);
+            AuctionTag attribute = new AuctionTag(property, MongoBot.CachedAuctionTags[property].Type, value);
             UpdateDefinition<AuctionBuy> update = new UpdateDefinitionBuilder<AuctionBuy>()
-                .Push(e => e.ExtraAttributes, attribute);
+                .Push(e => e.AuctionTags, attribute);
 
             await MongoBot.AuctionBuy.UpdateOneAsync(e => e.ID == itemID && e.UserId == Context.User.Id, update);
-            MongoBot.CachedAuctionBuys.Find(e => e.ID == itemID && e.UserId == Context.User.Id)!.ExtraAttributes.Add(attribute);
+            MongoBot.CachedAuctionBuys.Find(e => e.ID == itemID && e.UserId == Context.User.Id)!.AuctionTags.Add(attribute);
             await RespondAsync($"Successfully added '{property}' to {MongoBot.CachedAuctionItems[itemID].Name} when the property is {value}.");
         }
 

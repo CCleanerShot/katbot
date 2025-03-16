@@ -23,18 +23,19 @@ public class Settings
     public static string ID_RAMOJUSD = "";
     public static string ID_VOLATILE = "";
     public static string MONGODB_BASE_URI = "";
-    public static string MONGODB_COLLECTION_AUCTION_BUY = "";
-    public static string MONGODB_COLLECTION_AUCTION_ITEMS = "";
-    public static string MONGODB_COLLECTION_AUCTION_TAGS = "";
-    public static string MONGODB_COLLECTION_BAZAAR_BUY = "";
-    public static string MONGODB_COLLECTION_BAZAAR_SELL = "";
-    public static string MONGODB_COLLECTION_BAZAAR_ITEMS = "";
-    public static string MONGODB_COLLECTION_STARBOARDS = "";
-    public static string MONGODB_COLLECTION_ROLL_STATS = "";
-    public static string MONGODB_COLLECTION_USERS = "";
-    public static string MONGODB_DATABASE_DISCORD = "";
-    public static string MONGODB_DATABASE_GENERAL = "";
-    public static string MONGODB_DATABASE_HYPIXEL = "";
+    public static string MONGODB_C_AUCTION_BUY = "";
+    public static string MONGODB_C_AUCTION_ITEMS = "";
+    public static string MONGODB_C_AUCTION_TAGS = "";
+    public static string MONGODB_C_BAZAAR_BUY = "";
+    public static string MONGODB_C_BAZAAR_SELL = "";
+    public static string MONGODB_C_BAZAAR_ITEMS = "";
+    public static string MONGODB_C_SESSIONS = "";
+    public static string MONGODB_C_STARBOARDS = "";
+    public static string MONGODB_C_ROLL_STATS = "";
+    public static string MONGODB_C_USERS = "";
+    public static string MONGODB_D_DISCORD = "";
+    public static string MONGODB_D_GENERAL = "";
+    public static string MONGODB_D_HYPIXEL = "";
     public static string MONGODB_OPTIONS = "";
     public static string PATH_OBAMA = "";
     public static string SITE_URL_1 = "";
@@ -125,30 +126,32 @@ public class Settings
                 ID_VOLATILE = lines[1];
             else if (lines[0] == "MONGODB_BASE_URI")
                 MONGODB_BASE_URI = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_AUCTION_BUY")
-                MONGODB_COLLECTION_AUCTION_BUY = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_AUCTION_ITEMS")
-                MONGODB_COLLECTION_AUCTION_ITEMS = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_AUCTION_TAGS")
-                MONGODB_COLLECTION_AUCTION_TAGS = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_BUY")
-                MONGODB_COLLECTION_BAZAAR_BUY = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_ITEMS")
-                MONGODB_COLLECTION_BAZAAR_ITEMS = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_BAZAAR_SELL")
-                MONGODB_COLLECTION_BAZAAR_SELL = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_ROLL_STATS")
-                MONGODB_COLLECTION_ROLL_STATS = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_STARBOARDS")
-                MONGODB_COLLECTION_STARBOARDS = lines[1];
-            else if (lines[0] == "MONGODB_COLLECTION_USERS")
-                MONGODB_COLLECTION_USERS = lines[1];
-            else if (lines[0] == "MONGODB_DATABASE_DISCORD")
-                MONGODB_DATABASE_DISCORD = lines[1];
-            else if (lines[0] == "MONGODB_DATABASE_HYPIXEL")
-                MONGODB_DATABASE_HYPIXEL = lines[1];
-            else if (lines[0] == "MONGODB_DATABASE_GENERAL")
-                MONGODB_DATABASE_GENERAL = lines[1];
+            else if (lines[0] == "MONGODB_C_AUCTION_BUY")
+                MONGODB_C_AUCTION_BUY = lines[1];
+            else if (lines[0] == "MONGODB_C_AUCTION_ITEMS")
+                MONGODB_C_AUCTION_ITEMS = lines[1];
+            else if (lines[0] == "MONGODB_C_AUCTION_TAGS")
+                MONGODB_C_AUCTION_TAGS = lines[1];
+            else if (lines[0] == "MONGODB_C_BAZAAR_BUY")
+                MONGODB_C_BAZAAR_BUY = lines[1];
+            else if (lines[0] == "MONGODB_C_BAZAAR_ITEMS")
+                MONGODB_C_BAZAAR_ITEMS = lines[1];
+            else if (lines[0] == "MONGODB_C_BAZAAR_SELL")
+                MONGODB_C_BAZAAR_SELL = lines[1];
+            else if (lines[0] == "MONGODB_C_ROLL_STATS")
+                MONGODB_C_ROLL_STATS = lines[1];
+            else if (lines[0] == "MONGODB_C_SESSIONS")
+                MONGODB_C_SESSIONS = lines[1];
+            else if (lines[0] == "MONGODB_C_STARBOARDS")
+                MONGODB_C_STARBOARDS = lines[1];
+            else if (lines[0] == "MONGODB_C_USERS")
+                MONGODB_C_USERS = lines[1];
+            else if (lines[0] == "MONGODB_D_DISCORD")
+                MONGODB_D_DISCORD = lines[1];
+            else if (lines[0] == "MONGODB_D_HYPIXEL")
+                MONGODB_D_HYPIXEL = lines[1];
+            else if (lines[0] == "MONGODB_D_GENERAL")
+                MONGODB_D_GENERAL = lines[1];
             else if (lines[0] == "MONGODB_OPTIONS")
                 MONGODB_OPTIONS = lines[1];
             else if (lines[0] == "TEST_DISCORD_GUILD_ID")
@@ -174,18 +177,18 @@ public class Settings
             ID_KELINIMO = Environment.GetEnvironmentVariable("ID_KELINIMO");
             ID_RAMOJUSD = Environment.GetEnvironmentVariable("ID_RAMOJUSD");
             ID_VOLATILE = Environment.GetEnvironmentVariable("ID_VOLATILE");
-            MONGODB_COLLECTION_AUCTION_BUY = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_AUCTION_BUY");
-            MONGODB_COLLECTION_AUCTION_ITEMS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_AUCTION_ITEMS");
-            MONGODB_COLLECTION_AUCTION_TAGS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_AUCTION_TAGS");
-            MONGODB_COLLECTION_BAZAAR_BUY = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_BAZAAR_BUY");
-            MONGODB_COLLECTION_BAZAAR_ITEMS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_BAZAAR_ITEMS");
-            MONGODB_COLLECTION_BAZAAR_SELL = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_BAZAAR_SELL");
-            MONGODB_COLLECTION_ROLL_STATS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_ROLL_STATS");
-            MONGODB_COLLECTION_STARBOARDS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_STARBOARDS");
-            MONGODB_COLLECTION_USERS = Environment.GetEnvironmentVariable("MONGODB_COLLECTION_USERS");
-            MONGODB_DATABASE_DISCORD = Environment.GetEnvironmentVariable("MONGODB_DATABASE_DISCORD");
-            MONGODB_DATABASE_HYPIXEL = Environment.GetEnvironmentVariable("MONGODB_DATABASE_HYPIXEL");
-            MONGODB_DATABASE_GENERAL = Environment.GetEnvironmentVariable("MONGODB_DATABASE_GENERAL");
+            MONGODB_C_AUCTION_BUY = Environment.GetEnvironmentVariable("MONGODB_C_AUCTION_BUY");
+            MONGODB_C_AUCTION_ITEMS = Environment.GetEnvironmentVariable("MONGODB_C_AUCTION_ITEMS");
+            MONGODB_C_AUCTION_TAGS = Environment.GetEnvironmentVariable("MONGODB_C_AUCTION_TAGS");
+            MONGODB_C_BAZAAR_BUY = Environment.GetEnvironmentVariable("MONGODB_C_BAZAAR_BUY");
+            MONGODB_C_BAZAAR_ITEMS = Environment.GetEnvironmentVariable("MONGODB_C_BAZAAR_ITEMS");
+            MONGODB_C_BAZAAR_SELL = Environment.GetEnvironmentVariable("MONGODB_C_BAZAAR_SELL");
+            MONGODB_C_ROLL_STATS = Environment.GetEnvironmentVariable("MONGODB_C_ROLL_STATS");
+            MONGODB_C_STARBOARDS = Environment.GetEnvironmentVariable("MONGODB_C_STARBOARDS");
+            MONGODB_C_USERS = Environment.GetEnvironmentVariable("MONGODB_C_USERS");
+            MONGODB_D_DISCORD = Environment.GetEnvironmentVariable("MONGODB_D_DISCORD");
+            MONGODB_D_HYPIXEL = Environment.GetEnvironmentVariable("MONGODB_D_HYPIXEL");
+            MONGODB_D_GENERAL = Environment.GetEnvironmentVariable("MONGODB_D_GENERAL");
             MONGODB_URI = Environment.GetEnvironmentVariable("MONGODB_URI");
             TEST_DISCORD_GUILD_ID = UInt64.Parse(Environment.GetEnvironmentVariable("TEST_DISCORD_GUILD_ID"));
 #endif

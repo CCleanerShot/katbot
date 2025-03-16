@@ -28,7 +28,7 @@ public partial class DiscordCommands : InteractionModuleBase
                 AuctionBuy newItem = new AuctionBuy()
                 {
                     ID = itemID,
-                    ExtraAttributes = new List<ExtraAttribute>(),
+                    AuctionTags = new List<AuctionTag>(),
                     Name = MongoBot.CachedAuctionItems[itemID].Name,
                     Price = buyPrice,
                     RemovedAfter = removeAfter,

@@ -25,8 +25,8 @@ public class Program
             Settings.Load();
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
-            await DiscordBot.Initialize();
             await MongoBot.Load();
+            await DiscordBot.Initialize();
 
             // // keeps program running
             await Task.Delay(-1);

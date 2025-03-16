@@ -4,7 +4,7 @@ using Cyotek.Data.Nbt;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-public class ExtraAttribute
+public class AuctionTag
 {
     /// <summary>
     /// The name of the tag.
@@ -20,7 +20,7 @@ public class ExtraAttribute
     /// </summary>
     public string Value;
 
-    public ExtraAttribute(string _Name, TagType _Type, string _Value)
+    public AuctionTag(string _Name, TagType _Type, string _Value)
     {
         Name = _Name;
         Type = _Type;
@@ -34,11 +34,11 @@ public class ExtraAttribute
 
     public sealed override bool Equals(object? obj)
     {
-        if (obj is not ExtraAttribute attribute)
+        if (obj is not AuctionTag attribute)
             return false;
 
-        ExtraAttribute c1 = this;
-        ExtraAttribute c2 = attribute;
+        AuctionTag c1 = this;
+        AuctionTag c2 = attribute;
 
         if (c1.Type != c2.Type)
             return false;
@@ -61,12 +61,12 @@ public class ExtraAttribute
         return HashCode.Combine(Name, Type, Value);
     }
 
-    public static bool operator ==(ExtraAttribute c1, ExtraAttribute c2)
+    public static bool operator ==(AuctionTag c1, AuctionTag c2)
     {
         return c1.Equals(c2);
     }
 
-    public static bool operator !=(ExtraAttribute c1, ExtraAttribute c2)
+    public static bool operator !=(AuctionTag c1, AuctionTag c2)
     {
         return !c1.Equals(c2);
     }

@@ -12,14 +12,14 @@ public partial class DiscordCommands : InteractionModuleBase
     {
         try
         {
-            ExtraAttribute attribute = MongoBot.CachedAuctionBuys
-                .Find(e => e.ID == itemID && e.UserId == Context.User.Id)!.ExtraAttributes
+            AuctionTag attribute = MongoBot.CachedAuctionBuys
+                .Find(e => e.ID == itemID && e.UserId == Context.User.Id)!.AuctionTags
                 .Find(e => e.Name == property)!;
             UpdateDefinition<AuctionBuy> update = new UpdateDefinitionBuilder<AuctionBuy>()
-                .Pull(e => e.ExtraAttributes, attribute);
+                .Pull(e => e.AuctionTags, attribute);
 
             await MongoBot.AuctionBuy.UpdateOneAsync(e => e.ID == itemID && e.UserId == Context.User.Id, update);
-            MongoBot.CachedAuctionBuys.Find(e => e.ID == itemID && e.UserId == Context.User.Id)!.ExtraAttributes.Remove(attribute);
+            MongoBot.CachedAuctionBuys.Find(e => e.ID == itemID && e.UserId == Context.User.Id)!.AuctionTags.Remove(attribute);
             await RespondAsync($"Successfully removed '{property}' to {MongoBot.CachedAuctionItems[itemID].Name} when the property is {value}.");
         }
 

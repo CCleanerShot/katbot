@@ -22,16 +22,16 @@ public partial class DiscordCommands : InteractionModuleBase
             {
                 string wantedProperties = "";
 
-                for (int i = 0; i < auctionBuy.ExtraAttributes.Count; i++)
+                for (int i = 0; i < auctionBuy.AuctionTags.Count; i++)
                 {
-                    ExtraAttribute attribute = auctionBuy.ExtraAttributes[i];
+                    AuctionTag attribute = auctionBuy.AuctionTags[i];
 
                     if (MongoBot.CachedAuctionTags[attribute.Name].Type == Cyotek.Data.Nbt.TagType.Compound)
                         wantedProperties += $"{attribute.Name} [{attribute.Value}]";
                     else
                         wantedProperties += $"{attribute.Name} {attribute.Value}";
 
-                    if (i < auctionBuy.ExtraAttributes.Count - 1)
+                    if (i < auctionBuy.AuctionTags.Count - 1)
                         wantedProperties += ", ";
                 }
 

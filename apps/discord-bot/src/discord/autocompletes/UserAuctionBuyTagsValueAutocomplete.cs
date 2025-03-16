@@ -13,7 +13,7 @@ public class UserAuctionBuyTagsValueAutocomplete : AutocompleteHandler
         string value = autocompleteInteraction.Data.Current.Value.ToString()!;
 
         IEnumerable<AutocompleteResult> results = MongoBot.CachedAuctionBuys
-            .Find(e => e.ID == itemID && e.UserId == context.User.Id)!.ExtraAttributes
+            .Find(e => e.ID == itemID && e.UserId == context.User.Id)!.AuctionTags
                 .Where(e => e.Value.ToLower().Contains(value.ToLower()))
                 .OrderBy(e => e.Value)
                 .Select(e => new AutocompleteResult(e.Value, e.Value));
