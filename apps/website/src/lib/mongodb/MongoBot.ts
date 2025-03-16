@@ -2,6 +2,7 @@ import {
 	SVELTE_MONGODB_BASE_URI,
 	SVELTE_MONGODB_C_AUCTION_BUY,
 	SVELTE_MONGODB_C_AUCTION_ITEMS,
+	SVELTE_MONGODB_C_AUCTION_TAGS,
 	SVELTE_MONGODB_C_BAZAAR_BUY,
 	SVELTE_MONGODB_C_BAZAAR_ITEMS,
 	SVELTE_MONGODB_C_BAZAAR_SELL,
@@ -14,11 +15,15 @@ import {
 	SVELTE_MONGODB_D_HYPIXEL,
 	SVELTE_MONGODB_OPTIONS
 } from '$env/static/private';
-import type { BazaarItem } from './BazaarItem';
 import { Db, MongoClient } from 'mongodb';
-import type { BazaarItemsAll } from './collections/BazaarItemsAll';
+import type { BazaarItem } from './BazaarItem';
 import { MongoCollection } from './MongoCollection';
-import type { Session, User } from '$lib/types';
+import type { AuctionBuy } from './collections/AuctionBuy';
+import type { AuctionTags } from './collections/AuctionTags';
+import type { BazaarItemsAll } from './collections/BazaarItemsAll';
+import type { AuctionItemsAll } from './collections/AuctionItemsAll';
+import type { Session } from './collections/Session';
+import type { MongoUser } from './collections/MongoUser';
 
 export class MongoBot {
 	Client: MongoClient;
@@ -26,14 +31,15 @@ export class MongoBot {
 	private MONGODB_D_GENERAL: Db;
 	private MONGODB_D_HYPIXEL: Db;
 
-	public MONGODB_C_AUCTION_BUY: MongoCollection<BazaarItem>; // TODO: implement
-	public MONGODB_C_AUCTION_ITEMS: MongoCollection<BazaarItem>; // TODO: implement
+	public MONGODB_C_AUCTION_BUY: MongoCollection<AuctionBuy>;
+	public MONGODB_C_AUCTION_ITEMS: MongoCollection<AuctionItemsAll>;
+	public MONGODB_C_AUCTION_TAGS: MongoCollection<AuctionTags>;
 	public MONGODB_C_BAZAAR_BUY: MongoCollection<BazaarItem>;
 	public MONGODB_C_BAZAAR_ITEMS: MongoCollection<BazaarItemsAll>;
 	public MONGODB_C_BAZAAR_SELL: MongoCollection<BazaarItem>;
 	public MONGODB_C_SESSIONS: MongoCollection<Session>;
 	public MONGODB_C_STARBOARDS: MongoCollection<BazaarItem>; // TODO: implement
-	public MONGODB_C_USERS: MongoCollection<User>;
+	public MONGODB_C_USERS: MongoCollection<MongoUser>;
 	public MONGODB_C_ROLL_STATS: MongoCollection<BazaarItem>; // TODO: implement
 
 	constructor() {
@@ -44,6 +50,7 @@ export class MongoBot {
 
 		this.MONGODB_C_AUCTION_BUY = new MongoCollection(this.MONGODB_D_HYPIXEL.collection(SVELTE_MONGODB_C_AUCTION_BUY));
 		this.MONGODB_C_AUCTION_ITEMS = new MongoCollection(this.MONGODB_D_HYPIXEL.collection(SVELTE_MONGODB_C_AUCTION_ITEMS));
+		this.MONGODB_C_AUCTION_TAGS = new MongoCollection(this.MONGODB_D_HYPIXEL.collection(SVELTE_MONGODB_C_AUCTION_TAGS));
 		this.MONGODB_C_BAZAAR_BUY = new MongoCollection(this.MONGODB_D_HYPIXEL.collection(SVELTE_MONGODB_C_BAZAAR_BUY));
 		this.MONGODB_C_BAZAAR_ITEMS = new MongoCollection(this.MONGODB_D_HYPIXEL.collection(SVELTE_MONGODB_C_BAZAAR_ITEMS));
 		this.MONGODB_C_BAZAAR_SELL = new MongoCollection(this.MONGODB_D_HYPIXEL.collection(SVELTE_MONGODB_C_BAZAAR_SELL));

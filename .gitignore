@@ -3,7 +3,7 @@
 ###############
 .env*
 bin
-logs/*
+**/logs/**
 node_modules
 obj
 package-lock.json

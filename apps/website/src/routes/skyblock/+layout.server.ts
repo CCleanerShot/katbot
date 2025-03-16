@@ -6,7 +6,6 @@ import { utilityServer } from '$lib/server/utilityServer';
 
 export const load: LayoutServerLoad = async (event) => {
 	const token = event.cookies.get('session') ?? null;
-	const redirectUrl = `/login?redirect=${event.route.id}`;
 
 	if (token === null) {
 		return utilityServer.redirectToLogin(event.route);
@@ -20,15 +19,15 @@ export const load: LayoutServerLoad = async (event) => {
 		return utilityServer.redirectToLogin(event.route);
 	}
 
-	const foundUser = await mongoBot.MONGODB_C_USERS.FindOne({ username: session.username });
+	const foundUser = await mongoBot.MONGODB_C_USERS.FindOne({ Username: session.Username });
 
 	if (foundUser === null) {
 		// TODO: log that forgery was successfully made, as the user couldnt be found, but the session was validated.
 		return utilityServer.redirectToLogin(event.route);
 	}
 
-	sessionServer.setDiscordId(event, foundUser.discordId, session.expiresAt);
-	sessionServer.setSessionTokenCookie(event, token, session.expiresAt);
+	sessionServer.setDiscordId(event, foundUser.DiscordId, session.ExpiresAt);
+	sessionServer.setSessionTokenCookie(event, token, session.ExpiresAt);
 
 	return {
 		title: 'Skyblock',

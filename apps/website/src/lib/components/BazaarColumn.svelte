@@ -48,7 +48,7 @@
 	</div>
 	<div class="flex justify-center p-2">
 		{#if bazaarState[type].length != 0}
-			<table class="border-black text-[10px]">
+			<table class="table border-black text-[8px]">
 				<thead>
 					<tr>
 						<th>Name</th>
@@ -79,42 +79,4 @@
 </div>
 
 <style>
-	@keyframes animate-exit-button {
-		0% {
-			transform: translateX(5px);
-		}
-
-		50% {
-			transform: scale(110%);
-		}
-	}
-
-	tr:hover .remove-button {
-		animation-name: animate-exit-button;
-		animation-duration: 0.25s;
-		animation-iteration-count: 1;
-	}
-
-	tr > *:not(:last-child) {
-		border: 1px solid black;
-		padding-left: 2px;
-		padding-right: 2px;
-		text-align: center;
-	}
-
-	tr > th:not(:last-child) {
-		background-color: var(--primary-color);
-	}
-
-	tr td:nth-child(2) {
-		text-align: right;
-	}
-
-	tr:has(td):not(:hover) {
-		background-color: white;
-	}
-
-	tr:has(td:hover) > *:not(:last-child) {
-		background-color: var(--secondary-color);
-	}
 </style>

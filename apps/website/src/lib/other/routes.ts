@@ -3,7 +3,7 @@ export const ROUTES = {
 		'/skyblock/?/create-buy-item',
 		'/skyblock/?/create-sell-item',
 		'/api/auctions',
-		'/api/auctions/items',
+		'/api/auctions/buy',
 		'/api/bazaar',
 		'/api/bazaar/buy',
 		'/api/bazaar/sell',

@@ -22,9 +22,9 @@
 	{#if page.route.id === '/'}
 		<div>here lies: useless crap</div>
 	{/if}
-	<div class="flex gap-2 *:w-28">
-		<RoutePage route="/discord" title="Discord" imageUrl={discordImage} />
-		<RoutePage route="/skyblock" title="Skyblock" imageUrl={grassBlockImage} />
+	<div class="flex gap-2">
+		<RoutePage className="w-32" route="/discord" title="Discord" imageUrl={discordImage} />
+		<RoutePage className="w-32" route="/skyblock" title="Skyblock" imageUrl={grassBlockImage} />
 	</div>
 </div>
 

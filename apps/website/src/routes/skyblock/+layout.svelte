@@ -6,7 +6,7 @@
 </script>
 
 <div>
-	<div class="flex items-center justify-center gap-2 border-b-2 border-black py-2 *:w-20">
+	<div class="flex items-center justify-center gap-2 border-b-2 border-black py-2">
 		{#if page.route.id?.includes('bazaar')}
 			<span class="invisible rotate-3 whitespace-nowrap text-[6px] transition hover:rotate-2">
 				check
@@ -16,8 +16,8 @@
 				for prices.
 			</span>
 		{/if}
-		<RoutePage route="/skyblock/auctions" title="Auctions" />
-		<RoutePage route="/skyblock/bazaar" title="Bazaar" />
+		<RoutePage className="w-24" route="/skyblock/auctions" title="Auctions" />
+		<RoutePage className="w-24" route="/skyblock/bazaar" title="Bazaar" />
 		{#if page.route.id?.includes('bazaar')}
 			<span class="rotate-3 whitespace-nowrap text-[6px] transition hover:rotate-2">
 				check

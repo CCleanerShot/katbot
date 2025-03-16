@@ -2,7 +2,7 @@ import { API_CONTRACTS } from '$lib/other/apiContracts';
 import { mongoBot } from '$lib/server/mongoBot';
 import { sessionServer } from '$lib/server/sessionServer';
 import { utilityServer } from '$lib/server/utilityServer';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
+import { json, type RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async (event) => {
 	const { params } = API_CONTRACTS['POST=>/api/login'];
@@ -18,7 +18,7 @@ export const POST: RequestHandler = async (event) => {
 			sessionServer.deleteDiscordId(event);
 			sessionServer.deleteSessionTokenCookie(event);
 		} else {
-			await mongoBot.MONGODB_C_SESSIONS.DeleteOne({ id: session.id });
+			await mongoBot.MONGODB_C_SESSIONS.DeleteOne({ id: session.ID });
 			deletedToken = true;
 		}
 	}
@@ -35,8 +35,8 @@ export const POST: RequestHandler = async (event) => {
 
 	const newSession = sessionServer.generateSessionToken();
 	const session = await sessionServer.createSession(newSession, user.username);
-	sessionServer.setSessionTokenCookie(event, newSession, session.expiresAt);
-	sessionServer.setDiscordId(event, foundUser.discordId, session.expiresAt);
+	sessionServer.setSessionTokenCookie(event, newSession, session.ExpiresAt);
+	sessionServer.setDiscordId(event, foundUser.DiscordId, session.ExpiresAt);
 
 	return json('');
 };

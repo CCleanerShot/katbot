@@ -13,8 +13,8 @@
 		resultsProps?: SvelteHTMLElements['div'];
 	};
 
-	let { value = $bindable(''), bindInput = $bindable(), containerProps, inputProps, resultsProps }: Props = $props();
-	let allItems = $derived(cacheState['BAZAAR']);
+	let { value = $bindable(''), containerProps, inputProps, resultsProps }: Props = $props();
+	let allItems = $derived(cacheState.BAZAAR);
 
 	const autoCompleteInput = (input: string) => {
 		const results = [] as ArrayType;
