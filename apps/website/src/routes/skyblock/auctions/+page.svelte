@@ -1,6 +1,8 @@
 <script lang="ts">
+	import type { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
 	import { clientFetch } from '$lib/other/clientFetch';
 	import { auctionState } from '$lib/states/auctionState.svelte';
+	import { modalState } from '$lib/states/modalState.svelte';
 
 	const auctionItems = $derived(auctionState.BUYS);
 
@@ -9,9 +11,19 @@
 		auctionState.BUYS = (await response.JSON()).data;
 	};
 
-	const onclickAdd = async () => {};
+	const onclickAdd = async () => {
+		modalState.AuctionAddModal.isOpened = true;
+	};
 
-	$inspect(auctionItems);
+	const onclickTag = async () => {};
+
+	const onclickDelete = async (item: AuctionBuy, index: number) => {
+		const response = await clientFetch('DELETE=>/api/auctions/buy', { ID: item.ID });
+
+		if (response.ok) {
+			auctionItems.splice(index, 1);
+		}
+	};
 </script>
 
 <div class="mt-2 flex flex-col items-center gap-1">
@@ -28,20 +40,20 @@
 						<th>Price</th>
 						<th>Retain</th>
 						<th>Tags</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
-					{#each auctionItems as item (item.ID)}
+					{#each auctionItems as item, index (item.ID)}
 						<tr class="group">
 							<td>{item.Name}</td>
 							<td>{item.Price}</td>
-							<td>{item.RemovedAfter}</td>
-							<td>
-								<select>
-									{#each item.AuctionTags as tag (tag.Name)}
-										<option class="w-12" value={tag.Name}>{tag.Name}</option>
-									{/each}
-								</select>
+							<td>{item.RemovedAfter ? 'YES' : 'NO'}</td>
+							<td class="cursor-pointer hover:font-bold" onclick={onclickTag}>>></td>
+							<td class="invisible px-1 group-hover:visible">
+								<button class="remove-button hover:scale:105 button-border bg-red-500 px-1" onclick={() => onclickDelete(item, index)}>
+									X
+								</button>
 							</td>
 						</tr>
 					{/each}

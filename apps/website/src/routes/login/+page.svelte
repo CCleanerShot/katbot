@@ -2,13 +2,13 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import type { User } from '$lib/types';
 	import { Form } from '$lib/classes/Form.svelte';
 	import { clientFetch } from '$lib/other/clientFetch';
 	import { FormElement } from '$lib/classes/FormElement.svelte';
+	import type { MongoUser } from '$lib/mongodb/collections/MongoUser';
 
-	let username: User['username'] = $state('');
-	let password: User['password'] = $state('');
+	let username: MongoUser['Username'] = $state('');
+	let password: MongoUser['Password'] = $state('');
 
 	const form = new Form([
 		new FormElement('username', () => true, 'how did we get here?'),
@@ -30,11 +30,11 @@
 			return;
 		}
 
-		const response = await clientFetch('POST=>/api/login', { user: { username, password } }, true);
+		const response = await clientFetch('POST=>/api/login', { user: { Username: username, Password: password } }, true);
 
 		if (response.ok) {
 			const redirect = page.url.searchParams.get('redirect');
-			await goto('http://localhost:5173/skyblock');
+			await goto(window.location.origin + (redirect ?? '/'));
 		}
 	};
 </script>

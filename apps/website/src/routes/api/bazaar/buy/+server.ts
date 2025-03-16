@@ -5,7 +5,7 @@ import { utilityServer } from '$lib/server/utilityServer';
 
 // TODO: add middleware that validates the search params
 export const GET: RequestHandler = async ({ cookies, route, url }) => {
-	const { response, statusCode, params } = API_CONTRACTS['GET=>/api/bazaar/buy'];
+	const { response, params } = API_CONTRACTS['GET=>/api/bazaar/buy'];
 	const userId = BigInt(cookies.get('discordId') as any)!;
 
 	if (userId === null) {
@@ -13,28 +13,28 @@ export const GET: RequestHandler = async ({ cookies, route, url }) => {
 	}
 
 	const mongoResponse = await mongoBot.MONGODB_C_BAZAAR_BUY.Find({ UserId: userId });
-	return json({ data: mongoResponse } as typeof response, { status: statusCode });
+	return json({ data: mongoResponse } as typeof response);
 };
 
 export const DELETE: RequestHandler = async ({ cookies, request, url }) => {
-	const { params, response, statusCode } = API_CONTRACTS['DELETE=>/api/bazaar/buy'];
-	const { Name } = (await request.json()) as typeof params;
+	const { params, response } = API_CONTRACTS['DELETE=>/api/bazaar/buy'];
+	const { ID } = (await request.json()) as typeof params;
 
 	const userId = BigInt(cookies.get('discordId') as any)!;
-	const existingItem = await mongoBot.MONGODB_C_BAZAAR_BUY.FindOne({ Name: Name, UserId: userId });
+	const existingItem = await mongoBot.MONGODB_C_BAZAAR_BUY.FindOne({ ID: ID, UserId: userId });
 
 	if (existingItem !== null) {
-		await mongoBot.MONGODB_C_BAZAAR_BUY.DeleteOne({ Name: Name, UserId: userId });
+		await mongoBot.MONGODB_C_BAZAAR_BUY.DeleteOne({ ID: ID, UserId: userId });
 	}
 
-	return json('' as typeof response, { status: statusCode });
+	return json('' as typeof response);
 };
 
 export const POST: RequestHandler = async ({ cookies, request, route }) => {
 	const { item } = (await request.json()) as typeof params;
 	const userId = BigInt(cookies.get('discordId') as any)!;
 
-	const { params, response, statusCode } = API_CONTRACTS['POST=>/api/bazaar/buy'];
+	const { params, response } = API_CONTRACTS['POST=>/api/bazaar/buy'];
 
 	const alreadyExists = await mongoBot.MONGODB_C_BAZAAR_BUY.FindOne({ ID: item.ID, UserId: userId });
 
@@ -44,5 +44,5 @@ export const POST: RequestHandler = async ({ cookies, request, route }) => {
 		await mongoBot.MONGODB_C_BAZAAR_BUY.InsertOne({ ...item, UserId: userId });
 	}
 
-	return json('' as typeof response, { status: statusCode });
+	return json('' as typeof response);
 };

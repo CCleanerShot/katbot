@@ -1,7 +1,6 @@
-import { redirect } from '@sveltejs/kit';
+import { mongoBot } from '$lib/server/mongoBot';
 import type { LayoutServerLoad } from './$types';
 import { sessionServer } from '$lib/server/sessionServer';
-import { mongoBot } from '$lib/server/mongoBot';
 import { utilityServer } from '$lib/server/utilityServer';
 
 export const load: LayoutServerLoad = async (event) => {

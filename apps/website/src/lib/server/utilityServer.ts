@@ -5,7 +5,7 @@ export const utilityServer = {
 	errorInvalidCredentials: () => {
 		return error(401, 'Invalid credentials!');
 	},
-	logServer: (logLevel: LogLevel, message: string) => {
+	logServer: (logLevel: LogLevel, ...data: any[]) => {
 		let prefix;
 
 		switch (logLevel) {
@@ -20,7 +20,7 @@ export const utilityServer = {
 				break;
 		}
 
-		console.log(`${prefix}: ${message}`);
+		console.log(`${prefix}: `, ...data);
 	},
 	redirectToLogin: (route: { id: any }) => {
 		const redirectUrl = `/login?redirect=${route.id}`;

@@ -9,11 +9,11 @@
 	import Toasts from '$lib/components/toast/Toasts.svelte';
 
 	let { children } = $props();
+	let pageData = $derived(pageState.page.data);
+
 	onMount(() => {
 		pageState.page.data = page.data as BasePageData;
 	});
-
-	let pageData = $derived(pageState.page.data);
 </script>
 
 <svelte:head>

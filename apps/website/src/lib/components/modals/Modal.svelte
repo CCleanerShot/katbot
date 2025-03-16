@@ -5,10 +5,11 @@
 	type Props = {
 		children: Snippet<[]>;
 		modal: keyof typeof modalState;
+		title: string;
 		id?: string;
 	};
 
-	const { modal, children, id }: Props = $props();
+	const { children, modal, title, id }: Props = $props();
 	const current = modalState[modal];
 
 	const onclick = () => {
@@ -25,7 +26,7 @@
 >
 	<div class="absolute-center z-20 flex min-h-[50vh] min-w-[50vw] flex-col rounded-md border-2 border-black bg-white blur-none">
 		<div class="flex border-b-2 border-black p-1 font-bold">
-			<h3 class="flex-1">ADD A {current.type} ORDER</h3>
+			<h3 class="flex-1">{title}</h3>
 			<button {onclick} class="button-border bg-red-500 px-1.5">X</button>
 		</div>
 		{@render children()}

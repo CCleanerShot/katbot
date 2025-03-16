@@ -127,6 +127,11 @@ main {
 	background-color: var(--secondary-color);
 }
 
+.table tr:has(td:hover) > *:not(:last-child):hover {
+	background-color: black;
+	color: white;
+}
+
 label:has(+ * .invalid),
 label:has(+ .invalid) {
 	color: red;

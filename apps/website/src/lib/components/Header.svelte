@@ -1,14 +1,15 @@
 <script lang="ts">
-	import katbotImage from '$lib/images/katbot.png';
+	import Link from './Link.svelte';
 	import { page } from '$app/state';
 	import RoutePage from './RoutePage.svelte';
-	let hover = $state(false);
+	import katbotImage from '$lib/images/katbot.png';
 	import discordImage from '$lib/images/discord.png';
 	import grassBlockImage from '$lib/images/grass_block.png';
-	import Link from './Link.svelte';
+
+	let hover = $state(false);
 </script>
 
-<div id="container" class="border-b-2 border-black p-2">
+<div id="container" class="border-b-2 border-black p-1">
 	<Link href="/">
 		<img
 			alt="katbot logo"
@@ -36,7 +37,7 @@
 		50% {
 			rotate: 365deg;
 			scale: 110%;
-			width: 4rem;
+			width: 3.5rem;
 		}
 		100% {
 			rotate: 360deg;
@@ -44,8 +45,8 @@
 	}
 
 	img {
-		width: 4rem;
-		height: 4rem;
+		width: 3rem;
+		height: 3rem;
 	}
 
 	img.hover {
@@ -58,7 +59,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		padding-top: 0.5rem;
 	}
 
 	h1 {

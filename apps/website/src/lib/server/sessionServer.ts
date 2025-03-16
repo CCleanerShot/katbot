@@ -1,9 +1,9 @@
 import { sha256 } from '@oslojs/crypto/sha2';
 import { mongoBot } from '$lib/server/mongoBot';
 import type { RequestEvent } from '@sveltejs/kit';
+import type { Session } from '$lib/mongodb/collections/Session';
 import { MONGODB_SESSION_DAY_LENGTH } from '$env/static/private';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
-import type { Session } from '$lib/mongodb/collections/Session';
 
 // session token: https://lucia-auth.com/sessions/cookies/sveltekit
 export const sessionServer = {
@@ -59,14 +59,14 @@ export const sessionServer = {
 	},
 	validateSessionToken: async (token: string): Promise<Session | null> => {
 		const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-		const session = await mongoBot.MONGODB_C_SESSIONS.FindOne({ id: sessionId });
+		const session = await mongoBot.MONGODB_C_SESSIONS.FindOne({ ID: sessionId });
 
 		if (session === null) {
 			return null;
 		}
 
 		if (Date.now() >= session.ExpiresAt.getTime()) {
-			await mongoBot.MONGODB_C_SESSIONS.DeleteOne({ id: sessionId });
+			await mongoBot.MONGODB_C_SESSIONS.DeleteOne({ ID: sessionId });
 			return null;
 		}
 
@@ -74,7 +74,7 @@ export const sessionServer = {
 
 		if (Date.now() >= session.ExpiresAt.getTime() - 1000 * 60 * 60 * 24 * (days / 2)) {
 			session.ExpiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * days);
-			await mongoBot.MONGODB_C_SESSIONS.UpdateOne({ id: sessionId }, { $set: { ExpiresAt: session.ExpiresAt } });
+			await mongoBot.MONGODB_C_SESSIONS.UpdateOne({ ID: sessionId }, { $set: { ExpiresAt: session.ExpiresAt } });
 		}
 
 		return session;

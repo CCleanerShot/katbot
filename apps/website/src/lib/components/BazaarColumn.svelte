@@ -22,7 +22,7 @@
 	};
 
 	const deleteOnClick = async (item: BazaarItem, index: number) => {
-		const response = await clientFetch(actionDelete, { Name: item.Name });
+		const response = await clientFetch(actionDelete, { ID: item.ID });
 
 		if (response.ok) {
 			bazaarState[type].splice(index, 1);
@@ -66,9 +66,9 @@
 							<td>{BazaarItem.OrderTypeString(item)}</td>
 							<td>{item.RemovedAfter ? 'YES' : 'NO'}</td>
 							<td class="invisible px-1 group-hover:visible">
-								<button class="remove-button hover:scale:105 button-border bg-red-500 px-1" onclick={() => deleteOnClick(item, index)}
-									>X</button
-								>
+								<button class="remove-button hover:scale:105 button-border bg-red-500 px-1" onclick={() => deleteOnClick(item, index)}>
+									X
+								</button>
 							</td>
 						</tr>
 					{/each}

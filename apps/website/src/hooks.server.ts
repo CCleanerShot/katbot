@@ -35,6 +35,5 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 
 export const handleFetch: HandleFetch = async ({ event, fetch, request }) => {
-	console.log(event.url);
 	return fetch(request);
 };
