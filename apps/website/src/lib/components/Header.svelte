@@ -7,25 +7,29 @@
 	import grassBlockImage from '$lib/images/grass_block.png';
 
 	let hover = $state(false);
+
+	let indexPage = $derived(page.route.id === '/');
 </script>
 
-<div id="container" class="border-b-2 border-black p-1">
-	<Link href="/">
-		<img
-			alt="katbot logo"
-			src={katbotImage}
-			class={[{ hover }]}
-			onmouseenter={(e) => (hover = true)}
-			onanimationiteration={(e) => (hover = false)}
-		/>
-	</Link>
-	<h1>KatBot</h1>
-	{#if page.route.id === '/'}
+<div id="container" class={['border-b-2 border-black p-2', indexPage ? '' : 'small']}>
+	<div class="flex gap-4 pb-2">
+		<Link href="/">
+			<img
+				alt="katbot logo"
+				src={katbotImage}
+				class={[{ hover }]}
+				onmouseenter={(e) => (hover = true)}
+				onanimationiteration={(e) => (hover = false)}
+			/>
+		</Link>
+		<h1 class="m-auto">KatBot</h1>
+	</div>
+	{#if indexPage}
 		<div>here lies: useless crap</div>
 	{/if}
 	<div class="flex gap-2">
-		<RoutePage className="w-32" route="/discord" title="Discord" imageUrl={discordImage} />
-		<RoutePage className="w-32" route="/skyblock" title="Skyblock" imageUrl={grassBlockImage} />
+		<RoutePage className="w-48" route="/discord" title="Discord" imageUrl={discordImage} />
+		<RoutePage className="w-48" route="/skyblock" title="Skyblock" imageUrl={grassBlockImage} />
 	</div>
 </div>
 
@@ -37,7 +41,7 @@
 		50% {
 			rotate: 365deg;
 			scale: 110%;
-			width: 3.5rem;
+			width: 5rem;
 		}
 		100% {
 			rotate: 360deg;
@@ -45,8 +49,8 @@
 	}
 
 	img {
-		width: 3rem;
-		height: 3rem;
+		width: 4rem;
+		height: 4rem;
 	}
 
 	img.hover {

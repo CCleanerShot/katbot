@@ -1,0 +1,81 @@
+* {
+	font-size: 1.5rem;
+}
+
+.font-x-small {
+	font-size: 0.75rem;
+}
+
+.font-small {
+	font-size: 1rem;
+}
+
+.font-large {
+	font-size: 2rem;
+}
+
+.font-x-large {
+	font-size: 2.5rem;
+}
+
+.font-x-small-recursive,
+.font-x-small-recursive * {
+	font-size: 0.75rem;
+}
+
+.font-small-recursive,
+.font-small-recursive * {
+	font-size: 1rem;
+}
+
+.font-large-recursive,
+.font-large-recursive * {
+	font-size: 2rem;
+}
+
+.font-x-large-recursive,
+.font-x-large-recursive * {
+	font-size: 2.5rem;
+}
+
+@media only screen and (max-width: 48rem) {
+	* {
+		font-size: 1rem;
+	}
+
+	.font-x-small {
+		font-size: 0.5rem;
+	}
+
+	.font-small {
+		font-size: 0.5rem;
+	}
+
+	.font-large {
+		font-size: 1.5rem;
+	}
+
+	.font-x-large {
+		font-size: 2rem;
+	}
+
+	.font-x-small-recursive,
+	.font-x-small-recursive * {
+		font-size: 0.5rem;
+	}
+
+	.font-small-recursive,
+	.font-small-recursive * {
+		font-size: 0.5rem;
+	}
+
+	.font-large-recursive,
+	.font-large-recursive * {
+		font-size: 1.5rem;
+	}
+
+	.font-x-large-recursive,
+	.font-x-large-recursive * {
+		font-size: 2rem;
+	}
+}

@@ -36,19 +36,19 @@
 	};
 </script>
 
-<div class="not-last:border-r-2 flex h-full flex-1 flex-col border-black p-1">
+<div class="not-last:border-r-2 flex h-full flex-1 flex-col border-black p-2">
 	<div class="flex justify-center gap-2">
-		<button class="button group relative w-20" {onclick}>
+		<button class="button group relative w-28" {onclick}>
 			<span class="group-hover:invisible">{type}</span>
 			<span class="absolute-center invisible group-hover:visible">REFRESH</span>
 		</button>
-		<button class="button w-20" onclick={addOnClick}>
+		<button class="button w-28" onclick={addOnClick}>
 			<span>ADD</span>
 		</button>
 	</div>
 	<div class="flex justify-center p-2">
 		{#if bazaarState[type].length != 0}
-			<table class="table border-black text-[8px]">
+			<table class="font-small-recursive table border-black">
 				<thead>
 					<tr>
 						<th>Name</th>
@@ -65,8 +65,8 @@
 							<td>{item.Price}</td>
 							<td>{BazaarItem.OrderTypeString(item)}</td>
 							<td>{item.RemovedAfter ? 'YES' : 'NO'}</td>
-							<td class="invisible px-1 group-hover:visible">
-								<button class="remove-button hover:scale:105 button-border bg-red-500 px-1" onclick={() => deleteOnClick(item, index)}>
+							<td class="invisible px-1.5 group-hover:visible">
+								<button class="remove-button hover:scale:105 button-border bg-red-500 px-2" onclick={() => deleteOnClick(item, index)}>
 									X
 								</button>
 							</td>

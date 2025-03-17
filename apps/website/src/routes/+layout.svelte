@@ -1,12 +1,17 @@
 <script lang="ts">
-	import '../polyfills';
 	import '../app.css';
-	import Header from '$lib/components/Header.svelte';
+	import '../polyfills';
+	import '../app-font.css';
+	import '../app-media.css';
+	import '../app-special.css';
+	import '../app-animations.css';
+	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import type { BasePageData } from '$lib/types';
+	import Header from '$lib/components/Header.svelte';
 	import { pageState } from '$lib/states/pageState.svelte';
-	import { onMount } from 'svelte';
 	import Toasts from '$lib/components/toast/Toasts.svelte';
+	import LoadingBorder from '$lib/components/LoadingBorder.svelte';
 
 	let { children } = $props();
 	let pageData = $derived(pageState.page.data);
@@ -22,6 +27,7 @@
 </svelte:head>
 
 <main class="min-h-screen">
+	<LoadingBorder />
 	<Header />
 	<Toasts />
 	{@render children()}

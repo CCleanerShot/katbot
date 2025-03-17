@@ -19,7 +19,7 @@
 
 	const onclickTag = async (item: AuctionItem) => {
 		auctionState.ITEM = item;
-		panelState.AuctionTagPanel.isOpened = true;
+		panelState.AuctionTagsPanel.isOpened = true;
 	};
 
 	const onclickDelete = async (item: AuctionBuy, index: number) => {
@@ -38,7 +38,7 @@
 	</div>
 	<div class="flex flex-col items-center">
 		{#if auctionItems.length > 0}
-			<table class="table text-[8px]">
+			<table class="table">
 				<thead>
 					<tr>
 						<th>Name</th>
@@ -54,9 +54,14 @@
 							<td>{item.Name}</td>
 							<td>{item.Price}</td>
 							<td>{item.RemovedAfter ? 'YES' : 'NO'}</td>
-							<td class="cursor-pointer hover:font-bold" onclick={() => onclickTag(item)}>>></td>
-							<td class="invisible px-1 group-hover:visible">
-								<button class="remove-button hover:scale:105 button-border bg-red-500 px-1" onclick={() => onclickDelete(item, index)}>
+							<td class="group/inner relative cursor-pointer hover:font-bold" onclick={() => onclickTag(item)}>
+								<span class="group-hover/inner:invisible">>></span>
+								<span class="invisible absolute inset-0 text-white transition group-hover/inner:visible group-hover/inner:rotate-3">
+									OPEN
+								</span>
+							</td>
+							<td class="invisible px-2 group-hover:visible">
+								<button class="remove-button hover:scale:105 button-border bg-red-500 px-2.5" onclick={() => onclickDelete(item, index)}>
 									X
 								</button>
 							</td>

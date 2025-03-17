@@ -1,5 +1,18 @@
 @import 'tailwindcss';
 
+* {
+	font-size: 24px;
+}
+
+button:disabled {
+	cursor: not-allowed;
+}
+
+button:enabled,
+select:enabled {
+	cursor: pointer;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -14,7 +27,9 @@ input {
 :root {
 	--primary-color: #ffccff;
 	--secondary-color: #ccffcc;
-	--transition-time: 0.1s;
+	--transition-time-short: 0.1s;
+	--transition-time-medium: 0.25s;
+	--transition-time-long: 0.5s;
 }
 
 main {
@@ -22,36 +37,16 @@ main {
 	font-family: monospace;
 }
 
-.absolute-center {
-	left: 50%;
-	position: absolute;
-	top: 50%;
-	transform: translate(-50%, -50%);
-}
-
-/* assumes you have absolute already */
-.absolute-x-center {
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-/* assumes you have absolute already */
-.absolute-y-center {
-	top: 50%;
-	transform: translateY(-50%);
-}
-
 .button {
 	background-color: white;
-	border: 0.2rem solid black;
+	border: 4px solid black;
 	border-radius: 0.5rem;
-	cursor: pointer;
 	font-weight: 600;
-	padding: 0.1rem;
-	padding-left: 0.4rem;
-	padding-right: 0.4rem;
+	padding: 0.2rem;
+	padding-left: 0.6rem;
+	padding-right: 0.6rem;
 	transition: all;
-	transition-duration: var(--transition-time);
+	transition-duration: var(--transition-time-short);
 }
 
 .button:hover {
@@ -60,21 +55,8 @@ main {
 	scale: 105%;
 }
 
-.button-border {
-	border: 1px solid black;
-	text-align: center;
-	font-weight: bold;
-	transition: transform;
-	transition-duration: var(--transition-time);
-	cursor: pointer;
-}
-
-.button-border:hover {
-	transform: rotate(12deg) scale(105%);
-}
-
 .input {
-	width: 8rem;
+	width: 0px;
 	border: 1px solid black;
 	padding-left: 0.2rem;
 	padding-right: 0.2rem;
@@ -82,20 +64,6 @@ main {
 
 .input:focus {
 	border: 1px solid var(--secondary-color);
-}
-
-.invalid {
-	border-color: red;
-}
-
-@keyframes animate-exit-button {
-	0% {
-		transform: translateX(5px);
-	}
-
-	50% {
-		transform: scale(110%);
-	}
 }
 
 .table tr:hover .remove-button {
@@ -106,8 +74,8 @@ main {
 
 .table tr > *:not(:last-child) {
 	border: 1px solid black;
-	padding-left: 2px;
-	padding-right: 2px;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
 	text-align: center;
 }
 
@@ -130,9 +98,4 @@ main {
 .table tr:has(td:hover) > *:not(:last-child):hover {
 	background-color: black;
 	color: white;
-}
-
-label:has(+ * .invalid),
-label:has(+ .invalid) {
-	color: red;
 }

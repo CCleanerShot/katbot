@@ -35,24 +35,23 @@
 
 <style>
 	.toast {
-		cursor: pointer;
 		background-color: white;
-		border-left: 2px solid;
-		border-right: 2px solid;
+		border-left: 0.25rem solid;
+		border-right: 0.25rem solid;
 		border-radius: 0.5rem;
 		display: flex;
 		font-size: 0.5rem;
 		transition-property: all;
-		transition-duration: 0.2s;
+		transition-duration: var(--transition-time-medium);
 	}
 
 	.toast:hover {
 		background-color: black;
 		color: white;
-		padding-left: 2px;
-		padding-right: 2px;
-		border-left-width: 4px;
-		border-right-width: 4px;
+		padding-left: 0.2rem;
+		padding-right: 0.2rem;
+		border-left-width: 1rem;
+		border-right-width: 1rem;
 		transform: scale(105%);
 	}
 

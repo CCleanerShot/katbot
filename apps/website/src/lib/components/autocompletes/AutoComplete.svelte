@@ -32,14 +32,14 @@
 	};
 </script>
 
-<div {...containerProps} class={['', containerProps?.class]}>
-	<input {...inputProps} {oninput} bind:value />
+<div {...containerProps} class={['relative flex', containerProps?.class]}>
+	<input {...inputProps} {oninput} bind:value class={['flex-1', inputProps?.class]} />
 	{#if autoCompleteResults.length > 0}
-		<div class="absolute -bottom-0 -left-0 flex w-full flex-1 items-center">
+		<div class="font-x-small-recursive absolute left-0 top-[100%] z-10 flex w-full flex-1 items-center">
 			<div
 				{...resultsProps}
 				class={[
-					'grid max-h-32 min-h-32 flex-1 gap-[2px] overflow-y-auto border-2 border-black bg-white p-1',
+					'grid max-h-64 min-h-64 flex-1 gap-[2px] overflow-y-auto border-4 border-black bg-white p-2',
 					resultsProps?.class,
 					autoCompleteResults.length > 16 ? 'grid-cols-2' : 'grid-cols-1'
 				]}
@@ -47,7 +47,7 @@
 				{#each autoCompleteResults as result}
 					<button
 						type="button"
-						class="cursor-pointer overflow-x-auto whitespace-nowrap border border-gray-500 px-1 text-[7px] transition hover:bg-green-600"
+						class="overflow-x-auto whitespace-nowrap border border-gray-500 px-1 transition hover:bg-green-600"
 						onclick={() => onclick(result)}
 					>
 						<span>{result.beg}</span><span class="font-bold text-green-500">{result.mid}</span><span>{result.end}</span>

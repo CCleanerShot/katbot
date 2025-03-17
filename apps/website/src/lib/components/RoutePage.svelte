@@ -20,9 +20,9 @@
 	});
 </script>
 
-<Link class={['button flex items-center justify-between gap-1', className]} href={route} {style}>
+<Link class={['button flex items-center justify-between gap-2', className]} href={route} {style}>
 	{#if imageUrl}
-		<img alt="related to the route" class="h-auto w-4" src={imageUrl} />
+		<img alt="related to the route" class="h-auto w-8" src={imageUrl} />
 	{/if}
 	<span class="m-auto">{title}</span>
 </Link>

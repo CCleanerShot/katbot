@@ -41,7 +41,7 @@
 
 <div class="flex flex-col items-center gap-2">
 	<h2 class="mt-1">If you don't know your details, you don't belong here.</h2>
-	<form method="POST" class="flex flex-col items-center gap-1 border-2 border-black bg-white p-1" {onsubmit}>
+	<form method="POST" class="flex flex-col items-center gap-1 border-4 border-black bg-white p-1" {onsubmit}>
 		<div>
 			<label for="username">USERNAME</label>
 			<input bind:value={username} class="input" id="username" name="username" type="text" />

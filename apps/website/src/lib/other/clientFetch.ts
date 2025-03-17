@@ -1,3 +1,4 @@
+import { fetchState } from '$lib/states/fetchState.svelte';
 import { toastActions } from '$lib/states/toastsState.svelte';
 import { API_CONTRACTS } from './apiContracts';
 
@@ -13,10 +14,11 @@ export const clientFetch = async <T extends keyof typeof API_CONTRACTS, K extend
 	params: (typeof API_CONTRACTS)[T]['params'],
 	useToast: boolean = false
 ): Promise<ClientResponse<K>> => {
-	// TODO: add headers esp. for authorized routes
 	const { method, route } = API_CONTRACTS[request];
 	const url = new URL(route, window.location.origin);
 	const searchParams = new URL(document.location.toString()).searchParams;
+
+	fetchState.status = 'loading';
 
 	for (const param of searchParams) {
 		url.searchParams.append(param[0], param[1]);
@@ -40,6 +42,7 @@ export const clientFetch = async <T extends keyof typeof API_CONTRACTS, K extend
 		switch (result.ok) {
 			case true:
 				toastActions.addToast({ message: 'Success!', type: 'NONE' });
+				fetchState.status = 'none';
 				break;
 			case false:
 				let message;
@@ -55,9 +58,18 @@ export const clientFetch = async <T extends keyof typeof API_CONTRACTS, K extend
 				}
 
 				toastActions.addToast({ message: message, type: 'ERROR' });
+				fetchState.status = 'error';
+
+				// TODO: get delay from config
+				setTimeout(() => {
+					fetchState.status = 'none';
+				}, 4000);
+
 				break;
 		}
 	}
+
+	fetchState.status = 'none';
 
 	return result as any as ClientResponse<K>;
 };

@@ -1,5 +1,5 @@
 export const panelState = $state({
-	AuctionTagPanel: {
+	AuctionTagsPanel: {
 		isOpened: false as boolean
 	}
 });

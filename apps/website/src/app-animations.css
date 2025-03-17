@@ -1,0 +1,9 @@
+@keyframes animate-exit-button {
+	0% {
+		transform: translateX(5px);
+	}
+
+	50% {
+		transform: scale(110%);
+	}
+}

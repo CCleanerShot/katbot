@@ -59,12 +59,13 @@
 </script>
 
 <Modal modal="BazaarAddModal" id="modal" title={`ADD A ${type.replace(/[sS]$/, '')} ORDER`}>
-	<form method="POST" class="flex flex-1 flex-col items-center justify-center gap-1 p-2" {onsubmit}>
-		<div id="container" class="flex flex-1 flex-col gap-1 border border-black p-3">
+	<form method="POST" class="flex flex-1 flex-col justify-center gap-2 p-2" {onsubmit}>
+		<div class="form-container flex flex-1 flex-col gap-2 border border-black p-3">
 			<div>
 				<label for="name">Name</label>
 				<BazaarItemsAllAutoComplete
 					bind:value={name}
+					containerProps={{ class: 'w-[50%]' }}
 					inputProps={{ autocomplete: 'off', class: 'input', id: 'name', name: 'name', required: true }}
 				/>
 			</div>
@@ -73,37 +74,20 @@
 				<input id="price" name="price" type="number" class="input" bind:value={price} required min="0" max="1000000000000" />
 			</div>
 			<div>
-				<label for="order-type" class="text-[10px]">Order Type</label>
-				<select id="order-type" name="order-type" class="input cursor-pointer" bind:value={orderType} required>
+				<label for="order-type" class="">Order Type</label>
+				<select id="order-type" name="order-type" class="input" bind:value={orderType} required>
 					<option value={0}>INSTA</option>
 					<option value={1}>ORDER</option>
 				</select>
 			</div>
 			<div>
-				<label for="remove-after" class="text-[10px]">Remove After?</label>
-				<select id="remove-after" name="remove-after" class="input hover: cursor-pointer" bind:value={removeAfter} required>
+				<label for="remove-after" class="">Remove After?</label>
+				<select id="remove-after" name="remove-after" class="input" bind:value={removeAfter} required>
 					<option value={true}>TRUE</option>
 					<option value={false}>FALSE</option>
 				</select>
 			</div>
 		</div>
-		<button class="button-border mt-2 bg-green-500 p-1 px-2" type="submit">Create</button>
+		<button class="button-border my-3 self-center bg-green-500 p-1 px-2" type="submit">Create</button>
 	</form>
 </Modal>
-
-<style>
-	#container > div {
-		display: flex;
-		align-items: center;
-	}
-
-	#container label:hover {
-		font-weight: 600;
-		text-decoration: underline;
-	}
-
-	#container > div > label {
-		width: 50%;
-		cursor: pointer;
-	}
-</style>

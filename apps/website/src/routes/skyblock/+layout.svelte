@@ -5,27 +5,28 @@
 	const { children } = $props();
 </script>
 
+{#snippet link(className: string)}
+	<span class={['font-x-small rotate-3 whitespace-nowrap transition hover:rotate-2', className]}>
+		check
+		<a
+			target="_blank"
+			href="https://www.skyblock.bz"
+			class="font-x-small not-visited:text-blue-500 visited:text-purple-500 hover:underline"
+		>
+			https://www.skyblock.bz
+		</a>
+		for prices.
+	</span>
+{/snippet}
 <div>
 	<div class="flex items-center justify-center gap-2 border-b-2 border-black py-2">
 		{#if page.route.id?.includes('bazaar')}
-			<span class="invisible rotate-3 whitespace-nowrap text-[6px] transition hover:rotate-2">
-				check
-				<a target="_blank" href="https://www.skyblock.bz" class="not-visited:text-blue-500 inline visited:text-purple-500 hover:underline">
-					https://www.skyblock.bz
-				</a>
-				for prices.
-			</span>
+			{@render link('invisible')}
 		{/if}
-		<RoutePage className="w-24" route="/skyblock/auctions" title="Auctions" />
-		<RoutePage className="w-24" route="/skyblock/bazaar" title="Bazaar" />
+		<RoutePage className="w-36" route="/skyblock/auctions" title="Auctions" />
+		<RoutePage className="w-36" route="/skyblock/bazaar" title="Bazaar" />
 		{#if page.route.id?.includes('bazaar')}
-			<span class="rotate-3 whitespace-nowrap text-[6px] transition hover:rotate-2">
-				check
-				<a target="_blank" href="https://www.skyblock.bz" class="not-visited:text-blue-500 inline visited:text-purple-500 hover:underline">
-					https://www.skyblock.bz
-				</a>
-				for prices.
-			</span>
+			{@render link('')}
 		{/if}
 	</div>
 	<div>{@render children()}</div>

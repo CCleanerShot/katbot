@@ -1,0 +1,62 @@
+.absolute-center {
+	left: 50%;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/* assumes you have absolute already */
+.absolute-x-center {
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+/* assumes you have absolute already */
+.absolute-y-center {
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.button-border {
+	border: 1px solid black;
+	text-align: center;
+	font-weight: bold;
+	transition: transform;
+	transition-duration: var(--transition-time-short);
+}
+
+.button-border:hover {
+	transform: rotate(12deg) scale(105%);
+}
+
+.disable-text {
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.form-container > div > * {
+	width: 50%;
+}
+
+.form-container > div {
+	display: flex;
+	align-items: center;
+}
+
+.form-container > div > label {
+	cursor: pointer;
+}
+
+.form-container > div > label:hover {
+	font-weight: 600;
+	text-decoration: underline;
+}
+
+.invalid {
+	border-color: red;
+}
+
+label:has(+ * .invalid),
+label:has(+ .invalid) {
+	color: red;
+}
