@@ -16,7 +16,7 @@
 	let style = $state('');
 
 	afterNavigate(() => {
-		style = page.route.id!.includes(route) ? 'background-color: var(--primary-color)' : '';
+		style = page.route.id!.includes(route) ? 'background-color: var(--color-primary)' : '';
 	});
 </script>
 

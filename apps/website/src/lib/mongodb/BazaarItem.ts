@@ -1,4 +1,5 @@
 import { OrderType } from '$lib/enums';
+import { cacheState } from '$lib/states/cacheState.svelte';
 
 export class BazaarItem {
 	/** Hypixel ID of the item. */
@@ -23,12 +24,17 @@ export class BazaarItem {
 		this.UserId = _UserId;
 	}
 
+	static Empty(): BazaarItem {
+		return { ID: '', Name: '', OrderType: OrderType.ORDER, Price: 0n, RemovedAfter: true, UserId: 0n };
+	}
+
 	static ToClass(item: BazaarItem): BazaarItem {
 		return new BazaarItem(item.ID, item.Name, item.OrderType, item.Price, item.RemovedAfter, item.UserId);
 	}
 
 	static ToType(item: BazaarItem): BazaarItem {
-		const { ID, Name, OrderType, Price, RemovedAfter, UserId } = item;
+		const { Name, OrderType, Price, RemovedAfter, UserId } = item;
+		const ID = cacheState.BAZAAR.find((e) => e.Name === item.Name)?.ID!;
 		return { ID, Name, OrderType, Price, RemovedAfter, UserId } as BazaarItem;
 	}
 

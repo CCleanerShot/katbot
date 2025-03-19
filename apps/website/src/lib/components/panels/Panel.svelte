@@ -64,7 +64,7 @@
 	}
 
 	.header:hover {
-		background-color: var(--primary-color);
+		background-color: var(--color-primary);
 		transition-duration: var(--transition-time-long);
 		transition-property: background-color;
 	}

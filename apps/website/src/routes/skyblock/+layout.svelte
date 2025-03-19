@@ -29,5 +29,5 @@
 			{@render link('')}
 		{/if}
 	</div>
-	<div>{@render children()}</div>
+	{@render children()}
 </div>

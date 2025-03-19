@@ -24,7 +24,7 @@ public partial class DiscordEvents
     [DiscordEvents]
     public void watch_bazaar()
     {
-        _Timer.Elapsed += Watch_Bazaar_Elapsed;
+        _BazaarTimer.Elapsed += Watch_Bazaar_Elapsed;
     }
 
     async void Watch_Bazaar_Elapsed(object? obj, System.Timers.ElapsedEventArgs args)
@@ -32,6 +32,9 @@ public partial class DiscordEvents
         Dictionary<string, BazaarRouteProduct>? liveItems = await BazaarRoute.GetRoute();
 
         if (liveItems == null)
+            return;
+
+        if (liveItems.Count == 0)
             return;
 
         List<BazaarItem> trackedBuys = await MongoBot.BazaarBuy.FindList(e => MongoBot.CachedBazaarItems.Keys.Contains(e.ID));

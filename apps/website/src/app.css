@@ -25,15 +25,19 @@ input {
 }
 
 :root {
-	--primary-color: #ffccff;
-	--secondary-color: #ccffcc;
+	--button-padding-x: 0.6rem;
+	--button-padding-y: 0.2rem;
+	--color-primary: #ffccff;
+	--color-secondary: #ccffcc;
+	--color-green: oklch(0.723 0.219 149.579);
+	--color-red: oklch(0.637 0.237 25.331);
 	--transition-time-short: 0.1s;
 	--transition-time-medium: 0.25s;
 	--transition-time-long: 0.5s;
 }
 
 main {
-	background-image: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+	background-image: linear-gradient(to bottom, var(--color-primary), var(--color-secondary));
 	font-family: monospace;
 }
 
@@ -43,27 +47,26 @@ main {
 	border-radius: 0.5rem;
 	font-weight: 600;
 	padding: 0.2rem;
-	padding-left: 0.6rem;
-	padding-right: 0.6rem;
+	padding-left: var(--button-padding-x);
+	padding-right: var(--button-padding-x);
 	transition: all;
 	transition-duration: var(--transition-time-short);
 }
 
-.button:hover {
-	background-color: var(--primary-color);
+.button:not(:disabled):hover {
+	background-color: var(--color-primary);
 	rotate: 2deg;
 	scale: 105%;
 }
 
 .input {
-	width: 0px;
 	border: 1px solid black;
 	padding-left: 0.2rem;
 	padding-right: 0.2rem;
 }
 
-.input:focus {
-	border: 1px solid var(--secondary-color);
+.input:focus-within {
+	border: 3px solid black;
 }
 
 .table tr:hover .remove-button {
@@ -74,13 +77,19 @@ main {
 
 .table tr > *:not(:last-child) {
 	border: 1px solid black;
+	text-align: center;
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
-	text-align: center;
+}
+
+.table tr > *:not(:last-child) > select {
+	margin: auto;
+	outline: none;
+	width: 100%;
 }
 
 .table tr > th:not(:last-child) {
-	background-color: var(--primary-color);
+	background-color: var(--color-primary);
 }
 
 .table tr td:nth-child(2) {
@@ -92,10 +101,5 @@ main {
 }
 
 .table tr:has(td:hover) > *:not(:last-child) {
-	background-color: var(--secondary-color);
-}
-
-.table tr:has(td:hover) > *:not(:last-child):hover {
-	background-color: black;
-	color: white;
+	background-color: var(--color-secondary);
 }

@@ -1,38 +1,59 @@
 <script lang="ts">
-	import { BazaarItem } from '$lib/mongodb/BazaarItem';
-	import type { API_CONTRACTS } from '$lib/other/apiContracts';
-	import { clientFetch } from '$lib/other/clientFetch';
-	import { bazaarState } from '$lib/states/bazaarState.svelte';
-	import { modalState } from '$lib/states/modalState.svelte';
+	import { OrderType } from '$lib/enums';
 	import type { BazaarType } from '$lib/types';
+	import { BazaarItem } from '$lib/mongodb/BazaarItem';
+	import { clientFetch } from '$lib/other/clientFetch';
+	import { cacheState } from '$lib/states/cacheState.svelte';
+	import type { API_CONTRACTS } from '$lib/other/apiContracts';
+	import { bazaarState } from '$lib/states/bazaarState.svelte';
+	import AutoComplete from './autocompletes/Autocomplete.svelte';
 
 	type Props = {
 		action: Extract<keyof typeof API_CONTRACTS, `GET${string}/bazaar/${string}`>;
-		actionAdd: Extract<keyof typeof API_CONTRACTS, `POST${string}/bazaar/${string}`>;
 		actionDelete: Extract<keyof typeof API_CONTRACTS, `DELETE${string}/bazaar/${string}`>;
 		type: BazaarType;
 	};
 
-	const { action, actionAdd, actionDelete, type }: Props = $props();
+	class Item {
+		Name: string = $state('');
+		ID: string = $derived(cacheState.BAZAAR.find((e) => e.Name === this.Name)?.ID ?? '');
+		OrderType: OrderType = $state(OrderType.ORDER);
+		Price: bigint = $state(0n);
+		RemovedAfter = $state(true);
+		UserId: bigint = $state(0n);
+
+		constructor(item?: BazaarItem) {
+			if (!item) {
+				return;
+			}
+
+			const { ID, Name, OrderType, Price, RemovedAfter, UserId } = item;
+			this.Name = Name;
+			this.OrderType = OrderType;
+			this.Price = Price;
+			this.RemovedAfter = RemovedAfter;
+			this.UserId = UserId;
+		}
+	}
+
+	const { action, actionDelete, type }: Props = $props();
 
 	const onclick = async () => {
 		const response = await clientFetch(action, {});
 		const json = await response.JSON();
-		bazaarState[type] = json.data.map((e) => BazaarItem.ToClass(e));
+		bazaarState[type] = json.data.map((e) => new Item(e));
 	};
 
-	const deleteOnClick = async (item: BazaarItem, index: number) => {
+	const onclickAdd = () => {
+		bazaarState[type].push(BazaarItem.Empty());
+	};
+
+	const onclickDelete = async (item: BazaarItem, index: number) => {
 		const response = await clientFetch(actionDelete, { ID: item.ID });
 
 		if (response.ok) {
 			bazaarState[type].splice(index, 1);
 		}
-	};
-
-	const addOnClick = () => {
-		modalState.BazaarAddModal.action = actionAdd;
-		modalState.BazaarAddModal.type = type;
-		modalState.BazaarAddModal.isOpened = true;
 	};
 </script>
 
@@ -42,13 +63,13 @@
 			<span class="group-hover:invisible">{type}</span>
 			<span class="absolute-center invisible group-hover:visible">REFRESH</span>
 		</button>
-		<button class="button w-28" onclick={addOnClick}>
+		<button class="button w-28" onclick={onclickAdd}>
 			<span>ADD</span>
 		</button>
 	</div>
 	<div class="flex justify-center p-2">
 		{#if bazaarState[type].length != 0}
-			<table class="font-small-recursive table border-black">
+			<table class="font-x-small-recursive table border-black">
 				<thead>
 					<tr>
 						<th>Name</th>
@@ -59,14 +80,31 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each bazaarState[type] as item, index (item.Name)}
+					{#each bazaarState[type] as item, index (`${item.ID}-${index}`)}
 						<tr class="group">
-							<td>{item.Name}</td>
-							<td>{item.Price}</td>
-							<td>{BazaarItem.OrderTypeString(item)}</td>
-							<td>{item.RemovedAfter ? 'YES' : 'NO'}</td>
+							<td>
+								<AutoComplete
+									bind:array={cacheState['BAZAAR']}
+									bind:value={item.Name}
+									updateKey={'Name'}
+									updateObj={bazaarState[type][index]}
+								/>
+							</td>
+							<td><input bind:value={item.Price} type="number" class="w-20 text-right" min="0" max="1000000000" /></td>
+							<td>
+								<select bind:value={item.OrderType}>
+									<option value={0}>INSTA</option>
+									<option value={1}>ORDER</option>
+								</select>
+							</td>
+							<td>
+								<select bind:value={item.RemovedAfter}>
+									<option value={true}>YES</option>
+									<option value={false}>NO</option>
+								</select>
+							</td>
 							<td class="invisible px-1.5 group-hover:visible">
-								<button class="remove-button hover:scale:105 button-border bg-red-500 px-2" onclick={() => deleteOnClick(item, index)}>
+								<button class="remove-button hover:scale:105 button-border bg-red-500 px-2" onclick={() => onclickDelete(item, index)}>
 									X
 								</button>
 							</td>
@@ -77,6 +115,3 @@
 		{/if}
 	</div>
 </div>
-
-<style>
-</style>

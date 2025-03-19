@@ -1,9 +1,8 @@
 <script lang="ts">
-	import AuctionAddModal from '$lib/components/modals/AuctionAddModal.svelte';
-	import AuctionTagsPanel from '$lib/components/panels/AuctionTagsPanel.svelte';
+	import { onMount } from 'svelte';
 	import { clientFetch } from '$lib/other/clientFetch';
 	import { cacheState } from '$lib/states/cacheState.svelte';
-	import { onMount } from 'svelte';
+	import AuctionTagsPanel from '$lib/components/panels/AuctionTagsPanel.svelte';
 
 	const { children } = $props();
 
@@ -13,6 +12,5 @@
 	});
 </script>
 
-<AuctionAddModal />
 <AuctionTagsPanel />
 {@render children()}

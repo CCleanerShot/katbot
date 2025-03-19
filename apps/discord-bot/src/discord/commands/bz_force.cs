@@ -6,10 +6,16 @@ public partial class DiscordCommands : InteractionModuleBase
     [SlashCommand("bz_force", "forces the timer for checking the bazaar to finish instantly (same as '/ah_force')")]
     public async Task bz_force()
     {
+        void OneTime(object? obj, System.Timers.ElapsedEventArgs args)
+        {
+            DiscordBot._DiscordEvents._BazaarTimer.Interval = Settings.PUBLIC_HYPIXEL_BAZAAR_TIMER_MINUTES * 60000;
+            DiscordBot._DiscordEvents._BazaarTimer.Elapsed -= OneTime;
+        }
+
         try
         {
-            DiscordBot._DiscordEvents._Timer.Interval = 100;
-            DiscordBot._DiscordEvents._Timer.Elapsed += OneTime;
+            DiscordBot._DiscordEvents._BazaarTimer.Interval = 100;
+            DiscordBot._DiscordEvents._BazaarTimer.Elapsed += OneTime;
             await RespondAsync("Forcing...");
         }
 

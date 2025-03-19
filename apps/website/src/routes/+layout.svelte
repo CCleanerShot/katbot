@@ -12,6 +12,7 @@
 	import { pageState } from '$lib/states/pageState.svelte';
 	import Toasts from '$lib/components/toast/Toasts.svelte';
 	import LoadingBorder from '$lib/components/LoadingBorder.svelte';
+	import AutoCompletePane from '$lib/components/autocompletes/AutocompletePane.svelte';
 
 	let { children } = $props();
 	let pageData = $derived(pageState.page.data);
@@ -30,5 +31,6 @@
 	<LoadingBorder />
 	<Header />
 	<Toasts />
+	<AutoCompletePane />
 	{@render children()}
 </main>

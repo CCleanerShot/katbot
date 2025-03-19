@@ -28,12 +28,12 @@ public partial class DiscordEvents
     [DiscordEvents]
     public void watch_auction()
     {
-        _Timer.Elapsed += Watch_Auction_Elapsed;
+        _AuctionTimer.Elapsed += Watch_Auction_Elapsed;
     }
 
     async void Watch_Auction_Elapsed(object? obj, System.Timers.ElapsedEventArgs args)
     {
-        List<AuctionsRouteProduct>? liveItems = await AuctionsRoute.GetRoute(WatchBuy_CachedAuctionBuyAlerts);
+        List<AuctionsRouteProduct>? liveItems = await AuctionsRoute.GetRoute(WatchBuy_CachedAuctionBuyAlerts, 100);
 
         if (liveItems == null)
         {
