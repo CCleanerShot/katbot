@@ -1,5 +1,3 @@
-using System.Reflection;
-
 /// <summary>
 /// Holds data regarding constant runtime-specifics of the app.
 /// </summary>
@@ -161,7 +159,6 @@ public class Settings
                 Program.Utility.Log(Enums.LogLevel.WARN, $"The key was not implemented yet. Intentional? (at {lines[0]})");
         } while (line != null);
 #else
-            Console.WriteLine(Environment.GetEnvironmentVariables());
             ADMIN_1 = Environment.GetEnvironmentVariable("ADMIN_1");
             ADMIN_2 = Environment.GetEnvironmentVariable("ADMIN_2");
             DISCORD_APPLICATION_ID = UInt64.Parse(Environment.GetEnvironmentVariable("DISCORD_APPLICATION_ID"));

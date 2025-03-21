@@ -45,6 +45,9 @@ public partial class DiscordEvents
             if (WatchBuy_CachedBazaarBuyAlerts.Select(e => e.ID).Contains(t.ID))
                 return false;
 
+            if (!liveItems.ContainsKey(t.ID)) // if the market somehow crashed for that item
+                return false;
+
             switch (t.OrderType)
             {
                 case Enums.OrderType.INSTA:
@@ -65,6 +68,9 @@ public partial class DiscordEvents
         List<BazaarItem> eligibleSells = trackedSells.Where(t =>
         {
             if (WatchSell_CachedBazaarSellAlerts.Select(e => e.ID).Contains(t.ID))
+                return false;
+
+            if (!liveItems.ContainsKey(t.ID)) // if the market somehow crashed for that item
                 return false;
 
             switch (t.OrderType)
