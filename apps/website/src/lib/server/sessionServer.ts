@@ -7,12 +7,13 @@ import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/enco
 
 // session token: https://lucia-auth.com/sessions/cookies/sveltekit
 export const sessionServer = {
-	createSession: async (token: string, username: string) => {
+	createSession: async (token: string, userId: bigint, username: string) => {
 		const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 		const days = Number(MONGODB_SESSION_DAY_LENGTH);
 		const session: Session = {
 			ExpiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * days),
 			ID: sessionId,
+			UserId: userId,
 			Username: username
 		};
 
@@ -57,6 +58,7 @@ export const sessionServer = {
 			path: '/'
 		});
 	},
+
 	validateSessionToken: async (token: string): Promise<Session | null> => {
 		const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 		const session = await mongoBot.MONGODB_C_SESSIONS.FindOne({ ID: sessionId });

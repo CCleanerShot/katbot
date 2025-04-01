@@ -49,6 +49,11 @@
 	};
 
 	const onclickDelete = async (item: BazaarItem, index: number) => {
+		if (item.UserId === 0n) {
+			bazaarState[type].splice(index, 1);
+			return;
+		}
+
 		const response = await clientFetch(actionDelete, { ID: item.ID });
 
 		if (response.ok) {
@@ -57,7 +62,7 @@
 	};
 </script>
 
-<div class="not-last:border-r-2 flex h-full flex-1 flex-col border-black p-2">
+<div class="flex h-full flex-1 flex-col border-black p-2 not-last:border-r-2">
 	<div class="flex justify-center gap-2">
 		<button class="button group relative w-28" {onclick}>
 			<span class="group-hover:invisible">{type}</span>
@@ -99,12 +104,12 @@
 							</td>
 							<td>
 								<select bind:value={item.RemovedAfter}>
-									<option value={true}>YES</option>
-									<option value={false}>NO</option>
+									<option value={false}>YES</option>
+									<option value={true}>NO</option>
 								</select>
 							</td>
 							<td class="invisible px-1.5 group-hover:visible">
-								<button class="remove-button hover:scale:105 button-border bg-red-500 px-2" onclick={() => onclickDelete(item, index)}>
+								<button class="remove-button hover:scale:105 button-border bg-red-500 px-1.5" onclick={() => onclickDelete(item, index)}>
 									X
 								</button>
 							</td>

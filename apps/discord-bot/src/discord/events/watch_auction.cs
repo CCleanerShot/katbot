@@ -68,13 +68,8 @@ public partial class DiscordEvents
             }
         }
 
-        Program.Utility.LogPerformance("Finished Matching Products");
-
         if (matchingProducts.Count == 0)
-        {
-            Program.Utility.Log(Enums.LogLevel.NONE, "0 matching products, returning...", false, false);
             return;
-        }
 
         SocketTextChannel? channel = (await DiscordBot._Client.GetChannelAsync(Settings.DISCORD_HYPIXEL_ALERTS_CHANNEL_ID)) as SocketTextChannel;
 

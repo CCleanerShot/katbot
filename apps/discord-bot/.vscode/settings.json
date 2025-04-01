@@ -1,0 +1,7 @@
+{
+  "dotnet.codeLens.enableReferencesCodeLens": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.suggestOnTriggerCharacters": false,
+  "explorer.compactFolders": false,
+}

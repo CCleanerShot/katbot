@@ -1,12 +1,21 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import RoutePage from '$lib/components/RoutePage.svelte';
+	import { socketState } from '$lib/states/socketState.svelte';
+	import { WebsocketService } from '$lib/classes/WebsocketService.svelte';
+	import SkyblockAlertsSidebar from '$lib/components/sidebars/SkyblockAlertsSidebar.svelte';
 
 	const { children } = $props();
+
+	onMount(() => {
+		const url = `ws://localhost:3000`;
+		socketState.socketService = new WebsocketService(url);
+	});
 </script>
 
 {#snippet link(className: string)}
-	<span class={['font-x-small rotate-3 whitespace-nowrap transition hover:rotate-2', className]}>
+	<span class={['font-xx-small-recursive rotate-3 whitespace-nowrap transition hover:rotate-2', className]}>
 		check
 		<a
 			target="_blank"
@@ -18,7 +27,9 @@
 		for prices.
 	</span>
 {/snippet}
+
 <div>
+	<SkyblockAlertsSidebar/>
 	<div class="flex items-center justify-center gap-2 border-b-2 border-black py-2">
 		{#if page.route.id?.includes('bazaar')}
 			{@render link('invisible')}

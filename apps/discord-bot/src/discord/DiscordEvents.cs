@@ -14,10 +14,10 @@ public partial class DiscordEventsAttribute : Attribute { }
 public partial class DiscordEvents
 {
     /// <summary>
-    /// <summary>
     /// The timer for the next time Hypixel API is checked for auction items.
     /// </summary>
     public readonly System.Timers.Timer _AuctionTimer = new System.Timers.Timer();
+    /// <summary>
     /// The timer for the next time Hypixel API is checked for bazaar items.
     /// </summary>
     public readonly System.Timers.Timer _BazaarTimer = new System.Timers.Timer();

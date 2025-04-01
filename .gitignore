@@ -9,6 +9,7 @@ obj
 package-lock.json
 tailwind.config.js
 
+
 ###########
 # WEBSITE #
 ###########
@@ -29,3 +30,8 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 
+######################
+# WEBSOCKET-SKYBLOCK #
+######################
+.env
+dist

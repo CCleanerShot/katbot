@@ -1,0 +1,5 @@
+.env
+bin
+obj
+Dockerfile
+skyblock-bot.sln

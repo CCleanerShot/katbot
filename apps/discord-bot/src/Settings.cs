@@ -36,14 +36,10 @@ public class Settings
     public static string MONGODB_D_HYPIXEL = "";
     public static string MONGODB_OPTIONS = "";
     public static string PATH_OBAMA = "";
-    public static string SITE_URL_1 = "";
     public static ulong TEST_DISCORD_GUILD_ID = 0;
     #endregion
 
     #region PUBLIC idc if these are exposed
-    public static string PUBLIC_AH_PROPERTY_ADD_PROPERTY_BUTTON = "add-button";
-    public static string PUBLIC_AH_PROPERTY_ADD_PROPERTY_MENU = "add-menu";
-    public static string PUBLIC_AH_PROPERTY_REMOVE_PROPERTY_BUTTON = "remove-button";
     public static string PUBLIC_PATH_MONDAY_GIF_URL = "https://media1.tenor.com/m/eB9Egjcaa_QAAAAd/evangelion.gif";
     public static string PUBLIC_PATH_MONDAY_GIF_URL_2 = "https://media1.tenor.com/m/Jnqs70oki_AAAAAd/tuesday.gif";
     public static string PUBLIC_PATH_RAMOJUSD_GIF_URL = "https://cdn.discordapp.com/attachments/1210132113358065695/1236680414597222411/ramojusd.gif?ex=679c3023&is=679adea3&hm=5f03113120db858cb71fcd7715f4ca75ffeda1a5de2a284639034d90fc97e07c&";

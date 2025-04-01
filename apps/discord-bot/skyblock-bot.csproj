@@ -9,8 +9,6 @@
     <NoWarn>IDE0028,CS1998</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Htmx" Version="1.8.1" />
-    <PackageReference Include="Htmx.TagHelpers" Version="1.1.1" />
     <PackageReference Include="Discord.Net" Version="3.14.1" />
     <PackageReference Include="MongoDB.Driver" Version="3.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

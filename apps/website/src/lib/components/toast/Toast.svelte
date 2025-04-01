@@ -6,7 +6,7 @@
 
 	let toasts = $derived(toastsState);
 	let { id, message, type }: ToastProps = $props();
-	let timer = $state(0);
+	let timer: NodeJS.Timeout | undefined = $state();
 
 	const remove = () => {
 		const index = toasts.findIndex((e) => e.id === id);

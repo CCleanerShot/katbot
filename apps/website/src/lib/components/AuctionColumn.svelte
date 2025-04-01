@@ -86,8 +86,8 @@
 							<td><input bind:value={item.Price} type="number" min="0" /></td>
 							<td>
 								<select bind:value={item.RemovedAfter}>
-									<option value={true}>YES</option>
-									<option value={false}>NO</option>
+									<option value={false}>YES</option>
+									<option value={true}>NO</option>
 								</select>
 							</td>
 							<td class="group/inner relative cursor-pointer hover:font-bold" onclick={() => onclickTag(item)}>
@@ -97,7 +97,7 @@
 								</span>
 							</td>
 							<td class="invisible px-2 group-hover:visible">
-								<button class="remove-button hover:scale:105 button-border bg-red-500 px-2.5" onclick={() => onclickDelete(item, index)}>
+								<button class="remove-button hover:scale:105 button-border bg-red-500 px-2" onclick={() => onclickDelete(item, index)}>
 									X
 								</button>
 							</td>

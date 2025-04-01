@@ -61,7 +61,10 @@ export const PUT: RequestHandler = async ({ cookies, request }) => {
 	}
 
 	const insertItems: AuctionItem[] = toInsert.map((e) => ({ ...e, UserId: userId, AuctionTags: e.AuctionTags ?? [] }) as AuctionItem);
-	const response = await mongoBot.MONGODB_C_AUCTION_BUY.InsertMany(insertItems);
+
+	if (insertItems.length) {
+		await mongoBot.MONGODB_C_AUCTION_BUY.InsertMany(insertItems);
+	}
 
 	return json('');
 };

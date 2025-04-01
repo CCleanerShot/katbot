@@ -7,10 +7,9 @@
 		children: Snippet<[]>;
 		panel: keyof typeof panelState;
 		title: Snippet<[SvelteHTMLElements['h3']]>;
-		id?: string;
 	};
 
-	const { children, panel, title, id }: Props = $props();
+	const { children, panel, title }: Props = $props();
 	const current = panelState[panel];
 
 	const onclick = () => {
@@ -29,7 +28,7 @@
 	</div>
 {/snippet}
 
-<div {id} class={['root-container', current.isOpened ? 'open' : '']}>
+<div class={['panel', current.isOpened ? 'open' : '']}>
 	<button class="header group flex border-b-2 p-1 font-bold" {onclick}>
 		{@render close('')}
 		{@render title({ class: 'flex-1' })}
@@ -39,7 +38,19 @@
 </div>
 
 <style>
-	.root-container {
+	.header {
+		cursor: pointer;
+		padding-left: 0.4rem;
+		padding-right: 0.4rem;
+	}
+
+	.header:hover {
+		background-color: var(--color-primary);
+		transition-duration: var(--transition-time-long);
+		transition-property: background-color;
+	}
+
+	.panel {
 		background-color: white;
 		border-top: 0.5rem solid black;
 		bottom: -100%;
@@ -53,19 +64,7 @@
 		z-index: 30;
 	}
 
-	.root-container.open {
+	.panel.open {
 		bottom: 0px;
-	}
-
-	.header {
-		cursor: pointer;
-		padding-left: 0.4rem;
-		padding-right: 0.4rem;
-	}
-
-	.header:hover {
-		background-color: var(--color-primary);
-		transition-duration: var(--transition-time-long);
-		transition-property: background-color;
 	}
 </style>

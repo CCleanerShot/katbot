@@ -34,7 +34,7 @@ export const POST: RequestHandler = async (event) => {
 	}
 
 	const newSession = sessionServer.generateSessionToken();
-	const session = await sessionServer.createSession(newSession, user.Username);
+	const session = await sessionServer.createSession(newSession, foundUser.DiscordId, foundUser.Username);
 	sessionServer.setSessionTokenCookie(event, newSession, session.ExpiresAt);
 	sessionServer.setDiscordId(event, foundUser.DiscordId, session.ExpiresAt);
 

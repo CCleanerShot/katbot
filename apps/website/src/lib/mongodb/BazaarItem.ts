@@ -25,7 +25,7 @@ export class BazaarItem {
 	}
 
 	static Empty(): BazaarItem {
-		return { ID: '', Name: '', OrderType: OrderType.ORDER, Price: 0n, RemovedAfter: true, UserId: 0n };
+		return { ID: '', Name: '', OrderType: OrderType.ORDER, Price: 0n, RemovedAfter: false, UserId: 0n };
 	}
 
 	static ToClass(item: BazaarItem): BazaarItem {

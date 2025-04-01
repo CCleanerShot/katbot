@@ -2,7 +2,7 @@ import { cacheState } from '$lib/states/cacheState.svelte';
 import type { AuctionTag } from './AuctionTag';
 
 export class AuctionItem {
-	/** List of AuctioNTags that the tracked item should have. */
+	/** List of AuctionTags that the tracked item should have. */
 	AuctionTags: AuctionTag[];
 	/** The Hypixel ID of the item. */
 	ID: string;

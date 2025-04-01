@@ -38,29 +38,6 @@ export const DELETE: RequestHandler = async ({ cookies, request }) => {
 	return json('' as typeof response);
 };
 
-// export const POST: RequestHandler = async ({ cookies, request, route }) => {
-// 	const { params, response } = API_CONTRACTS['POST=>/api/bazaar/buy'];
-// 	const { item } = (await request.json()) as typeof params;
-// 	const userId = BigInt(cookies.get('discordId') as any)!;
-
-// 	// check if ID is valid
-// 	const validID = await mongoBot.MONGODB_C_BAZAAR_ITEMS.FindOne({ ID: item.ID });
-
-// 	if (!validID) {
-// 		return error(501, 'Bad Request!');
-// 	}
-
-// 	const alreadyExists = await mongoBot.MONGODB_C_BAZAAR_BUY.FindOne({ ID: item.ID, UserId: userId });
-
-// 	if (alreadyExists) {
-// 		await mongoBot.MONGODB_C_BAZAAR_BUY.UpdateOne({ ID: item.ID, UserId: userId }, { $set: { ...item } });
-// 	} else {
-// 		await mongoBot.MONGODB_C_BAZAAR_BUY.InsertOne({ ...item, UserId: userId });
-// 	}
-
-// 	return json('' as typeof response);
-// };
-
 export const PUT: RequestHandler = async ({ request, cookies }) => {
 	const { params, response } = API_CONTRACTS['PUT=>/api/bazaar/buy'];
 	const { items } = (await request.json()) as typeof params;
