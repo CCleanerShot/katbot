@@ -72,7 +72,6 @@ public class MongoBot
             {
                 ElgibleAuctionBuys.Add(user.DiscordId, new Dictionary<AuctionBuy, AuctionItemsWithBuy>());
                 ElgibleBazaarBuys.Add(user.DiscordId, new List<BazaarItem>());
-                ElgibleBazaarSells.Add(user.DiscordId, new List<BazaarItem>());
             }
 
             Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");
