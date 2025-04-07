@@ -14,16 +14,17 @@ public static partial class TimerBot
         List<AuctionBuy> allBuys = await MongoBot.AuctionBuy.FindList(e => true);
         List<AuctionsRouteProduct> similarLive = new List<AuctionsRouteProduct>();
 
+        // so we dont have to check literally every single possible item later here
         foreach (AuctionsRouteProduct item in liveItems)
             if (allBuys.Find(e => e.ID == item.ITEM_ID) != null)
                 similarLive.Add(item);
 
         foreach (var (k, v) in MongoBot.ElgibleAuctionBuys)
-            MongoBot.ElgibleAuctionBuys[k] = new List<AuctionItemsWithBuy>();
+            MongoBot.ElgibleAuctionBuys[k] = new Dictionary<AuctionBuy, AuctionItemsWithBuy>();
 
         foreach (var (k, v) in MongoBot.ElgibleAuctionBuys)
         {
-            foreach (AuctionBuy trackedBuy in allBuys)
+            foreach (AuctionBuy buy in allBuys)
             {
                 // items where the ID of an item from the API matches the same ID as a tracked item
 
@@ -32,20 +33,14 @@ public static partial class TimerBot
 
                 // check if all the properties are matching
                 foreach (AuctionsRouteProduct item in similarLive)
-                {
                     foreach (AuctionTag attribute in item.AuctionTags)
-                    {
-                        if (trackedBuy.AuctionTags.All(attribute => item.AuctionTags.Any(e => e == attribute)))
+                        if (buy.AuctionTags.All(attribute => item.AuctionTags.Any(e => e == attribute)))
                         {
+                            if(!MongoBot.ElgibleAuctionBuys[buy.UserId].ContainsKey(buy))
+                                MongoBot.ElgibleAuctionBuys[buy.UserId].Add(buy, new AuctionItemsWithBuy(new List<AuctionsRouteProductMinimal>(), buy));
 
-                            if (!matchingProducts.ContainsKey(trackedBuy))
-                                matchingProducts.Add(trackedBuy, new List<AuctionsRouteProduct>());
-
-                            matchingProducts[trackedBuy].Add(item);
-                            WatchBuy_CachedAuctionBuyAlerts[item.uuid].Add(trackedBuy.UserId);
+                            MongoBot.ElgibleAuctionBuys[buy.UserId][buy].LiveItems.Add(item);
                         }
-                    }
-                }
             }
         }
 

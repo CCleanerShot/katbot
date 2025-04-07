@@ -11,7 +11,7 @@ public static class HTTPBot
     public static async Task Load()
     {
         listener = new HttpListener();
-        listener.Prefixes.Add($"http://127.0.0.1:{Settings.HTTP_SERVER_PORT}/");
+        listener.Prefixes.Add($"http://127.0.0.1:{Settings.PORT_HTTP}/");
         listener.Start();
 
         Utility.Log(Enums.LogLevel.NONE, "HTTP Listener active.");

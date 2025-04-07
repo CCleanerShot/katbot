@@ -1,7 +1,7 @@
-public readonly struct AuctionItemsWithBuy
+public class AuctionItemsWithBuy
 {
-    public readonly List<AuctionsRouteProductMinimal> LiveItems;
-    public readonly AuctionBuy BuyItem;
+    public List<AuctionsRouteProductMinimal> LiveItems;
+    public AuctionBuy BuyItem;
 
     public AuctionItemsWithBuy(List<AuctionsRouteProductMinimal> _LiveItems, AuctionBuy _BuyItem)
     {

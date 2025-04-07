@@ -4,7 +4,6 @@
 public class Settings
 {
     #region  PRIVATE should not be 
-    public static string HTTP_SERVER_PORT = "";
     public static string HYPIXEL_API_BASE_URL = "";
     public static string HYPIXEL_BOT_KEY = "";
     public static string MONGODB_BASE_URI = "";
@@ -27,6 +26,8 @@ public class Settings
     public static string MONGODB_D_STATE = "";
     public static string MONGODB_OPTIONS = "";
     public static string MONGODB_SESSION_DAY_LENGTH = "";
+    public static string PORT_HTTP = "";
+    public static string PORT_WEBSOCKET = "";
     #endregion
 
     #region PUBLIC idc if these are exposed
@@ -63,8 +64,6 @@ public class Settings
             if (lines.Length != 2)
                 throw new Exception("Illegal structure in the .env.");
 
-            else if (lines[0] == "HTTP_SERVER_PORT")
-                HTTP_SERVER_PORT = lines[1];
             else if (lines[0] == "HYPIXEL_API_BASE_URL")
                 HYPIXEL_API_BASE_URL = lines[1];
             else if (lines[0] == "HYPIXEL_BOT_KEY")
@@ -109,6 +108,10 @@ public class Settings
                 MONGODB_OPTIONS = lines[1];
             else if (lines[0] == "MONGODB_SESSION_DAY_LENGTH")
                 MONGODB_SESSION_DAY_LENGTH = lines[1];
+            else if (lines[0] == "PORT_HTTP")
+                PORT_HTTP = lines[1];
+            else if (lines[0] == "PORT_WEBSOCKET")
+                PORT_WEBSOCKET = lines[1];
             else
                 Utility.Log(Enums.LogLevel.WARN, $"The key was not implemented yet. Intentional? (at {lines[0]})");
         } while (line != null);
@@ -131,7 +134,8 @@ public class Settings
     MONGODB_D_HYPIXEL=Environment.GetEnvironmentVariable("MONGODB_D_HYPIXEL");
     MONGODB_OPTIONS=Environment.GetEnvironmentVariable("MONGODB_OPTIONS");
     MONGODB_SESSION_DAY_LENGTH=Environment.GetEnvironmentVariable("MONGODB_SESSION_DAY_LENGTH");
-    HTTP_SERVER_PORT=Environment.GetEnvironmentVariable("HTTP_SERVER_PORT");
+    PORT_HTTP=Environment.GetEnvironmentVariable("PORT_HTTP");
+    PORT_WEBSOCKET=Environment.GetEnvironmentVariable("PORT_WEBSOCKET");
 
 #endif
     }

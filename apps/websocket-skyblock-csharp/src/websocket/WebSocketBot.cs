@@ -11,7 +11,7 @@ public static partial class WebSocketBot
 
     public static void Load()
     {
-        string url = "ws://0.0.0.0:3000";
+        string url = $"ws://0.0.0.0:{Settings.PORT_WEBSOCKET}";
         Server = new WebSocketServer(url);
         Server.Start(async (ws) =>
         {
@@ -55,7 +55,7 @@ public static partial class WebSocketBot
 
             foreach (var (k, v) in MongoBot.ElgibleAuctionBuys)
                 if (k == session.UserId)
-                    foreach (var products in v)
+                    foreach (var (buy, products) in v)
                         message.auctionItemsWithBuys.Add(products);
 
             connection.Send(Newtonsoft.Json.JsonConvert.SerializeObject(message));

@@ -18,7 +18,7 @@ public class MongoBot
     public static Dictionary<string, AuctionItemsAll> CachedAuctionItems = new Dictionary<string, AuctionItemsAll>();
     public static Dictionary<string, AuctionTags> CachedAuctionTags = new Dictionary<string, AuctionTags>();
     public static Dictionary<string, BazaarItemsAll> CachedBazaarItems = new Dictionary<string, BazaarItemsAll>();
-    public static Dictionary<ulong, List<AuctionItemsWithBuy>> ElgibleAuctionBuys = new Dictionary<ulong, List<AuctionItemsWithBuy>>();
+    public static Dictionary<ulong, Dictionary<AuctionBuy, AuctionItemsWithBuy>> ElgibleAuctionBuys = new Dictionary<ulong, Dictionary<AuctionBuy, AuctionItemsWithBuy>>();
     public static Dictionary<ulong, List<BazaarItem>> ElgibleBazaarBuys = new Dictionary<ulong, List<BazaarItem>>();
     public static Dictionary<ulong, List<BazaarItem>> ElgibleBazaarSells = new Dictionary<ulong, List<BazaarItem>>();
 
@@ -64,6 +64,16 @@ public class MongoBot
             CachedAuctionItems = currentAuctionItems.Aggregate(new Dictionary<string, AuctionItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
             CachedAuctionTags = currentAuctionTags.Aggregate(new Dictionary<string, AuctionTags>(), (pV, cV) => { pV.Add(cV.Name, cV); return pV; });
             CachedBazaarItems = currentBazaarItems.Aggregate(new Dictionary<string, BazaarItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
+
+            // setup ids for elgible users
+            List<MongoUser> users = await MongoUser.FindList(e => true);
+
+            foreach (MongoUser user in users)
+            {
+                ElgibleAuctionBuys.Add(user.DiscordId, new Dictionary<AuctionBuy, AuctionItemsWithBuy>());
+                ElgibleBazaarBuys.Add(user.DiscordId, new List<BazaarItem>());
+                ElgibleBazaarSells.Add(user.DiscordId, new List<BazaarItem>());
+            }
 
             Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");
         }
