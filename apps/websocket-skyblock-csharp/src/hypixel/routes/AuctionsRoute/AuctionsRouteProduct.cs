@@ -29,6 +29,10 @@ public class AuctionsRouteProduct : AuctionsRouteProductMinimal
             DOCUMENT.Load(memoryStream);
 
             TagCompound ROOT = DOCUMENT.DocumentRoot;
+
+            if (ROOT.Value.Count == 0)
+                return;
+
             TagCompound BASE = ((ROOT.Value[0] as TagList)!.Value[0] as TagCompound)!;
             TagCompound TAG = (BASE.Value["tag"] as TagCompound)!;
 

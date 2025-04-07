@@ -1,14 +1,9 @@
 public static partial class TimerBot
 {
-    /// <summary>
-    /// List of tracked auction IDs + list of discord IDs (users) that have already been alerted for.
-    /// </summary>
-    public static Dictionary<string, List<ulong>> WatchBuy_CachedAuctionBuyAlerts = new Dictionary<string, List<ulong>>();
-
     static async void _AuctionElapsed(object? obj, System.Timers.ElapsedEventArgs args)
     {
 
-        List<AuctionsRouteProduct>? liveItems = await AuctionsRoute.GetRoute(WatchBuy_CachedAuctionBuyAlerts);
+        List<AuctionsRouteProduct>? liveItems = await AuctionsRoute.GetRoute();
 
         if (liveItems == null)
         {
@@ -16,43 +11,45 @@ public static partial class TimerBot
             return;
         }
 
-        List<AuctionBuy> eligibleBuys = await MongoBot.AuctionBuy.FindList(e => MongoBot.CachedAuctionBuys.Any(ee => ee.ID == e.ID));
-        Dictionary<AuctionBuy, List<AuctionsRouteProduct>> matchingProducts = new Dictionary<AuctionBuy, List<AuctionsRouteProduct>>();
+        List<AuctionBuy> allBuys = await MongoBot.AuctionBuy.FindList(e => true);
+        List<AuctionsRouteProduct> similarLive = new List<AuctionsRouteProduct>();
 
-        foreach (AuctionBuy trackedBuy in eligibleBuys)
+        foreach (AuctionsRouteProduct item in liveItems)
+            if (allBuys.Find(e => e.ID == item.ITEM_ID) != null)
+                similarLive.Add(item);
+
+        foreach (var (k, v) in MongoBot.ElgibleAuctionBuys)
+            MongoBot.ElgibleAuctionBuys[k] = new List<AuctionItemsWithBuy>();
+
+        foreach (var (k, v) in MongoBot.ElgibleAuctionBuys)
         {
-            // items where the ID of an item from the API matches the same ID as a tracked item
-            List<AuctionsRouteProduct> similarLive = liveItems.Where(e => e.ITEM_ID == trackedBuy.ID).ToList();
-
-            if (similarLive.Count == 0)
-                continue;
-
-            // check if all the properties are matching
-            foreach (AuctionsRouteProduct item in similarLive)
+            foreach (AuctionBuy trackedBuy in allBuys)
             {
-                if (WatchBuy_CachedAuctionBuyAlerts.ContainsKey(item.uuid))
-                    if (WatchBuy_CachedAuctionBuyAlerts[item.uuid].Contains(trackedBuy.UserId))
-                        continue;
+                // items where the ID of an item from the API matches the same ID as a tracked item
 
-                foreach (AuctionTag attribute in item.AuctionTags)
+                if (similarLive.Count == 0)
+                    continue;
+
+                // check if all the properties are matching
+                foreach (AuctionsRouteProduct item in similarLive)
                 {
-                    if (trackedBuy.AuctionTags.All(attribute => item.AuctionTags.Any(e => e == attribute)))
+                    foreach (AuctionTag attribute in item.AuctionTags)
                     {
-                        if (!matchingProducts.ContainsKey(trackedBuy))
-                            matchingProducts.Add(trackedBuy, new List<AuctionsRouteProduct>());
+                        if (trackedBuy.AuctionTags.All(attribute => item.AuctionTags.Any(e => e == attribute)))
+                        {
 
-                        matchingProducts[trackedBuy].Add(item);
-                        WatchBuy_CachedAuctionBuyAlerts[item.uuid].Add(trackedBuy.UserId);
+                            if (!matchingProducts.ContainsKey(trackedBuy))
+                                matchingProducts.Add(trackedBuy, new List<AuctionsRouteProduct>());
+
+                            matchingProducts[trackedBuy].Add(item);
+                            WatchBuy_CachedAuctionBuyAlerts[item.uuid].Add(trackedBuy.UserId);
+                        }
                     }
                 }
             }
         }
 
         Utility.LogPerformance("Finished Matching Products");
-
-        if (matchingProducts.Count == 0)
-            return;
-
-        WebSocketBot.SendAuctionData(matchingProducts);
+        WebSocketBot.SendAuctionData();
     }
 }

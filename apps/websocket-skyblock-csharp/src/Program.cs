@@ -3,6 +3,8 @@
 // 2. abrupt program exit
 // the purpose of this is to log the session into /logs
 
+using System.Net;
+using System.Net.Sockets;
 using oslo.binary;
 
 public class Program
@@ -24,6 +26,9 @@ public class Program
             TimerBot.Load();
             await MongoBot.Load();
             WebSocketBot.Load();
+#pragma warning disable CS4014
+            HTTPBot.Load();
+#pragma warning restore CS4014
 
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);

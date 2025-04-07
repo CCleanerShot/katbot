@@ -80,7 +80,7 @@
 									bind:value={item.Name}
 									updateObj={item}
 									updateKey={'Name'}
-									inputProps={{ class: 'w-72', type: 'text' }}
+									inputProps={{ class: 'w-72', placeholder: "Type Here to Add...", type: 'text' }}
 								/>
 							</td>
 							<td><input bind:value={item.Price} type="number" min="0" /></td>

@@ -4,18 +4,23 @@ using MongoDB.Driver;
 
 public class MongoBot
 {
+    /// <summary>
+    /// A check for whether or not auction buys have been recently updated. Modified after MongoDB calls for Add/Update requests on auction buys.
+    /// </summary>
+    public static bool AuctionBuysRecentlyUpdated = false;
+
     private static MongoClient _Client = default!;
     private static IMongoDatabase _DiscordDB = default!;
     private static IMongoDatabase _GeneralDB = default!;
     private static IMongoDatabase _HypixelDB = default!;
     private static string _Uri = default!;
 
-    public static List<AuctionBuy> CachedAuctionBuys = new List<AuctionBuy>();
     public static Dictionary<string, AuctionItemsAll> CachedAuctionItems = new Dictionary<string, AuctionItemsAll>();
     public static Dictionary<string, AuctionTags> CachedAuctionTags = new Dictionary<string, AuctionTags>();
-    public static List<BazaarItem> CachedBazaarBuys = new List<BazaarItem>();
     public static Dictionary<string, BazaarItemsAll> CachedBazaarItems = new Dictionary<string, BazaarItemsAll>();
-    public static List<BazaarItem> CachedBazaarSells = new List<BazaarItem>();
+    public static Dictionary<ulong, List<AuctionItemsWithBuy>> ElgibleAuctionBuys = new Dictionary<ulong, List<AuctionItemsWithBuy>>();
+    public static Dictionary<ulong, List<BazaarItem>> ElgibleBazaarBuys = new Dictionary<ulong, List<BazaarItem>>();
+    public static Dictionary<ulong, List<BazaarItem>> ElgibleBazaarSells = new Dictionary<ulong, List<BazaarItem>>();
 
     public static IMongoCollection<AuctionBuy> AuctionBuy { get; protected set; } = default!;
     public static IMongoCollection<AuctionItemsAll> AuctionItemsAll { get; protected set; } = default!;
@@ -27,6 +32,7 @@ public class MongoBot
     public static IMongoCollection<Session> Session { get; protected set; } = default!;
     public static IMongoCollection<Starboards> Starboards { get; protected set; } = default!;
     public static IMongoCollection<RollStats> RollStats { get; protected set; } = default!;
+
 
     public static async Task Load()
     {
@@ -55,13 +61,9 @@ public class MongoBot
             List<BazaarItemsAll> currentBazaarItems = await BazaarItemsAll.FindList(e => true);
             List<BazaarItem> currentSells = await BazaarSell.FindList(e => true);
 
-            // Reset the cache just in case
-            CachedAuctionBuys = currentAuctionBuy.Aggregate(new List<AuctionBuy>(), (pV, cV) => { pV.Add(cV); return pV; });
             CachedAuctionItems = currentAuctionItems.Aggregate(new Dictionary<string, AuctionItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
             CachedAuctionTags = currentAuctionTags.Aggregate(new Dictionary<string, AuctionTags>(), (pV, cV) => { pV.Add(cV.Name, cV); return pV; });
-            CachedBazaarBuys = currentBazaarBuys.Aggregate(new List<BazaarItem>(), (pV, cV) => { pV.Add(cV); return pV; });
             CachedBazaarItems = currentBazaarItems.Aggregate(new Dictionary<string, BazaarItemsAll>(), (pV, cV) => { pV.Add(cV.ID, cV); return pV; });
-            CachedBazaarSells = currentSells.Aggregate(new List<BazaarItem>(), (pV, cV) => { pV.Add(cV); return pV; });
 
             Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");
         }
@@ -132,7 +134,7 @@ public class MongoBot
     /// <returns></returns>
     public static async Task LoadAuctionItems(bool reset = false)
     {
-        List<AuctionsRouteProduct>? auctions = await AuctionsRoute.GetRoute(null);
+        List<AuctionsRouteProduct>? auctions = await AuctionsRoute.GetRoute();
 
         if (auctions == null)
         {

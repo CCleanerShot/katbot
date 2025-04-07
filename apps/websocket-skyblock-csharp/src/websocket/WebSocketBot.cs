@@ -47,53 +47,36 @@ public static partial class WebSocketBot
         });
     }
 
-    public static void SendAuctionData(Dictionary<AuctionBuy, List<AuctionsRouteProduct>>? auctionItems)
+    public static void SendAuctionData()
     {
-        auctionItems ??= new Dictionary<AuctionBuy, List<AuctionsRouteProduct>>();
-
         foreach (var (session, connection) in Connections)
         {
             SocketMessage message = new SocketMessage();
 
-            foreach (var (k, v) in auctionItems)
-            {
-                if (k.UserId == session.UserId)
-                {
-                    List<AuctionsRouteProductMinimal> items = v.Select(e => AuctionsRouteProductMinimal.ToMinimal(e)).ToList();
-                    message.auctionItemsWithBuys.Add(new AuctionItemsWithBuy(items, k));
-                }
-            }
+            foreach (var (k, v) in MongoBot.ElgibleAuctionBuys)
+                if (k == session.UserId)
+                    foreach (var products in v)
+                        message.auctionItemsWithBuys.Add(products);
 
             connection.Send(Newtonsoft.Json.JsonConvert.SerializeObject(message));
         }
     }
 
-    public static void SendBazaarData(List<BazaarItem>? bazaarBuys, List<BazaarItem>? bazaarSells)
+    public static void SendBazaarData()
     {
-        bazaarBuys ??= new List<BazaarItem>();
-        bazaarSells ??= new List<BazaarItem>();
-
         foreach (var (session, connection) in Connections)
         {
             SocketMessage message = new SocketMessage();
 
-            foreach (BazaarItem buy in bazaarBuys)
-            {
-                if (buy.UserId == session.UserId)
-                {
-                    TimerBot.WatchBuy_CachedBazaarBuyAlerts.Add(buy);
-                    message.bazaarBuys.Add(buy);
-                }
-            }
+            foreach (var (k, v) in MongoBot.ElgibleBazaarBuys)
+                if (k == session.UserId)
+                    foreach (BazaarItem item in v)
+                        message.bazaarBuys.Add(item);
 
-            foreach (BazaarItem sell in bazaarSells)
-            {
-                if (sell.UserId == session.UserId)
-                {
-                    TimerBot.WatchSell_CachedBazaarSellAlerts.Add(sell);
-                    message.bazaarSells.Add(sell);
-                }
-            }
+            foreach (var (k, v) in MongoBot.ElgibleBazaarSells)
+                if (k == session.UserId)
+                    foreach (BazaarItem item in v)
+                        message.bazaarSells.Add(item);
 
             connection.Send(Newtonsoft.Json.JsonConvert.SerializeObject(message));
         }
@@ -102,28 +85,8 @@ public static partial class WebSocketBot
 
     static void AddEvents(Session session, IWebSocketConnection ws)
     {
-        void OnClose()
-        {
-            TimerBot.WatchBuy_CachedAuctionBuyAlerts = TimerBot.WatchBuy_CachedAuctionBuyAlerts.Where((kv) =>
-            {
-                kv.Value.Remove(session.UserId);
-
-                if (kv.Value.Count == 0)
-                    return false;
-                else
-                    return true;
-
-            }).ToDictionary();
-            TimerBot.WatchBuy_CachedBazaarBuyAlerts = TimerBot.WatchBuy_CachedBazaarBuyAlerts.Where(e => e.UserId != session.UserId).ToList();
-            TimerBot.WatchSell_CachedBazaarSellAlerts = TimerBot.WatchSell_CachedBazaarSellAlerts.Where(e => e.UserId != session.UserId).ToList();
-            Connections.Remove(session);
-        }
-
-        void OnMessage(string message)
-        {
-            Console.WriteLine(message);
-        }
-
+        void OnClose() => Connections.Remove(session);
+        void OnMessage(string message) => Console.WriteLine(message);
         ws.OnClose += OnClose;
         ws.OnMessage += OnMessage;
     }
@@ -158,24 +121,5 @@ public static partial class WebSocketBot
         }
 
         return session;
-    }
-}
-
-class SocketMessage
-{
-    public List<AuctionItemsWithBuy> auctionItemsWithBuys = new List<AuctionItemsWithBuy>();
-    public List<BazaarItem> bazaarBuys = new List<BazaarItem>();
-    public List<BazaarItem> bazaarSells = new List<BazaarItem>();
-}
-
-class AuctionItemsWithBuy
-{
-    List<AuctionsRouteProductMinimal> LiveItems;
-    AuctionBuy BuyItem;
-
-    public AuctionItemsWithBuy(List<AuctionsRouteProductMinimal> _LiveItems, AuctionBuy _BuyItem)
-    {
-        LiveItems = _LiveItems;
-        BuyItem = _BuyItem;
     }
 }

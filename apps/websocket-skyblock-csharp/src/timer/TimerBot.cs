@@ -11,8 +11,8 @@ public static partial class TimerBot
 
     public static void Load()
     {
-        AuctionTimer.AutoReset = false;
-        AuctionTimer.Interval = 6 * Settings.PUBLIC_HYPIXEL_AUCTION_TIMER_MINUTES;
+        AuctionTimer.AutoReset = true;
+        AuctionTimer.Interval = 60000 * Settings.PUBLIC_HYPIXEL_AUCTION_TIMER_MINUTES;
         AuctionTimer.Elapsed += _AuctionElapsed;
         AuctionTimer.Start();
 

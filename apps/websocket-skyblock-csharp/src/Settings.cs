@@ -3,7 +3,8 @@
 /// </summary>
 public class Settings
 {
-    #region  PRIVATE should not be exposed
+    #region  PRIVATE should not be 
+    public static string HTTP_SERVER_PORT = "";
     public static string HYPIXEL_API_BASE_URL = "";
     public static string HYPIXEL_BOT_KEY = "";
     public static string MONGODB_BASE_URI = "";
@@ -15,18 +16,22 @@ public class Settings
     public static string MONGODB_C_BAZAAR_ITEMS = "";
     public static string MONGODB_C_SESSIONS = "";
     public static string MONGODB_C_STARBOARDS = "";
+    public static string MONGODB_C_STATE_DISCORD = "";
+    public static string MONGODB_C_STATE_GENERAL = "";
+    public static string MONGODB_C_STATE_HYPIXEL = "";
     public static string MONGODB_C_ROLL_STATS = "";
     public static string MONGODB_C_USERS = "";
     public static string MONGODB_D_DISCORD = "";
     public static string MONGODB_D_GENERAL = "";
     public static string MONGODB_D_HYPIXEL = "";
+    public static string MONGODB_D_STATE = "";
     public static string MONGODB_OPTIONS = "";
     public static string MONGODB_SESSION_DAY_LENGTH = "";
     #endregion
 
     #region PUBLIC idc if these are exposed
-    public static int PUBLIC_HYPIXEL_AUCTION_TIMER_MINUTES = 4;
-    public static int PUBLIC_HYPIXEL_BAZAAR_TIMER_MINUTES = 2;
+    public static int PUBLIC_HYPIXEL_AUCTION_TIMER_MINUTES = 2;
+    public static int PUBLIC_HYPIXEL_BAZAAR_TIMER_MINUTES = 1;
     #endregion
 
     /// <summary>
@@ -58,6 +63,8 @@ public class Settings
             if (lines.Length != 2)
                 throw new Exception("Illegal structure in the .env.");
 
+            else if (lines[0] == "HTTP_SERVER_PORT")
+                HTTP_SERVER_PORT = lines[1];
             else if (lines[0] == "HYPIXEL_API_BASE_URL")
                 HYPIXEL_API_BASE_URL = lines[1];
             else if (lines[0] == "HYPIXEL_BOT_KEY")
@@ -82,6 +89,12 @@ public class Settings
                 MONGODB_C_SESSIONS = lines[1];
             else if (lines[0] == "MONGODB_C_STARBOARDS")
                 MONGODB_C_STARBOARDS = lines[1];
+            else if (lines[0] == "MONGODB_C_STATE_DISCORD")
+                MONGODB_C_STATE_DISCORD = lines[1];
+            else if (lines[0] == "MONGODB_C_STATE_GENERAL")
+                MONGODB_C_STATE_GENERAL = lines[1];
+            else if (lines[0] == "MONGODB_C_STATE_HYPIXEL")
+                MONGODB_C_STATE_HYPIXEL = lines[1];
             else if (lines[0] == "MONGODB_C_USERS")
                 MONGODB_C_USERS = lines[1];
             else if (lines[0] == "MONGODB_D_DISCORD")
@@ -90,6 +103,8 @@ public class Settings
                 MONGODB_D_HYPIXEL = lines[1];
             else if (lines[0] == "MONGODB_D_GENERAL")
                 MONGODB_D_GENERAL = lines[1];
+            else if (lines[0] == "MONGODB_D_STATE")
+                MONGODB_D_STATE = lines[1];
             else if (lines[0] == "MONGODB_OPTIONS")
                 MONGODB_OPTIONS = lines[1];
             else if (lines[0] == "MONGODB_SESSION_DAY_LENGTH")
@@ -116,6 +131,8 @@ public class Settings
     MONGODB_D_HYPIXEL=Environment.GetEnvironmentVariable("MONGODB_D_HYPIXEL");
     MONGODB_OPTIONS=Environment.GetEnvironmentVariable("MONGODB_OPTIONS");
     MONGODB_SESSION_DAY_LENGTH=Environment.GetEnvironmentVariable("MONGODB_SESSION_DAY_LENGTH");
+    HTTP_SERVER_PORT=Environment.GetEnvironmentVariable("HTTP_SERVER_PORT");
+
 #endif
     }
 }

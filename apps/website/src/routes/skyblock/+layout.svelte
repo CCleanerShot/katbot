@@ -18,9 +18,9 @@
 	<span class={['font-xx-small-recursive rotate-3 whitespace-nowrap transition hover:rotate-2', className]}>
 		check
 		<a
-			target="_blank"
-			href="https://www.skyblock.bz"
 			class="font-x-small not-visited:text-blue-500 visited:text-purple-500 hover:underline"
+			href="https://www.skyblock.bz"
+			target="_blank"
 		>
 			https://www.skyblock.bz
 		</a>
@@ -29,7 +29,7 @@
 {/snippet}
 
 <div>
-	<SkyblockAlertsSidebar/>
+	<SkyblockAlertsSidebar />
 	<div class="flex items-center justify-center gap-2 border-b-2 border-black py-2">
 		{#if page.route.id?.includes('bazaar')}
 			{@render link('invisible')}

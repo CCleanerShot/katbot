@@ -63,5 +63,11 @@
 	.parent div {
 		border-width: 10px;
 		position: absolute;
+		transition-property: border-width;
+		transition-duration: 0.2s;
+	}
+
+	.parent.yellow div {
+		border-width: 20px;
 	}
 </style>

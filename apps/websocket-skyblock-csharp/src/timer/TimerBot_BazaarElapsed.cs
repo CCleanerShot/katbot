@@ -1,14 +1,5 @@
 public static partial class TimerBot
 {
-    /// <summary>
-    /// List of tracked bazaar buys that have already been alerted.
-    /// </summary>
-    public static List<BazaarItem> WatchBuy_CachedBazaarBuyAlerts = new List<BazaarItem>();
-    /// <summary>
-    /// List of tracked bazaar sells that have already been alerted.
-    /// </summary>
-    public static List<BazaarItem> WatchSell_CachedBazaarSellAlerts = new List<BazaarItem>();
-
     static async void _BazaarElapsed(object? obj, System.Timers.ElapsedEventArgs args)
     {
         Dictionary<string, BazaarRouteProduct>? liveItems = await BazaarRoute.GetRoute();
@@ -19,64 +10,71 @@ public static partial class TimerBot
         if (liveItems.Count == 0)
             return;
 
-        List<BazaarItem> trackedBuys = await MongoBot.BazaarBuy.FindList(e => MongoBot.CachedBazaarItems.Keys.Contains(e.ID));
-        List<BazaarItem> trackedSells = await MongoBot.BazaarSell.FindList(e => MongoBot.CachedBazaarItems.Keys.Contains(e.ID));
+        List<BazaarItem> allBuys = await MongoBot.BazaarBuy.FindList(e => true);
+        List<BazaarItem> allSells = await MongoBot.BazaarSell.FindList(e => true);
 
-        List<BazaarItem> eligibleBuys = trackedBuys.Where(t =>
+        // easier to just reset the current listings
+        foreach (var (key, value) in MongoBot.ElgibleBazaarBuys)
+            MongoBot.ElgibleBazaarBuys[key] = new List<BazaarItem>();
+        foreach (var (key, value) in MongoBot.ElgibleBazaarSells)
+            MongoBot.ElgibleBazaarSells[key] = new List<BazaarItem>();
+
+        foreach (var (key, value) in MongoBot.ElgibleBazaarBuys)
         {
-            if (WatchBuy_CachedBazaarBuyAlerts.Select(e => e.ID).Contains(t.ID))
-                return false;
-
-            if (!liveItems.ContainsKey(t.ID)) // if the market somehow crashed for that item
-                return false;
-
-            switch (t.OrderType)
+            MongoBot.ElgibleBazaarBuys[key] = allBuys.Where(t =>
             {
-                case Enums.OrderType.INSTA:
-                    if (t.Price >= liveItems[t.ID].quick_status.buyPrice)
-                        return true;
-                    else
-                        return false;
-                case Enums.OrderType.ORDER:
-                    if (t.Price >= liveItems[t.ID].sell_summary.First().pricePerUnit)
-                        return true;
-                    else
-                        return false;
-                default:
-                    throw new NotImplementedException("Implement this");
-            }
-        }).ToList();
+                if (t.UserId != key)
+                    return false;
 
-        List<BazaarItem> eligibleSells = trackedSells.Where(t =>
+                if (!liveItems.ContainsKey(t.ID)) // if the market somehow crashed for that item
+                    return false;
+
+                switch (t.OrderType)
+                {
+                    case Enums.OrderType.INSTA:
+                        if (t.Price >= liveItems[t.ID].quick_status.buyPrice)
+                            return true;
+                        else
+                            return false;
+                    case Enums.OrderType.ORDER:
+                        if (t.Price >= liveItems[t.ID].sell_summary.First().pricePerUnit)
+                            return true;
+                        else
+                            return false;
+                    default:
+                        throw new NotImplementedException("Implement this");
+                }
+            }).ToList();
+        }
+
+        foreach (var (key, value) in MongoBot.ElgibleBazaarSells)
         {
-            if (WatchSell_CachedBazaarSellAlerts.Select(e => e.ID).Contains(t.ID))
-                return false;
-
-            if (!liveItems.ContainsKey(t.ID)) // if the market somehow crashed for that item
-                return false;
-
-            switch (t.OrderType)
+            MongoBot.ElgibleBazaarSells[key] = allSells.Where(t =>
             {
-                case Enums.OrderType.INSTA:
-                    if (t.Price <= liveItems[t.ID].quick_status.sellPrice)
-                        return true;
-                    else
-                        return false;
-                case Enums.OrderType.ORDER:
-                    if (t.Price <= liveItems[t.ID].buy_summary.First().pricePerUnit)
-                        return true;
-                    else
-                        return false;
-                default:
-                    throw new NotImplementedException("Implement this");
-            }
-        }).ToList();
+                if (t.UserId != key)
+                    return false;
 
-        Console.WriteLine($"{eligibleBuys.Count}, {eligibleSells.Count}");
+                if (!liveItems.ContainsKey(t.ID)) // if the market somehow crashed for that item
+                    return false;
 
-        if (eligibleBuys.Count == 0 && eligibleSells.Count == 0)
-            return;
+                switch (t.OrderType)
+                {
+                    case Enums.OrderType.INSTA:
+                        if (t.Price <= liveItems[t.ID].quick_status.sellPrice)
+                            return true;
+                        else
+                            return false;
+                    case Enums.OrderType.ORDER:
+                        if (t.Price <= liveItems[t.ID].buy_summary.First().pricePerUnit)
+                            return true;
+                        else
+                            return false;
+                    default:
+                        throw new NotImplementedException("Implement this");
+                }
+            }).ToList();
+        }
 
-        WebSocketBot.SendBazaarData(eligibleBuys, eligibleSells);
+        WebSocketBot.SendBazaarData();
     }
 }

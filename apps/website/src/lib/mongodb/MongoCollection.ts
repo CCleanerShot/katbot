@@ -1,3 +1,4 @@
+import { SVELTE_MONGODB_C_AUCTION_BUY } from '$env/static/private';
 import {
 	Collection,
 	type Abortable,
@@ -13,11 +14,27 @@ import {
 	type UpdateOptions
 } from 'mongodb';
 
+type Acknowledged = { acknowledged: boolean };
+
 export class MongoCollection<T extends object = object> {
 	Collection: Collection<T>;
 
 	constructor(_Collection: Collection<T>) {
 		this.Collection = _Collection;
+
+		// "middleware" for the database requests
+		if (this.Collection.collectionName === SVELTE_MONGODB_C_AUCTION_BUY) {
+			const oldInsertOne = this.InsertOne;
+			const oldInsertMany = this.InsertMany;
+			const oldUpdateOne = this.UpdateOne;
+			const oldUpdateMany = this.UpdateMany;
+			const oldUpsertOne = this.UpsertOne;
+			this.InsertOne = async (docs, options) => await MongoCollection.Override(oldInsertOne, [docs, options]);
+			this.InsertMany = async (docs, options) => await MongoCollection.Override(oldInsertMany, [docs, options]);
+			this.UpdateOne = async (docs, filter, opts) => await MongoCollection.Override(oldUpdateOne, [docs, filter, opts]);
+			this.UpdateMany = async (docs, filter, opts) => await MongoCollection.Override(oldUpdateMany, [docs, filter, opts]);
+			this.UpsertOne = async (filter, update, options) => await MongoCollection.Override(oldUpsertOne, [filter, update, options]);
+		}
 	}
 
 	BulkWrite = async (writes: AnyBulkWriteOperation<T>[], options?: BulkWriteOptions) => this.Collection.bulkWrite(writes, options);
@@ -27,6 +44,17 @@ export class MongoCollection<T extends object = object> {
 	InsertMany = async (docs: OptionalUnlessRequiredId<T>[], options?: BulkWriteOptions) => this.Collection.insertMany(docs, options);
 	UpdateOne = async (docs: Filter<T>, filter: UpdateFilter<T>, opts?: UpdateOptions) => this.Collection.updateOne(docs, filter, opts);
 	UpdateMany = async (docs: Filter<T>, filter: UpdateFilter<T>, opts?: UpdateOptions) => this.Collection.updateMany(docs, filter, opts);
+
+	static async Override<T extends (...args: any) => Promise<any>, K extends Parameters<T>>(func: T, args: K): Promise<ReturnType<T>> {
+		const response = await func(...args);
+
+		if (response?.acknowledged || response === null) {
+			const response = await fetch('localhost:4000');
+			console.log(response);
+		}
+
+		return response;
+	}
 
 	async Find(filter?: Filter<T>, options?: FindOptions & Abortable): Promise<T[]> {
 		const response = filter ? this.Collection.find(filter, options) : this.Collection.find();
@@ -41,24 +69,16 @@ export class MongoCollection<T extends object = object> {
 
 	async FindOne(filter: Filter<T>, options?: FindOptions & Abortable): Promise<T | null> {
 		const response = await this.Collection.findOne(filter, options);
-
-		// TODO: log the condition that the response is null, or otherwise
-		if (response == null) {
-			return null;
-		} else {
-			return response;
-		}
+		return response;
 	}
 
 	async UpsertOne(filter: Filter<T>, update: UpdateFilter<T> | Document[], options: FindOneAndUpdateOptions): Promise<T | null> {
 		const response = await this.Collection.findOneAndUpdate(filter, update, options);
 
-		// TODO: log the condition that the response is null, or otherwise
-		if (response == null) {
-			return null;
-		} else {
+		if (response !== null) {
 			delete (response as any)._id;
-			return response as T;
 		}
+
+		return response as T | null;
 	}
 }

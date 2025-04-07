@@ -93,6 +93,7 @@
 									bind:value={item.Name}
 									updateKey={'Name'}
 									updateObj={bazaarState[type][index]}
+									inputProps={{ placeholder: 'Type Here to Add...' }}
 								/>
 							</td>
 							<td><input bind:value={item.Price} type="number" class="w-20 text-right" min="0" max="1000000000" /></td>
