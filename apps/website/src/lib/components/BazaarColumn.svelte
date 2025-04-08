@@ -6,7 +6,7 @@
 	import { cacheState } from '$lib/states/cacheState.svelte';
 	import type { API_CONTRACTS } from '$lib/other/apiContracts';
 	import { bazaarState } from '$lib/states/bazaarState.svelte';
-	import AutoComplete from './autocompletes/Autocomplete.svelte';
+	import AutoComplete from './autocompletes/AutoComplete.svelte';
 
 	type Props = {
 		action: Extract<keyof typeof API_CONTRACTS, `GET${string}/bazaar/${string}`>;

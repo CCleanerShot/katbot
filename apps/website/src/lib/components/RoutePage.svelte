@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/state';
-	import type { ROUTES } from '$lib/other/routes';
 	import Link from './Link.svelte';
+	import { page } from '$app/state';
+	import { afterNavigate } from '$app/navigation';
+	import type { ROUTES } from '$lib/other/routes';
 
 	type Props = {
 		route: (typeof ROUTES)['PAGES'][number];

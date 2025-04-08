@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Tooltip from "./Tooltip.svelte";
+	import Tooltip from './Tooltip.svelte';
+	import { tooltipState } from '$lib/states/tooltipState.svelte';
 
+	let { buy, product } = $state(tooltipState['AuctionProductInfoTooltip']);
 </script>
 
-<Tooltip >
-    Test
-</Tooltip>
+<Tooltip tooltip="AuctionProductInfoTooltip">test</Tooltip>

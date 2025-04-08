@@ -4,7 +4,7 @@
 	import type { AuctionItem } from '$lib/mongodb/AuctionItem';
 	import { auctionState } from '$lib/states/auctionState.svelte';
 	import type { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
-	import Autocomplete from './autocompletes/Autocomplete.svelte';
+	import AutoComplete from './autocompletes/AutoComplete.svelte';
 	import { cacheState } from '$lib/states/cacheState.svelte';
 
 	class Item {
@@ -75,7 +75,7 @@
 					{#each auctionState.BUYS as item, index (item.ID + index)}
 						<tr class="group">
 							<td>
-								<Autocomplete
+								<AutoComplete
 									afterAction={(input) => (item.ID = cacheState.AUCTIONS.items.find(e => e.Name === input)?.ID ?? "")}
 									array={cacheState.AUCTIONS.items}
 									bind:value={item.Name}

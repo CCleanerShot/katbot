@@ -8,6 +8,9 @@
 	import { sidebarState } from '$lib/states/sidebarState.svelte';
 	import { socketState } from '$lib/states/socketState.svelte';
 	import type { AuctionTag } from '$lib/mongodb/AuctionTag';
+	import type { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
+	import type { AuctionsRouteProductMinimal } from '$lib/types';
+	import { tooltipState } from '$lib/states/tooltipState.svelte';
 
 	type DeleteRoutes = Extract<keyof typeof API_CONTRACTS, `${string}DELETE${string}`>;
 	let socketService = $derived(socketState.socketService);
@@ -49,6 +52,12 @@
 	const onclick = () => {
 		socketState.socketService?.InitalizeSocket();
 	};
+
+	const onclickMore = (buy: AuctionBuy, product: AuctionsRouteProductMinimal) => {
+		tooltipState["AuctionProductInfoTooltip"].buy = buy;
+		tooltipState["AuctionProductInfoTooltip"].product = product;
+		tooltipState["AuctionProductInfoTooltip"].isOpened = true;
+	}
 
 	/** first value represents the key */
 	const groupTags = (tags: AuctionTag[]): string[][] => {
@@ -161,19 +170,12 @@
 											</span>
 										{/each}
 									</td>
-									<td class="expandable">
-										<details>
-											<summary>
+										<td class="group/inner relative cursor-pointer hover:font-bold" onclick={() => onclickMore(message.BuyItem, liveItem)}>
+											<span class="group-hover/inner:invisible">>></span>
+											<span class="invisible absolute inset-0 text-white transition group-hover/inner:visible group-hover/inner:rotate-3">
 												MORE
-											</summary>
-												{#each groupTags(liveItem.AuctionTags.filter(e => e.Value)) as tags, aIndex}
-												<span class="overflow-x-auto">
-												{tags[0]}:
-												{#each tags.slice(1) as entries, eIndex} ({entries}) {/each}
 											</span>
-											{/each}
-										</details>
-									</td>
+										</td>
 									<td class="px-1.5">
 										<button
 											class="bg-green-500 px-1 transition hover:translate-x-0.5 hover:bg-black hover:text-white"
