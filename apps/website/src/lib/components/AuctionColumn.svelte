@@ -76,6 +76,7 @@
 						<tr class="group">
 							<td>
 								<Autocomplete
+									afterAction={(input) => (item.ID = cacheState.AUCTIONS.items.find(e => e.Name === input)?.ID ?? "")}
 									array={cacheState.AUCTIONS.items}
 									bind:value={item.Name}
 									updateObj={item}

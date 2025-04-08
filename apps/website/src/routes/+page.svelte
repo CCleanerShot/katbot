@@ -1,7 +1,7 @@
 <script lang="ts">
 </script>
 
-<div>Index Page</div>
+<h2 class="text-center mt-1">Nothing yet...</h2>
 
 <style>
 	* {

@@ -16,6 +16,7 @@
 	let names = $derived(cacheState['AUCTIONS'].items.find((e) => e.ID === panel.item.ID)?.AuctionTags.map((e) => ({ Name: e })) ?? []);
 	let values = $derived(cacheState['AUCTIONS'].tags.find((e) => e.Name === tag.Name)?.Values.map((e) => ({ Name: e })) ?? []);
 	let selected = $derived(panel.tag === tag);
+
 	const onfocusinEdit = (tag: AuctionTag) => {
 		panel.tag = tag;
 	};

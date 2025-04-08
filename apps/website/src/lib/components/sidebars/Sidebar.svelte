@@ -55,12 +55,12 @@
 			<span class="visible">►</span>
 		{/each}
 	</button>
-	<div bind:this={sidebarElement} class={['widget sidebar flex w-[20rem] md:w-[30rem]', current.isOpened ? 'open' : '']}>
-		<div class="flex flex-1 flex-col">
+	<div bind:this={sidebarElement} class={['bg-white widget sidebar flex w-[20rem] md:w-[30rem]', current.isOpened ? 'open' : '']}>
+		<div class="flex flex-1 flex-col bg-white">
 			{@render title({ class: 'border-b-2' })}
 			{@render children()}
 		</div>
-			<div class="flex">
+			<div class="flex bg-white">
 				<button class="header group flex border-l-2 p-1 font-bold" onclick={() => (current.isOpened = false)}>
 					{@render close('')}
 				</button>
@@ -102,12 +102,7 @@
 		padding: 0.5rem;
 	}
 
-	.open-sidebar:hover {
-		background-color: white;
-	}
-
 	.sidebar {
-		background-color: white;
 		height: 100vh;
 		top: 0px;
 	}

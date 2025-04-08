@@ -29,22 +29,22 @@
 
 	const autoCompleteInput = (input: string, array: { Name: string }[]) => {
 		const results = [] as ArrayType;
-
+		
 		if (input.trim() == '') {
 			return results;
 		}
-
+		
 		array.forEach((e, i) => {
 			const name = e.Name.toLowerCase();
 			const match = name.match(input);
-
+			
 			if (match != null) {
 				const min = match.index ?? 0;
 				const max = min + input.length;
 				results.push({ ...e, beg: e.Name.slice(0, min), mid: e.Name.slice(min, max), end: e.Name.slice(max) });
 			}
 		});
-
+		
 		return results;
 	};
 

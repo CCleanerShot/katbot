@@ -49,8 +49,8 @@ public class Settings
     static void LoadENV()
     {
 #if DEBUG
-        using StreamReader streamReader = new StreamReader(".env");
         string? line = null;
+        using StreamReader streamReader = new StreamReader(".env");
 
         do
         {
@@ -115,6 +115,8 @@ public class Settings
             else
                 Utility.Log(Enums.LogLevel.WARN, $"The key was not implemented yet. Intentional? (at {lines[0]})");
         } while (line != null);
+
+        streamReader.Close();
 #else
     HYPIXEL_API_BASE_URL=Environment.GetEnvironmentVariable("HYPIXEL_API_BASE_URL");
     HYPIXEL_BOT_KEY=Environment.GetEnvironmentVariable("HYPIXEL_BOT_KEY");

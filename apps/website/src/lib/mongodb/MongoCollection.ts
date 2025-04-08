@@ -1,4 +1,4 @@
-import { SVELTE_MONGODB_C_AUCTION_BUY } from '$env/static/private';
+import { PORT_HTTP, SVELTE_MONGODB_C_AUCTION_BUY } from '$env/static/private';
 import {
 	Collection,
 	type Abortable,
@@ -29,11 +29,11 @@ export class MongoCollection<T extends object = object> {
 			const oldUpdateOne = this.UpdateOne;
 			const oldUpdateMany = this.UpdateMany;
 			const oldUpsertOne = this.UpsertOne;
-			this.InsertOne = async (docs, options) => await MongoCollection.Override(oldInsertOne, [docs, options]);
-			this.InsertMany = async (docs, options) => await MongoCollection.Override(oldInsertMany, [docs, options]);
-			this.UpdateOne = async (docs, filter, opts) => await MongoCollection.Override(oldUpdateOne, [docs, filter, opts]);
-			this.UpdateMany = async (docs, filter, opts) => await MongoCollection.Override(oldUpdateMany, [docs, filter, opts]);
-			this.UpsertOne = async (filter, update, options) => await MongoCollection.Override(oldUpsertOne, [filter, update, options]);
+			this.InsertOne = async (docs, options) => await MongoCollection.Override(this, oldInsertOne, [docs, options]);
+			this.InsertMany = async (docs, options) => await MongoCollection.Override(this, oldInsertMany, [docs, options]);
+			this.UpdateOne = async (docs, filter, opts) => await MongoCollection.Override(this, oldUpdateOne, [docs, filter, opts]);
+			this.UpdateMany = async (docs, filter, opts) => await MongoCollection.Override(this, oldUpdateMany, [docs, filter, opts]);
+			this.UpsertOne = async (filter, update, options) => await MongoCollection.Override(this, oldUpsertOne, [filter, update, options]);
 		}
 	}
 
@@ -45,12 +45,19 @@ export class MongoCollection<T extends object = object> {
 	UpdateOne = async (docs: Filter<T>, filter: UpdateFilter<T>, opts?: UpdateOptions) => this.Collection.updateOne(docs, filter, opts);
 	UpdateMany = async (docs: Filter<T>, filter: UpdateFilter<T>, opts?: UpdateOptions) => this.Collection.updateMany(docs, filter, opts);
 
-	static async Override<T extends (...args: any) => Promise<any>, K extends Parameters<T>>(func: T, args: K): Promise<ReturnType<T>> {
-		const response = await func(...args);
+	static async Override<T extends (...args: any) => Promise<any>, K extends Parameters<T>>(
+		bound: unknown,
+		func: T,
+		args: K
+	): Promise<ReturnType<T>> {
+		const response = await func.call(bound, ...args);
 
-		if (response?.acknowledged || response === null) {
-			const response = await fetch('localhost:4000');
-			console.log(response);
+		try {
+			if (response?.acknowledged || response === null) {
+				await fetch(`http://localhost:${PORT_HTTP}`);
+			}
+		} catch (err) {
+			// doesn't really matter if the other server is down
 		}
 
 		return response;

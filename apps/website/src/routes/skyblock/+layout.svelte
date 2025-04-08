@@ -5,11 +5,12 @@
 	import { socketState } from '$lib/states/socketState.svelte';
 	import { WebsocketService } from '$lib/classes/WebsocketService.svelte';
 	import SkyblockAlertsSidebar from '$lib/components/sidebars/SkyblockAlertsSidebar.svelte';
+	import { PUBLIC_PORT_WEBSOCKET } from '$env/static/public';
 
 	const { children } = $props();
 
 	onMount(() => {
-		const url = `ws://localhost:3000`;
+		const url = `ws://localhost:${PUBLIC_PORT_WEBSOCKET}`;
 		socketState.socketService = new WebsocketService(url);
 	});
 </script>

@@ -1,5 +1,5 @@
 import { utility } from '$lib/utility/utility';
-import type { SocketMessage } from '$lib/types';
+import { SocketMessageType, type SocketMessage } from '$lib/types';
 import { sidebarState } from '$lib/states/sidebarState.svelte';
 
 export class WebsocketService {
@@ -14,16 +14,6 @@ export class WebsocketService {
 		this.url = url;
 		this.protocols = protocols;
 		this.InitalizeSocket(false);
-	}
-
-	emit() {
-		const data = { test: 'asda' };
-
-		if (this.socket === null) {
-			return;
-		}
-
-		this.socket.send(JSON.stringify(data));
 	}
 
 	InitalizeSocket(retry = true) {
@@ -59,9 +49,15 @@ export class WebsocketService {
 			const data = JSON.parse(e.data) as SocketMessage;
 			console.log('message', data);
 
-			sidebarState.SkyblockAlertsSidebar.items.auctionItems.push(...data.auctionItems);
-			sidebarState.SkyblockAlertsSidebar.items.bazaarBuys.push(...data.bazaarBuys);
-			sidebarState.SkyblockAlertsSidebar.items.bazaarSells.push(...data.bazaarSells);
+			switch (data.type) {
+				case SocketMessageType.AUCTIONS:
+					sidebarState.SkyblockAlertsSidebar.items.auctionSocketMessages = data.auctionSocketMessages;
+					break;
+				case SocketMessageType.BAZAAR:
+					sidebarState.SkyblockAlertsSidebar.items.bazaarBuys = data.bazaarBuys;
+					sidebarState.SkyblockAlertsSidebar.items.bazaarSells = data.bazaarSells;
+					break;
+			}
 		});
 	}
 }

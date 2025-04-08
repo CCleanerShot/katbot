@@ -1,5 +1,17 @@
 namespace Enums
 {
+    public enum Color
+    {
+        BLACK,
+        RED,
+        GREEN,
+        YELLOW,
+        BLUE,
+        MAGENTA,
+        CYAN,
+        WHITE,
+    }
+
     public enum LogLevel
     {
         NONE,
@@ -13,16 +25,10 @@ namespace Enums
         ORDER,
     }
 
-    public enum Color
+    public enum SocketMessageType
     {
-        BLACK,
-        RED,
-        GREEN,
-        YELLOW,
-        BLUE,
-        MAGENTA,
-        CYAN,
-        WHITE,
+        AUCTIONS,
+        BAZAAR,
     }
 
     public static class Dictionaries

@@ -48,6 +48,7 @@ export const PUT: RequestHandler = async ({ cookies, request }) => {
 	}
 
 	const toInsert: (typeof params)['items'] = [];
+
 	for (const item of items) {
 		const exists = await mongoBot.MONGODB_C_AUCTION_BUY.UpsertOne(
 			{ ID: item.ID, UserId: userId },

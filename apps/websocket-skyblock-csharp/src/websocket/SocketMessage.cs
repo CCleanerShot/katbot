@@ -1,12 +1,15 @@
+using Enums;
+
 public class SocketMessage
 {
-    public int ID;
-    public List<AuctionItemsWithBuy> auctionItemsWithBuys = new List<AuctionItemsWithBuy>();
+    public int id;
+    public SocketMessageType type;
+    public List<AuctionSocketMessage> auctionSocketMessages = new List<AuctionSocketMessage>();
     public List<BazaarItem> bazaarBuys = new List<BazaarItem>();
     public List<BazaarItem> bazaarSells = new List<BazaarItem>();
 
     public SocketMessage()
     {
-        ID = new Random().Next();
+        id = new Random().Next();
     }
 }

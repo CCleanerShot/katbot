@@ -14,14 +14,14 @@ public static partial class TimerBot
         List<BazaarItem> allSells = await MongoBot.BazaarSell.FindList(e => true);
 
         // easier to just reset the current listings
-        foreach (var (key, value) in MongoBot.ElgibleBazaarBuys)
-            MongoBot.ElgibleBazaarBuys[key] = new List<BazaarItem>();
-        foreach (var (key, value) in MongoBot.ElgibleBazaarSells)
-            MongoBot.ElgibleBazaarSells[key] = new List<BazaarItem>();
+        foreach (var (key, value) in MongoBot.EligibleBazaarBuys)
+            MongoBot.EligibleBazaarBuys[key] = new List<BazaarItem>();
+        foreach (var (key, value) in MongoBot.EligibleBazaarSells)
+            MongoBot.EligibleBazaarSells[key] = new List<BazaarItem>();
 
-        foreach (var (key, value) in MongoBot.ElgibleBazaarBuys)
+        foreach (var (key, value) in MongoBot.EligibleBazaarBuys)
         {
-            MongoBot.ElgibleBazaarBuys[key] = allBuys.Where(t =>
+            MongoBot.EligibleBazaarBuys[key] = allBuys.Where(t =>
             {
                 if (t.UserId != key)
                     return false;
@@ -47,9 +47,9 @@ public static partial class TimerBot
             }).ToList();
         }
 
-        foreach (var (key, value) in MongoBot.ElgibleBazaarSells)
+        foreach (var (key, value) in MongoBot.EligibleBazaarSells)
         {
-            MongoBot.ElgibleBazaarSells[key] = allSells.Where(t =>
+            MongoBot.EligibleBazaarSells[key] = allSells.Where(t =>
             {
                 if (t.UserId != key)
                     return false;

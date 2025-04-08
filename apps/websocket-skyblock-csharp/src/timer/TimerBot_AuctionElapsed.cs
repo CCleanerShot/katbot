@@ -19,10 +19,8 @@ public static partial class TimerBot
             if (allBuys.Find(e => e.ID == item.ITEM_ID) != null)
                 similarLive.Add(item);
 
-        foreach (var (k, v) in MongoBot.ElgibleAuctionBuys)
-            MongoBot.ElgibleAuctionBuys[k] = new Dictionary<AuctionBuy, AuctionItemsWithBuy>();
-
-        foreach (var (k, v) in MongoBot.ElgibleAuctionBuys)
+        // NOTE: we dont reset the list like we do in bazaar, because sometimes the fetch is only for the latest 'x' pages, which needs the old items.
+        foreach (var (k, v) in MongoBot.EligibleAuctionBuys)
         {
             foreach (AuctionBuy buy in allBuys)
             {
@@ -31,16 +29,43 @@ public static partial class TimerBot
                 if (similarLive.Count == 0)
                     continue;
 
-                // check if all the properties are matching
-                foreach (AuctionsRouteProduct item in similarLive)
-                    foreach (AuctionTag attribute in item.AuctionTags)
-                        if (buy.AuctionTags.All(attribute => item.AuctionTags.Any(e => e == attribute)))
-                        {
-                            if(!MongoBot.ElgibleAuctionBuys[buy.UserId].ContainsKey(buy))
-                                MongoBot.ElgibleAuctionBuys[buy.UserId].Add(buy, new AuctionItemsWithBuy(new List<AuctionsRouteProductMinimal>(), buy));
+                foreach (AuctionsRouteProduct product in similarLive)
+                {
+                    bool condition1 = buy.Price <= MathF.Max(product.starting_bid, product.highest_bid_amount);
+                    bool condition2 = buy.AuctionTags.All(e => product.AuctionTags.Any(ee =>
+                    {
+                        if (ee.Name != e.Name)
+                            return false;
 
-                            MongoBot.ElgibleAuctionBuys[buy.UserId][buy].LiveItems.Add(item);
+                        switch (ee.Name)
+                        {
+                            case "attributes":
+                                return ee >= e;
+                            default:
+                                return ee == e;
                         }
+                    }));
+
+                    // check if all the properties are matching
+                    if (condition1 && condition2)
+                    {
+                        if (!MongoBot.EligibleAuctionBuys[buy.UserId].ContainsKey(buy))
+                            MongoBot.EligibleAuctionBuys[buy.UserId].Add(buy, new AuctionSocketMessage(new List<AuctionsRouteProductMinimal>(), buy));
+
+                        if (MongoBot.EligibleAuctionBuys[buy.UserId][buy].LiveItems.Where(e => e.uuid == product.uuid).Count() == 0)
+                            MongoBot.EligibleAuctionBuys[buy.UserId][buy].LiveItems.Add(product);
+                    }
+
+                    // check if this is a product that existed and is no longer eligible
+                    else
+                    {
+                        if (!MongoBot.EligibleAuctionBuys[buy.UserId].ContainsKey(buy))
+                            continue;
+
+                        if (MongoBot.EligibleAuctionBuys[buy.UserId][buy].LiveItems.Where(e => e.uuid == product.uuid).Count() == 1)
+                            MongoBot.EligibleAuctionBuys[buy.UserId][buy].LiveItems.Remove(product);
+                    }
+                }
             }
         }
 

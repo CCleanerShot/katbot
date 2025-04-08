@@ -81,9 +81,8 @@ main {
 
 .table tr > *:not(:last-child) {
 	border: 1px solid black;
-	text-align: center;
-	padding-left: 0.5rem;
-	padding-right: 0.5rem;
+	padding-left: 0.1rem;
+	padding-right: 0.1rem;
 }
 
 .table tr > *:not(:last-child) > select {

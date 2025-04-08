@@ -26,8 +26,15 @@ export type AuctionSocketMessage = {
 	BuyItem: AuctionBuy;
 };
 
+export enum SocketMessageType {
+	AUCTIONS,
+	BAZAAR
+}
+
 export type SocketMessage = {
-	auctionItems: AuctionSocketMessage[];
+	id: number;
+	type: SocketMessageType;
+	auctionSocketMessages: AuctionSocketMessage[];
 	bazaarBuys: BazaarBuy[];
 	bazaarSells: BazaarSell[];
 };

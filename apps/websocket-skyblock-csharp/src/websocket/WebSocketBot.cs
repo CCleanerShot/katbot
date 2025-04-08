@@ -52,11 +52,12 @@ public static partial class WebSocketBot
         foreach (var (session, connection) in Connections)
         {
             SocketMessage message = new SocketMessage();
+            message.type = Enums.SocketMessageType.AUCTIONS;
 
-            foreach (var (k, v) in MongoBot.ElgibleAuctionBuys)
+            foreach (var (k, v) in MongoBot.EligibleAuctionBuys)
                 if (k == session.UserId)
                     foreach (var (buy, products) in v)
-                        message.auctionItemsWithBuys.Add(products);
+                        message.auctionSocketMessages.Add(products);
 
             connection.Send(Newtonsoft.Json.JsonConvert.SerializeObject(message));
         }
@@ -67,13 +68,14 @@ public static partial class WebSocketBot
         foreach (var (session, connection) in Connections)
         {
             SocketMessage message = new SocketMessage();
+            message.type = Enums.SocketMessageType.BAZAAR;
 
-            foreach (var (k, v) in MongoBot.ElgibleBazaarBuys)
+            foreach (var (k, v) in MongoBot.EligibleBazaarBuys)
                 if (k == session.UserId)
                     foreach (BazaarItem item in v)
                         message.bazaarBuys.Add(item);
 
-            foreach (var (k, v) in MongoBot.ElgibleBazaarSells)
+            foreach (var (k, v) in MongoBot.EligibleBazaarSells)
                 if (k == session.UserId)
                     foreach (BazaarItem item in v)
                         message.bazaarSells.Add(item);
@@ -85,10 +87,29 @@ public static partial class WebSocketBot
 
     static void AddEvents(Session session, IWebSocketConnection ws)
     {
-        void OnClose() => Connections.Remove(session);
-        void OnMessage(string message) => Console.WriteLine(message);
+        void OnClose()
+        {
+            Utility.Log(Enums.LogLevel.NONE, "Closing connection...");
+            Connections.Remove(session);
+        }
+
+        void OnMessage(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        void OnOpen()
+        {
+            if (MongoBot.EligibleAuctionBuys[session.UserId].Count > 0)
+                SendAuctionData();
+
+            if (MongoBot.EligibleBazaarBuys[session.UserId].Count > 0 | MongoBot.EligibleBazaarSells[session.UserId].Count > 0)
+                SendBazaarData();
+        }
+
         ws.OnClose += OnClose;
         ws.OnMessage += OnMessage;
+        ws.OnOpen += OnOpen;
     }
 
     static async Task<Session?> ValidateSessionToken(string token)

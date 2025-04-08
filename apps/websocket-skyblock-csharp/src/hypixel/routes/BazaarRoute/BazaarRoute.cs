@@ -16,11 +16,9 @@ public class BazaarRoute
             int maxRetry = 3;
             int currentRetry = 0;
 
-            async Task setJson() => json = await Program.Client.GetStringAsync($"{Settings.HYPIXEL_API_BASE_URL}/skyblock/bazaar");
-
             try
             {
-                await setJson();
+                json = await Program.Client.GetStringAsync($"{Settings.HYPIXEL_API_BASE_URL}/skyblock/bazaar");
             }
 
             catch (Exception)
@@ -32,7 +30,8 @@ public class BazaarRoute
                 if (currentRetry >= maxRetry)
                     throw;
 
-                await setJson();
+                json = await Program.Client.GetStringAsync($"{Settings.HYPIXEL_API_BASE_URL}/skyblock/bazaar");
+
             }
 
             JsonNode? result = JsonArray.Parse(json);

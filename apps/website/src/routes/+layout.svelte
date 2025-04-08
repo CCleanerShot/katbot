@@ -13,6 +13,7 @@
 	import Toasts from '$lib/components/toast/Toasts.svelte';
 	import LoadingBorder from '$lib/components/LoadingBorder.svelte';
 	import AutoCompletePane from '$lib/components/autocompletes/AutocompletePane.svelte';
+	import Tooltip from '$lib/components/tooltip/Tooltip.svelte';
 
 	let { children } = $props();
 	let pageData = $derived(pageState.page.data);

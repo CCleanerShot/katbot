@@ -22,16 +22,18 @@ public class Program
     {
         try
         {
+            Client.DefaultRequestHeaders.Accept.Clear();
+            Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
+
             Settings.Load();
-            TimerBot.Load();
             await MongoBot.Load();
             WebSocketBot.Load();
+            TimerBot.Load();
 #pragma warning disable CS4014
             HTTPBot.Load();
 #pragma warning restore CS4014
 
-            Client.DefaultRequestHeaders.Accept.Clear();
-            Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
+
 
             await Task.Delay(-1);
         }

@@ -18,9 +18,9 @@ public class MongoBot
     public static Dictionary<string, AuctionItemsAll> CachedAuctionItems = new Dictionary<string, AuctionItemsAll>();
     public static Dictionary<string, AuctionTags> CachedAuctionTags = new Dictionary<string, AuctionTags>();
     public static Dictionary<string, BazaarItemsAll> CachedBazaarItems = new Dictionary<string, BazaarItemsAll>();
-    public static Dictionary<ulong, Dictionary<AuctionBuy, AuctionItemsWithBuy>> ElgibleAuctionBuys = new Dictionary<ulong, Dictionary<AuctionBuy, AuctionItemsWithBuy>>();
-    public static Dictionary<ulong, List<BazaarItem>> ElgibleBazaarBuys = new Dictionary<ulong, List<BazaarItem>>();
-    public static Dictionary<ulong, List<BazaarItem>> ElgibleBazaarSells = new Dictionary<ulong, List<BazaarItem>>();
+    public static Dictionary<ulong, Dictionary<AuctionBuy, AuctionSocketMessage>> EligibleAuctionBuys = new Dictionary<ulong, Dictionary<AuctionBuy, AuctionSocketMessage>>();
+    public static Dictionary<ulong, List<BazaarItem>> EligibleBazaarBuys = new Dictionary<ulong, List<BazaarItem>>();
+    public static Dictionary<ulong, List<BazaarItem>> EligibleBazaarSells = new Dictionary<ulong, List<BazaarItem>>();
 
     public static IMongoCollection<AuctionBuy> AuctionBuy { get; protected set; } = default!;
     public static IMongoCollection<AuctionItemsAll> AuctionItemsAll { get; protected set; } = default!;
@@ -70,8 +70,8 @@ public class MongoBot
 
             foreach (MongoUser user in users)
             {
-                ElgibleAuctionBuys.Add(user.DiscordId, new Dictionary<AuctionBuy, AuctionItemsWithBuy>());
-                ElgibleBazaarBuys.Add(user.DiscordId, new List<BazaarItem>());
+                EligibleAuctionBuys.Add(user.DiscordId, new Dictionary<AuctionBuy, AuctionSocketMessage>());
+                EligibleBazaarBuys.Add(user.DiscordId, new List<BazaarItem>());
             }
 
             Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");

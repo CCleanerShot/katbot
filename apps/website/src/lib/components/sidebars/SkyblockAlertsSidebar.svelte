@@ -17,7 +17,7 @@
 	const actionType = {
 		auctionBuy: {
 			route: 'DELETE=>/api/auctions/buy',
-			store: 'auctionItems'
+			store: 'auctionSocketMessages'
 		},
 		bazaarBuy: {
 			route: 'DELETE=>/api/bazaar/buy',
@@ -121,8 +121,8 @@
 
 <Sidebar sidebar="SkyblockAlertsSidebar" {title}>
 	<div class="px-2">
-		{#if state.auctionItems.length}
-			<div class="flex flex-col items-center" out:fade={{ duration: 100 }}>
+		{#if state.auctionSocketMessages.length}
+			<div class="flex flex-col items-center auctions-container" out:fade={{ duration: 100 }}>
 				<h5>Auctions</h5>
 				<table class="font-xx-small-recursive table">
 					<thead>
@@ -130,41 +130,66 @@
 							<th>Name</th>
 							<th>Price</th>
 							<th>Tags</th>
+							<th>Seller</th>
+							<th>Price</th>
+							<th>Live Tags</th>
+							<th>All Tags</th>
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
-						{#each state.auctionItems as item, index (index)}
-							{#each item.LiveItems as liveItem, index2 (index2)}
-							<tr out:fade={{ duration: 100 }}>
-								<td>{liveItem.ITEM_NAME}</td>
-								<td>{liveItem.highest_bid_amount}</td>
-								<td class="font-xx-small flex">
-									{#each groupTags(liveItem.AuctionTags) as tags, aIndex}
-										<span>
-											{tags[0]}:
-											{#each tags.slice(1) as entries, eIndex}
-												({entries})
+						{#each state.auctionSocketMessages as message, index (index)}
+							{#each message.LiveItems as liveItem, index2 (index2)}
+								<tr class="{message.BuyItem.ID}-{index}" out:fade={{ duration: 100 }}>
+									<td>{message.BuyItem.Name}</td>
+									<td>{message.BuyItem.Price}</td>
+									<td class="font-xx-small flex">
+										{#each groupTags(message.BuyItem.AuctionTags) as tags, aIndex}
+											<span class="overflow-x-auto">
+												{tags[0]}:
+												{#each tags.slice(1) as entries, eIndex} ({entries}) {/each}
+											</span>
+										{/each}
+									</td>
+									<td>{liveItem.auctioneer}</td>
+									<td class="text-right">{Math.max(Number(liveItem.highest_bid_amount), Number(liveItem.starting_bid))}</td>
+									<td >
+										{#each groupTags(liveItem.AuctionTags.filter(e => message.BuyItem.AuctionTags.find(ee => ee.Name === e.Name))) as tags, aIndex}
+											<span class="overflow-x-auto">
+												{tags[0]}:
+												{#each tags.slice(1) as entries, eIndex} ({entries}) {/each}
+											</span>
+										{/each}
+									</td>
+									<td class="expandable">
+										<details>
+											<summary>
+												MORE
+											</summary>
+												{#each groupTags(liveItem.AuctionTags.filter(e => e.Value)) as tags, aIndex}
+												<span class="overflow-x-auto">
+												{tags[0]}:
+												{#each tags.slice(1) as entries, eIndex} ({entries}) {/each}
+											</span>
 											{/each}
-										</span>
-									{/each}
-								</td>
-								<td class="px-1.5">
-									<button
-										class="bg-green-500 px-1 transition hover:translate-x-0.5 hover:bg-black hover:text-white"
-										onclick={() => acknowledgeItem(item.BuyItem, index, 'auctionBuy')}
-									>
-										✔
-									</button>
-								</td>
-							</tr>
+										</details>
+									</td>
+									<td class="px-1.5">
+										<button
+											class="bg-green-500 px-1 transition hover:translate-x-0.5 hover:bg-black hover:text-white"
+											onclick={() => acknowledgeItem(message.BuyItem, index, 'auctionBuy')}
+										>
+											✔
+										</button>
+									</td>
+								</tr>
 							{/each}
 						{/each}
 					</tbody>
 				</table>
 			</div>
 		{/if}
-		{#if state.bazaarBuys.length || state.bazaarSells.length}
+		{#if state.bazaarBuys.length || state.bazaarSells.length || state.auctionSocketMessages.length}
 			<section class="mt-2">
 				<h4>Bazaar</h4>
 				{#if state.bazaarBuys.length}
@@ -175,7 +200,7 @@
 				{/if}
 			</section>
 		{/if}
-		{#if !state.auctionItems.length && !state.bazaarBuys.length && !state.bazaarSells.length}
+		{#if !state.auctionSocketMessages.length && !state.bazaarBuys.length && !state.bazaarSells.length}
 			<section class="flex">
 				<span class="font-small text-center">New updates will appear here!</span>
 			</section>
@@ -187,6 +212,10 @@
 	h4 {
 		text-decoration: underline;
 		text-align: center;
+	}
+
+	.auctions-container * {
+		text-wrap: nowrap;
 	}
 
 	.super-small {
