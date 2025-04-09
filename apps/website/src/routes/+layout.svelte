@@ -11,9 +11,8 @@
 	import Header from '$lib/components/Header.svelte';
 	import { pageState } from '$lib/states/pageState.svelte';
 	import Toasts from '$lib/components/toasts/Toasts.svelte';
-	import Tooltip from '$lib/components/tooltips/Tooltip.svelte';
 	import LoadingBorder from '$lib/components/LoadingBorder.svelte';
-	import AutoCompletePane from '$lib/components/autocompletes/AutocompletePane.svelte';
+	import AutoCompletePane from '$lib/components/autocompletes/AutoCompletePane.svelte';
 
 	let { children } = $props();
 	let pageData = $derived(pageState.page.data);

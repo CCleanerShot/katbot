@@ -44,6 +44,12 @@ public static partial class WebSocketBot
             AddEvents(session, ws);
             Connections.Add(session, ws);
             Utility.Log(Enums.LogLevel.NONE, "Added ws connection.");
+
+            if (MongoBot.EligibleAuctionBuys[session.UserId].Count > 0)
+                SendAuctionData();
+
+            if (MongoBot.EligibleBazaarBuys[session.UserId].Count > 0 | MongoBot.EligibleBazaarSells[session.UserId].Count > 0)
+                SendBazaarData();
         });
     }
 
@@ -98,18 +104,8 @@ public static partial class WebSocketBot
             Console.WriteLine(message);
         }
 
-        void OnOpen()
-        {
-            if (MongoBot.EligibleAuctionBuys[session.UserId].Count > 0)
-                SendAuctionData();
-
-            if (MongoBot.EligibleBazaarBuys[session.UserId].Count > 0 | MongoBot.EligibleBazaarSells[session.UserId].Count > 0)
-                SendBazaarData();
-        }
-
         ws.OnClose += OnClose;
         ws.OnMessage += OnMessage;
-        ws.OnOpen += OnOpen;
     }
 
     static async Task<Session?> ValidateSessionToken(string token)

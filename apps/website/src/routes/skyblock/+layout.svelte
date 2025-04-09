@@ -6,6 +6,7 @@
 	import { WebsocketService } from '$lib/classes/WebsocketService.svelte';
 	import SkyblockAlertsSidebar from '$lib/components/sidebars/SkyblockAlertsSidebar.svelte';
 	import { PUBLIC_PORT_WEBSOCKET } from '$env/static/public';
+	import AuctionProductInfoTooltip from '$lib/components/tooltips/AuctionProductInfoTooltip.svelte';
 
 	const { children } = $props();
 
@@ -30,6 +31,7 @@
 {/snippet}
 
 <div>
+	<AuctionProductInfoTooltip />
 	<SkyblockAlertsSidebar />
 	<div class="flex items-center justify-center gap-2 border-b-2 border-black py-2">
 		{#if page.route.id?.includes('bazaar')}

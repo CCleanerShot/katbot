@@ -72,6 +72,7 @@ public class MongoBot
             {
                 EligibleAuctionBuys.Add(user.DiscordId, new Dictionary<AuctionBuy, AuctionSocketMessage>());
                 EligibleBazaarBuys.Add(user.DiscordId, new List<BazaarItem>());
+                EligibleBazaarSells.Add(user.DiscordId, new List<BazaarItem>());
             }
 
             Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");

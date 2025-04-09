@@ -2,6 +2,10 @@
 	font-size: 1.5rem;
 }
 
+.font-xxx-small {
+	font-size: 0.4rem;
+}
+
 .font-xx-small {
 	font-size: 0.5rem;
 }
@@ -24,6 +28,15 @@
 
 .font-xx-large {
 	font-size: 3rem;
+}
+
+.font-xx-large {
+	font-size: 3.25rem;
+}
+
+.font-xxx-small-recursive,
+.font-xxx-small-recursive * {
+	font-size: 0.4rem;
 }
 
 .font-xx-small-recursive,
@@ -56,9 +69,18 @@
 	font-size: 3rem;
 }
 
+.font-xxx-large-recursive,
+.font-xxx-large-recursive * {
+	font-size: 3.25rem;
+}
+
 @media only screen and (max-width: 48rem) {
 	* {
 		font-size: 1rem;
+	}
+
+	.font-xxx-small {
+		font-size: 0.16rem;
 	}
 
 	.font-xx-small {
@@ -83,6 +105,15 @@
 
 	.font-xx-large {
 		font-size: 2.5rem;
+	}
+
+	.font-xx-large {
+		font-size: 2.75rem;
+	}
+
+	.font-xxx-small-recursive,
+	.font-xxx-small-recursive * {
+		font-size: 0.16rem;
 	}
 
 	.font-xx-small-recursive,
@@ -113,5 +144,10 @@
 	.font-xx-large-recursive,
 	.font-xx-large-recursive * {
 		font-size: 2.5rem;
+	}
+
+	.font-xxx-large-recursive,
+	.font-xxx-large-recursive * {
+		font-size: 2.75rem;
 	}
 }

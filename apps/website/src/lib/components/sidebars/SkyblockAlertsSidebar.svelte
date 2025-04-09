@@ -5,13 +5,13 @@
 	import { type SvelteHTMLElements } from 'svelte/elements';
 	import type { BazaarItem } from '$lib/mongodb/BazaarItem';
 	import type { API_CONTRACTS } from '$lib/other/apiContracts';
-	import { sidebarState } from '$lib/states/sidebarState.svelte';
 	import { socketState } from '$lib/states/socketState.svelte';
-	import type { AuctionTag } from '$lib/mongodb/AuctionTag';
-	import type { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
 	import type { AuctionsRouteProductMinimal } from '$lib/types';
+	import { sidebarState } from '$lib/states/sidebarState.svelte';
 	import { tooltipState } from '$lib/states/tooltipState.svelte';
-
+	import {utilityClient} from "$lib/utility/utilityClient.svelte";
+	import type { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
+	
 	type DeleteRoutes = Extract<keyof typeof API_CONTRACTS, `${string}DELETE${string}`>;
 	let socketService = $derived(socketState.socketService);
 	let state = $derived(sidebarState.SkyblockAlertsSidebar.items);
@@ -54,30 +54,10 @@
 	};
 
 	const onclickMore = (buy: AuctionBuy, product: AuctionsRouteProductMinimal) => {
-		tooltipState["AuctionProductInfoTooltip"].buy = buy;
-		tooltipState["AuctionProductInfoTooltip"].product = product;
-		tooltipState["AuctionProductInfoTooltip"].isOpened = true;
-	}
-
-	/** first value represents the key */
-	const groupTags = (tags: AuctionTag[]): string[][] => {
-		const groups: Record<string, string[]> = {} as const;
-
-		for (const tag of tags) {
-			if (!groups[tag.Name]) {
-				groups[tag.Name] = [tag.Value];
-			} else {
-				groups[tag.Name].push(tag.Value);
-			}
-		}
-
-		const result: string[][] = [];
-
-		for (const [key, values] of Object.entries(groups)) {
-			result.push([key, ...values]);
-		}
-
-		return result;
+		console.log(buy, product)
+		tooltipState['AuctionProductInfoTooltip'].buy = buy;
+		tooltipState['AuctionProductInfoTooltip'].product = product;
+		tooltipState['AuctionProductInfoTooltip'].isOpened = true;
 	};
 </script>
 
@@ -113,7 +93,7 @@
 					<tr out:fade={{ duration: fadeTimer }}>
 						<td>{item.Name}</td>
 						<td>{item.Price}</td>
-						<td class="px-1.5">
+						<td class="px-1">
 							<button
 								class="bg-green-500 px-1 transition hover:translate-x-0.5 hover:bg-black hover:text-white"
 								onclick={() => acknowledgeItem(item, index, action)}
@@ -129,63 +109,56 @@
 {/snippet}
 
 <Sidebar sidebar="SkyblockAlertsSidebar" {title}>
-	<div class="px-2">
+	<div class="pl-2">
 		{#if state.auctionSocketMessages.length}
-			<div class="flex flex-col items-center auctions-container" out:fade={{ duration: 100 }}>
+			<div class="auctions-container flex flex-col items-center" out:fade={{ duration: 100 }}>
 				<h5>Auctions</h5>
 				<table class="font-xx-small-recursive table">
 					<thead>
 						<tr>
 							<th>Name</th>
-							<th>Price</th>
-							<th>Tags</th>
-							<th>Seller</th>
-							<th>Price</th>
+							<th>Live Price</th>
 							<th>Live Tags</th>
-							<th>All Tags</th>
+							<th>Info</th>
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each state.auctionSocketMessages as message, index (index)}
-							{#each message.LiveItems as liveItem, index2 (index2)}
+
+								{#each message.LiveItems as liveItem, index2 (index2)}
 								<tr class="{message.BuyItem.ID}-{index}" out:fade={{ duration: 100 }}>
 									<td>{message.BuyItem.Name}</td>
-									<td>{message.BuyItem.Price}</td>
-									<td class="font-xx-small flex">
-										{#each groupTags(message.BuyItem.AuctionTags) as tags, aIndex}
-											<span class="overflow-x-auto">
-												{tags[0]}:
-												{#each tags.slice(1) as entries, eIndex} ({entries}) {/each}
-											</span>
-										{/each}
-									</td>
-									<td>{liveItem.auctioneer}</td>
 									<td class="text-right">{Math.max(Number(liveItem.highest_bid_amount), Number(liveItem.starting_bid))}</td>
-									<td >
-										{#each groupTags(liveItem.AuctionTags.filter(e => message.BuyItem.AuctionTags.find(ee => ee.Name === e.Name))) as tags, aIndex}
-											<span class="overflow-x-auto">
-												{tags[0]}:
-												{#each tags.slice(1) as entries, eIndex} ({entries}) {/each}
-											</span>
+									<td>
+										{#each utilityClient.groupTags(liveItem.AuctionTags.filter( (e) => message.BuyItem.AuctionTags.find((ee) => ee.Name === e.Name) )) as tags, aIndex}
+										<span class="overflow-x-auto">
+											{tags[0]}:
+											{#each tags.slice(1) as entries, eIndex}
+											({entries})
+											{/each}
+										</span>
 										{/each}
 									</td>
-										<td class="group/inner relative cursor-pointer hover:font-bold" onclick={() => onclickMore(message.BuyItem, liveItem)}>
-											<span class="group-hover/inner:invisible">>></span>
-											<span class="invisible absolute inset-0 text-white transition group-hover/inner:visible group-hover/inner:rotate-3">
-												MORE
-											</span>
-										</td>
-									<td class="px-1.5">
-										<button
-											class="bg-green-500 px-1 transition hover:translate-x-0.5 hover:bg-black hover:text-white"
-											onclick={() => acknowledgeItem(message.BuyItem, index, 'auctionBuy')}
-										>
-											✔
-										</button>
-									</td>
-								</tr>
-							{/each}
+									<td
+									class="group/inner relative cursor-pointer text-center hover:font-bold"
+									onclick={() => onclickMore(message.BuyItem, liveItem)}
+									>
+									<span class="group-hover/inner:invisible">>></span>
+									<span class="invisible absolute inset-0 text-white transition group-hover/inner:visible group-hover/inner:rotate-3">
+										MORE
+									</span>
+								</td>
+								<td class="px-1">
+									<button
+									class="bg-green-500 px-1 transition hover:translate-x-0.5 hover:bg-black hover:text-white"
+									onclick={() => acknowledgeItem(message.BuyItem, index, 'auctionBuy')}
+									>
+									✔
+								</button>
+							</td>
+						</tr>
+						{/each}
 						{/each}
 					</tbody>
 				</table>

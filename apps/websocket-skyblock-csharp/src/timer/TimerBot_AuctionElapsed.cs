@@ -19,15 +19,18 @@ public static partial class TimerBot
             if (allBuys.Find(e => e.ID == item.ITEM_ID) != null)
                 similarLive.Add(item);
 
+
         // NOTE: we dont reset the list like we do in bazaar, because sometimes the fetch is only for the latest 'x' pages, which needs the old items.
         foreach (var (k, v) in MongoBot.EligibleAuctionBuys)
         {
             foreach (AuctionBuy buy in allBuys)
             {
-                // items where the ID of an item from the API matches the same ID as a tracked item
-
-                if (similarLive.Count == 0)
+                // check if any are currently gone
+                if (allBuys.Where(e => e._id == buy._id).Count() == 0)
+                {
+                    v.Remove(buy);
                     continue;
+                }
 
                 foreach (AuctionsRouteProduct product in similarLive)
                 {

@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { TagType } from '$lib/enums';
 	import type { AuctionTag } from '$lib/mongodb/AuctionTag';
 	import { cacheState } from '$lib/states/cacheState.svelte';
 	import { panelState } from '$lib/states/panelState.svelte';
 	import type { SvelteHTMLElements } from 'svelte/elements';
-	import AutoComplete from '../autocompletes/Autocomplete.svelte';
-	import { TagType } from '$lib/enums';
+	import AutoComplete from '../autocompletes/AutoComplete.svelte';
 
 	type Props = {
 		tag: AuctionTag;

@@ -59,11 +59,10 @@ public class AuctionsRoute
 
             // NOTE: im doing it this way instead of an array of tasks, because for some reason, an async function within a task has unexpected results when awaiting (skips it + the rest of the code)
             products.AddRange(firstResults.auctions);
-            int totalPages = Math.Min(firstResults.totalAuctions / 1000, pages);
-            Console.WriteLine(firstResults.totalAuctions);
+            int totalPages = Math.Min((int)Math.Ceiling((float)firstResults.totalAuctions / 1000), pages);
             Action?[] tasks = new Action[totalPages - 1];
-            Task dummyTask = new Task(() => { }); // used to mimic all tasks being done
             List<AuctionsRouteProduct>[] fetchedProducts = new List<AuctionsRouteProduct>[totalPages - 1];
+            Task dummyTask = new Task(() => { }); // used to mimic all tasks being done
 
             for (i = 1; i < totalPages; i++)
             {

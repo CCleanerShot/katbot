@@ -16,7 +16,9 @@
 	let lastX = $state(0);
 	let sidebarElement: HTMLDivElement;
 
-	onMount(() => setTimeout(() => (invisible = false), 4000));
+	onMount(() => {
+		setTimeout(() => (invisible = false), 4000)
+	});
 
 	const ondrag = (e: DragEvent & { currentTarget: EventTarget & HTMLDivElement }) => {
 		// the last e.clientX is 0 when releasing. this is created to prevent 1frame snapback
@@ -39,7 +41,7 @@
 </script>
 
 {#snippet close(className: string)}
-	<div class={['relative flex flex-col justify-evenly', className]}>
+	<div  class={['relative flex flex-col justify-evenly', className]}>
 		{#each new Array(6).fill(null) as item, index}
 			<span class="visible">◄</span>
 		{/each}
@@ -56,9 +58,11 @@
 		{/each}
 	</button>
 	<div bind:this={sidebarElement} class={['bg-white widget sidebar flex w-[20rem] md:w-[30rem]', current.isOpened ? 'open' : '']}>
-		<div class="flex flex-1 flex-col bg-white">
+		<div class="flex flex-1 flex-col bg-white max-h-screen">
 			{@render title({ class: 'border-b-2' })}
-			{@render children()}
+			<div class="overflow-y-auto overflow-x-hidden mb-2">
+				{@render children()}
+			</div>
 		</div>
 			<div class="flex bg-white">
 				<button class="header group flex border-l-2 p-1 font-bold" onclick={() => (current.isOpened = false)}>
