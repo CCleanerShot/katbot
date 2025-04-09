@@ -60,36 +60,18 @@ public class AuctionsRoute
             // NOTE: im doing it this way instead of an array of tasks, because for some reason, an async function within a task has unexpected results when awaiting (skips it + the rest of the code)
             products.AddRange(firstResults.auctions);
             int totalPages = Math.Min((int)Math.Ceiling((float)firstResults.totalAuctions / 1000), pages);
-            Action?[] tasks = new Action[totalPages - 1];
-            List<AuctionsRouteProduct>[] fetchedProducts = new List<AuctionsRouteProduct>[totalPages - 1];
-            Task dummyTask = new Task(() => { }); // used to mimic all tasks being done
 
             for (i = 1; i < totalPages; i++)
             {
                 int page = i;
-                Action task = async () =>
-                {
-                    Utility.Log(Enums.LogLevel.NONE, $"auction page {page}", false, false);
-                    AuctionsRoute? auctionsRoute = await GetResult(page);
+                Utility.Log(Enums.LogLevel.NONE, $"auction page {page}", false, false);
+                AuctionsRoute? auctionsRoute = await GetResult(page);
 
-                    if (auctionsRoute == null)
-                        return;
+                if (auctionsRoute == null)
+                    return products;
 
-                    products.AddRange(auctionsRoute.auctions);
-                    fetchedProducts[page - 1] = auctionsRoute.auctions.ToList();
-                    tasks[page - 1] = null;
-
-                    if (tasks.All(e => e == null))
-                        dummyTask.Start();
-                };
-
-                tasks[page - 1] = task;
+                products.AddRange(auctionsRoute.auctions);
             }
-
-            foreach (Action? task in tasks)
-                task?.Invoke();
-
-            Task.WaitAll(dummyTask);
 
             return products;
         }
