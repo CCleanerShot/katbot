@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
+using ZstdSharp.Unsafe;
 
 public class AuctionsRoute
 {
@@ -56,30 +57,40 @@ public class AuctionsRoute
             if (firstResults == null)
                 return null;
 
+            // NOTE: im doing it this way instead of an array of tasks, because for some reason, an async function within a task has unexpected results when awaiting (skips it + the rest of the code)
+            products.AddRange(firstResults.auctions);
             int totalPages = Math.Min(firstResults.totalAuctions / 1000, pages);
-            Task[] tasks = new Task[totalPages];
+            Console.WriteLine(firstResults.totalAuctions);
+            Action?[] tasks = new Action[totalPages - 1];
+            Task dummyTask = new Task(() => { }); // used to mimic all tasks being done
+            List<AuctionsRouteProduct>[] fetchedProducts = new List<AuctionsRouteProduct>[totalPages - 1];
 
-            for (i = 0; i < totalPages; i++)
+            for (i = 1; i < totalPages; i++)
             {
-                Utility.Log(Enums.LogLevel.NONE, $"auction page {i}", false, false);
-
-                Task task = new Task(async () =>
+                int page = i;
+                Action task = async () =>
                 {
-                    AuctionsRoute? auctionsRoute = await GetResult(i);
+                    Utility.Log(Enums.LogLevel.NONE, $"auction page {page}", false, false);
+                    AuctionsRoute? auctionsRoute = await GetResult(page);
 
                     if (auctionsRoute == null)
                         return;
 
                     products.AddRange(auctionsRoute.auctions);
-                });
+                    fetchedProducts[page - 1] = auctionsRoute.auctions.ToList();
+                    tasks[page - 1] = null;
 
-                tasks[i] = task;
+                    if (tasks.All(e => e == null))
+                        dummyTask.Start();
+                };
+
+                tasks[page - 1] = task;
             }
 
-            foreach (Task task in tasks)
-                task.Start();
+            foreach (Action? task in tasks)
+                task?.Invoke();
 
-            Task.WaitAll(tasks);
+            Task.WaitAll(dummyTask);
 
             return products;
         }
