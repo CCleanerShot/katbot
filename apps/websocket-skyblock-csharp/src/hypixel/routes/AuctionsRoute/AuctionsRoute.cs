@@ -126,7 +126,7 @@ public class AuctionsRoute
         {
             currentRetry++;
             Utility.Log(Enums.LogLevel.WARN, $"Fetch failed! ({currentRetry})");
-            Thread.Sleep(50);
+            Thread.Sleep(500);
 
             if (currentRetry >= maxRetry)
                 return null;

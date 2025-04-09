@@ -102,6 +102,10 @@
 		padding: 0.5rem;
 	}
 
+	.open-sidebar:hover {
+		background-color: white;
+	}
+
 	.sidebar {
 		height: 100vh;
 		top: 0px;

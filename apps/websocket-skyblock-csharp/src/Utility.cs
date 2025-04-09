@@ -9,6 +9,16 @@ public static class Utility
 {
     public static string LogLine = "";
 
+    public static T BatchFetch<T>(Func<T>[] functions)
+    {
+        foreach (var func in functions)
+        {
+            Thread thread = new Thread();
+        }
+
+        return item;
+    }
+
     /// <summary>
     /// Returns the passed in cookies (from a string) into a Dictionary with matching key + pair values.
     /// </summary>
@@ -51,7 +61,6 @@ public static class Utility
 
         return result;
     }
-
 
     /// <summary>
     /// <para> Fills a passed array with a given value, from `start` index to `end` index. </para>
