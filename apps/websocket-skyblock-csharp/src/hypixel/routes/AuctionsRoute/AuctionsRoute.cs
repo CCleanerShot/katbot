@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
 
@@ -32,11 +30,11 @@ public class AuctionsRoute
 
         if (MongoBot.AuctionBuysRecentlyUpdated)
         {
-            auctions = await DefaultFetch();
+            auctions = await BatchFetch(10);
         }
         else
         {
-            auctions = await MaxFetch();
+            auctions = await BatchFetch(100);
             MongoBot.AuctionBuysRecentlyUpdated = true;
         }
 
@@ -46,60 +44,42 @@ public class AuctionsRoute
         return auctions;
     }
 
-    static async Task<List<AuctionsRouteProduct>?> DefaultFetch()
+    static async Task<List<AuctionsRouteProduct>?> BatchFetch(int pages)
     {
         List<AuctionsRouteProduct> products = new List<AuctionsRouteProduct>();
         int i = 0;
 
         try
         {
-            for (i = 0; i < 10; i++)
+            AuctionsRoute? firstResults = await GetResult(0);
+
+            if (firstResults == null)
+                return null;
+
+            int totalPages = Math.Min(firstResults.totalAuctions / 1000, pages);
+            Task[] tasks = new Task[totalPages];
+
+            for (i = 0; i < totalPages; i++)
             {
                 Utility.Log(Enums.LogLevel.NONE, $"auction page {i}", false, false);
-                AuctionsRoute? auctionsRoute = await GetResult(i);
 
-                if (auctionsRoute == null)
-                    return null;
-
-                products.AddRange(auctionsRoute.auctions);
-
-                if (auctionsRoute.auctions.Length < 1000)
+                Task task = new Task(async () =>
                 {
-                    Utility.Log(Enums.LogLevel.NONE, "Look into this: this means less than 10,000 items exist on the auction. Potential Event!");
-                    return products;
-                }
+                    AuctionsRoute? auctionsRoute = await GetResult(i);
+
+                    if (auctionsRoute == null)
+                        return;
+
+                    products.AddRange(auctionsRoute.auctions);
+                });
+
+                tasks[i] = task;
             }
 
-            return products;
-        }
+            foreach (Task task in tasks)
+                task.Start();
 
-        catch (Exception e)
-        {
-            Utility.Log(Enums.LogLevel.ERROR, $"Unexpected error on page {i}: {e}");
-            return null;
-        }
-    }
-
-    static async Task<List<AuctionsRouteProduct>?> MaxFetch()
-    {
-        List<AuctionsRouteProduct> products = new List<AuctionsRouteProduct>();
-        int i = 0;
-
-        try
-        {
-            for (i = 0; i < 100; i++)
-            {
-                Utility.Log(Enums.LogLevel.NONE, $"auction page {i}", false, false);
-                AuctionsRoute? auctionsRoute = await GetResult(i);
-
-                if (auctionsRoute == null)
-                    return null;
-
-                products.AddRange(auctionsRoute.auctions);
-
-                if (auctionsRoute.auctions.Length < 1000)
-                    return products;
-            }
+            Task.WaitAll(tasks);
 
             return products;
         }
