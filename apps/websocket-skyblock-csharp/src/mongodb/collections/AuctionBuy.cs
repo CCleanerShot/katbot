@@ -35,4 +35,39 @@ public class AuctionBuy
     /// The Discord ID of the user that submitted the tracking item.
     /// </summary>
     public ulong UserId;
+
+    public sealed override bool Equals(object? obj)
+    {
+        if (obj is not AuctionBuy buy)
+            return false;
+
+        AuctionBuy c1 = this;
+        AuctionBuy c2 = buy;
+
+        if (c1.ID != c2.ID)
+            return false;
+
+        if (c1.Name != c2.Name)
+            return false;
+
+        if (c1.Price != c2.Price)
+            return false;
+
+        if (c1.RemovedAfter != c2.RemovedAfter)
+            return false;
+
+        if (c1.UserId != c2.UserId)
+            return false;
+
+        foreach (AuctionTag tag in c1.AuctionTags)
+            if (c2.AuctionTags.Where(e => tag == e).Count() == 0)
+                return false;
+
+        return true;
+    }
+
+    public sealed override int GetHashCode()
+    {
+        return HashCode.Combine(_id, ID, AuctionTags, Price, RemovedAfter, UserId);
+    }
 }

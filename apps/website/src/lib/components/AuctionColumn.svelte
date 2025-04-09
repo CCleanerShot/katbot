@@ -61,7 +61,7 @@
 	</div>
 	<div class="flex flex-col items-center">
 		{#if auctionState.BUYS.length > 0}
-			<table class="font-small-recursive table">
+			<table class="font-x-small-recursive table-variant">
 				<thead>
 					<tr>
 						<th>Name</th>
@@ -84,7 +84,7 @@
 									inputProps={{ class: 'w-72', placeholder: "Type Here to Add...", type: 'text' }}
 								/>
 							</td>
-							<td><input bind:value={item.Price} type="number" min="0" /></td>
+							<td><input bind:value={item.Price} class="text-right"  min="0" type="number"/></td>
 							<td>
 								<select bind:value={item.RemovedAfter}>
 									<option value={false}>YES</option>
@@ -92,7 +92,7 @@
 								</select>
 							</td>
 							<td class="group/inner relative cursor-pointer hover:font-bold text-center" onclick={() => onclickTag(item)}>
-								<span class="group-hover/inner:invisible">>></span>
+								<span class="group-hover/inner:invisible mx-2">>></span>
 								<span class="invisible absolute inset-0 text-white transition group-hover/inner:visible group-hover/inner:rotate-3">
 									OPEN
 								</span>

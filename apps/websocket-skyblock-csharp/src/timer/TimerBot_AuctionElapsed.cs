@@ -52,7 +52,7 @@ public static partial class TimerBot
                     // check if all the properties are matching
                     if (condition1 && condition2)
                     {
-                        if (!MongoBot.EligibleAuctionBuys[buy.UserId].ContainsKey(buy))
+                        if (MongoBot.EligibleAuctionBuys[buy.UserId].Where(e => e.Key == buy).Count() == 0)
                             MongoBot.EligibleAuctionBuys[buy.UserId].Add(buy, new AuctionSocketMessage(new List<AuctionsRouteProductMinimal>(), buy));
 
                         if (MongoBot.EligibleAuctionBuys[buy.UserId][buy].LiveItems.Where(e => e.uuid == product.uuid).Count() == 0)

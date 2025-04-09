@@ -103,25 +103,29 @@ public class AuctionsRoute
 
     static async Task<AuctionsRoute?> GetResult(int page)
     {
-        string json;
-        int maxRetry = 3;
-        int currentRetry = 0;
-
-        try
+        string json = "";
+        int attempts = 0;
+        while (true)
         {
-            json = await Program.Client.GetStringAsync($"{Settings.HYPIXEL_API_BASE_URL}/skyblock/auctions?page={page}");
-        }
+            try
+            {
+                json = await Program.Client.GetStringAsync($"{Settings.HYPIXEL_API_BASE_URL}/skyblock/auctions?page={page}");
+                break;
+            }
 
-        catch (Exception)
-        {
-            currentRetry++;
-            Utility.Log(Enums.LogLevel.WARN, $"Fetch failed! ({currentRetry})");
-            Thread.Sleep(500);
+            catch (Exception e)
+            {
+                attempts++;
+                Utility.Log(Enums.LogLevel.ERROR, $"Fetch failed! {e}");
 
-            if (currentRetry >= maxRetry)
-                return null;
+                if (attempts > 3)
+                {
+                    Utility.Log(Enums.LogLevel.WARN, $"More than {attempts} retries occurred, returning null...");
+                    return null;
+                }
 
-            json = await Program.Client.GetStringAsync($"{Settings.HYPIXEL_API_BASE_URL}/skyblock/auctions?page={page}");
+                Thread.Sleep(500);
+            }
         }
 
         JsonNode? result = JsonArray.Parse(json);

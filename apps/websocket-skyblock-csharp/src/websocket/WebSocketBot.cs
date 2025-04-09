@@ -43,7 +43,7 @@ public static partial class WebSocketBot
 
             AddEvents(session, ws);
             Connections.Add(session, ws);
-            Utility.Log(Enums.LogLevel.NONE, "Added ws connection.");
+            Utility.Log(Enums.LogLevel.NONE, $"Added ws connection. {ws.ConnectionInfo.ClientIpAddress}");
 
             if (MongoBot.EligibleAuctionBuys[session.UserId].Count > 0)
                 SendAuctionData();

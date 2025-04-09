@@ -74,7 +74,7 @@
 	</div>
 	<div class="flex justify-center p-2">
 		{#if bazaarState[type].length != 0}
-			<table class="font-x-small-recursive table border-black">
+			<table class="font-x-small-recursive table-variant border-black">
 				<thead>
 					<tr>
 						<th>Name</th>
