@@ -95,10 +95,6 @@ main {
 	background-color: var(--color-primary);
 }
 
-.table tr td:nth-child(2) {
-	text-align: right;
-}
-
 .table tr:has(td):not(:hover) {
 	background-color: white;
 }
@@ -127,10 +123,6 @@ main {
 
 .table-variant tr > th:not(:last-child) {
 	background-color: var(--color-primary);
-}
-
-.table-variant tr td:nth-child(2) {
-	text-align: right;
 }
 
 .table-variant tr:has(td):not(:hover) {

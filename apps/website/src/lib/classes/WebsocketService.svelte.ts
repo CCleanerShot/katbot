@@ -54,8 +54,8 @@ export class WebsocketService {
 					sidebarState.SkyblockAlertsSidebar.items.auctionSocketMessages = data.auctionSocketMessages;
 					break;
 				case SocketMessageType.BAZAAR:
-					sidebarState.SkyblockAlertsSidebar.items.bazaarBuys = data.bazaarBuys;
-					sidebarState.SkyblockAlertsSidebar.items.bazaarSells = data.bazaarSells;
+					sidebarState.SkyblockAlertsSidebar.items.bazaarSocketMessagesBuy = data.bazaarSocketMessagesBuy;
+					sidebarState.SkyblockAlertsSidebar.items.bazaarSocketMessagesSell = data.bazaarSocketMessagesSell;
 					break;
 			}
 		});

@@ -4,8 +4,6 @@ export const utility = {
 	},
 	formatNumber: (input: number | bigint): string => {
 		const results = utility.reverse(input.toString()).split(/(.{3})/g);
-
-		console.log(results, utility.reverse(input.toString()), input);
 		return utility.reverse(results.join(' '));
 	},
 	randomNumber: (min: number, max: number): number => {

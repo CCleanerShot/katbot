@@ -6,11 +6,11 @@
 	import type { BazaarItem } from '$lib/mongodb/BazaarItem';
 	import type { API_CONTRACTS } from '$lib/other/apiContracts';
 	import { socketState } from '$lib/states/socketState.svelte';
-	import type { AuctionsRouteProductMinimal } from '$lib/types';
+	import type { AuctionsRouteProductMinimal, BazaarSocketMessage } from '$lib/types';
 	import { sidebarState } from '$lib/states/sidebarState.svelte';
 	import { tooltipState } from '$lib/states/tooltipState.svelte';
 	import { utilityClient } from '$lib/utility/utilityClient.svelte';
-	import type { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
+	import { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
 	import { utility } from '$lib/utility/utility';
 
 	type DeleteRoutes = Extract<keyof typeof API_CONTRACTS, `${string}DELETE${string}`>;
@@ -26,11 +26,11 @@
 		},
 		bazaarBuy: {
 			route: 'DELETE=>/api/bazaar/buy',
-			store: 'bazaarBuys'
+			store: 'bazaarSocketMessagesBuy'
 		} as const,
 		bazaarSell: {
 			route: 'DELETE=>/api/bazaar/sell',
-			store: 'bazaarSells'
+			store: 'bazaarSocketMessagesSell'
 		} as const
 	} as const satisfies Record<string, { route: DeleteRoutes; store: keyof typeof currentState }>;
 
@@ -64,7 +64,18 @@
 
 	const onmouseover = (buy: AuctionBuy) => {
 		hoveredItem = buy;
+		$state.snapshot(hoveredItem);
 	};
+
+	const onmouseleave = (buy: AuctionBuy) => {
+		if(hoveredItem === buy) {
+			hoveredItem = undefined;
+		}
+	};
+
+	$effect(() => {
+		$state.snapshot(hoveredItem);
+	})
 </script>
 
 {#snippet title(props: SvelteHTMLElements['h3'])}
@@ -83,26 +94,28 @@
 	</div>
 {/snippet}
 
-{#snippet bazaarTable(items: BazaarItem[], title: string, action: keyof typeof actionType)}
+{#snippet bazaarTable(items: BazaarSocketMessage[], title: string, action: Extract<keyof typeof actionType, `${string}bazaar${string}`>)}
 	<div class="flex flex-col items-center" out:fade={{ duration: fadeTimer }}>
 		<h5>{title}</h5>
 		<table class="font-x-small-recursive table-variant">
 			<thead>
 				<tr>
 					<th>Name</th>
-					<th>Price</th>
+					<th>Requested Price</th>
+					<th>Live Price</th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each items as item, index (index)}
 					<tr out:fade={{ duration: fadeTimer }}>
-						<td>{item.Name}</td>
-						<td>{utility.formatNumber(item.Price)}</td>
+						<td>{item.RequestedItem.Name}</td>
+						<td class="text-right">{utility.formatNumber(item.RequestedItem.Price)}</td>
+						<td class="text-right">{utility.formatNumber(action === "bazaarBuy" ? Math.floor(item.LiveSummary.buy_summary[0].pricePerUnit) : Math.floor(item.LiveSummary.sell_summary[0].pricePerUnit))}</td>
 						<td class="px-1">
 							<button
 								class="bg-green-500 px-1 transition hover:translate-x-0.5 hover:bg-black hover:text-white"
-								onclick={() => acknowledgeItem(item, index, action)}
+								onclick={() => acknowledgeItem(item.RequestedItem, index, action)}
 							>
 								✔
 							</button>
@@ -132,11 +145,11 @@
 						</thead>
 						<tbody>
 							{#each currentState.auctionSocketMessages as message, index (index)}
-								<tr class="{message.BuyItem.ID}-{index}" out:fade={{ duration: 100 }}>
-									<td>{message.BuyItem.Name}</td>
-									<td class="text-right">{utility.formatNumber(message.BuyItem.Price)}</td>
+								<tr class="{message.RequestedItem.ID}-{index}" out:fade={{ duration: 100 }} onmouseleave={() => onmouseleave(message.RequestedItem)} onmousemove={() => onmouseover(message.RequestedItem)} >
+									<td>{message.RequestedItem.Name}</td>
+									<td class="text-right">{utility.formatNumber(message.RequestedItem.Price)}</td>
 									<td>
-										{#each utilityClient.groupTags(message.BuyItem.AuctionTags) as tags, index2 (index2)}
+										{#each utilityClient.groupTags(message.RequestedItem.AuctionTags) as tags, index2 (index2)}
 											<span class="overflow-x-auto">
 												{tags[0]}:
 												{#each tags.slice(1) as entries, index3}
@@ -145,10 +158,10 @@
 											</span>
 										{/each}
 									</td>
-									<td class="px-1" onmousemove={() => onmouseover(message.BuyItem)}>
+									<td class="px-1">
 										<button
 											class="bg-green-500 px-1 transition hover:translate-x-0.5 hover:bg-black hover:text-white"
-											onclick={() => acknowledgeItem(message.BuyItem, index, 'auctionBuy')}
+											onclick={() => acknowledgeItem(message.RequestedItem, index, 'auctionBuy')}
 										>
 											✔
 										</button>
@@ -171,11 +184,11 @@
 					<tbody>
 						{#each currentState.auctionSocketMessages as message, index (index)}
 							{#each message.LiveItems as liveItem, index2 (index2)}
-								<tr class="{message.BuyItem.ID}-{index}" out:fade={{ duration: 100 }}>
-									<td>{message.BuyItem.Name}</td>
+								<tr class={[hoveredItem ? AuctionBuy.Equals(hoveredItem, message.RequestedItem) ? "hovered-item" : "" : ""]} out:fade={{ duration: 100 }}>
+									<td>{message.RequestedItem.Name}</td>
 									<td class="text-right">{utility.formatNumber(Math.max(Number(liveItem.highest_bid_amount), Number(liveItem.starting_bid)))}</td>
 									<td>
-										{#each utilityClient.groupTags(liveItem.AuctionTags.filter( (e) => message.BuyItem.AuctionTags.find((ee) => ee.Name === e.Name) )) as tags, aIndex}
+										{#each utilityClient.groupTags(liveItem.AuctionTags.filter( (e) => message.RequestedItem.AuctionTags.find((ee) => ee.Name === e.Name) )) as tags, aIndex}
 											<span class="overflow-x-auto">
 												{tags[0]}:
 												{#each tags.slice(1) as entries, eIndex}
@@ -186,7 +199,7 @@
 									</td>
 									<td
 										class="group/inner relative cursor-pointer text-center hover:font-bold"
-										onclick={() => onclickMore(message.BuyItem, liveItem)}
+										onclick={() => onclickMore(message.RequestedItem, liveItem)}
 									>
 										<span class="group-hover/inner:invisible">>></span>
 										<span class="invisible absolute inset-0 text-white transition group-hover/inner:visible group-hover/inner:rotate-3">
@@ -200,18 +213,18 @@
 				</table>
 			</div>
 		{/if}
-		{#if currentState.bazaarBuys.length || currentState.bazaarSells.length || currentState.auctionSocketMessages.length}
+		{#if currentState.bazaarSocketMessagesBuy.length || currentState.bazaarSocketMessagesSell.length || currentState.auctionSocketMessages.length}
 			<section class="mt-2">
 				<h4>Bazaar</h4>
-				{#if currentState.bazaarBuys.length}
-					{@render bazaarTable(currentState.bazaarBuys, 'BUYS', 'bazaarBuy')}
+				{#if currentState.bazaarSocketMessagesBuy.length}
+					{@render bazaarTable(currentState.bazaarSocketMessagesBuy, 'BUYS', 'bazaarBuy')}
 				{/if}
-				{#if currentState.bazaarSells.length}
-					{@render bazaarTable(currentState.bazaarSells, 'SELLS', 'bazaarSell')}
+				{#if currentState.bazaarSocketMessagesSell.length}
+					{@render bazaarTable(currentState.bazaarSocketMessagesSell, 'SELLS', 'bazaarSell')}
 				{/if}
 			</section>
 		{/if}
-		{#if !currentState.auctionSocketMessages.length && !currentState.bazaarBuys.length && !currentState.bazaarSells.length}
+		{#if !currentState.auctionSocketMessages.length && !currentState.bazaarSocketMessagesBuy.length && !currentState.bazaarSocketMessagesSell.length}
 			<section class="flex">
 				<span class="font-small text-center">New updates will appear here!</span>
 			</section>
@@ -227,5 +240,9 @@
 
 	.auctions-container * {
 		text-wrap: nowrap;
+	}
+
+	.hovered-item {
+		background-color: var(--color-secondary);
 	}
 </style>

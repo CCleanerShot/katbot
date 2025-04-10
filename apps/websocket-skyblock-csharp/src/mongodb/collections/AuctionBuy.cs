@@ -68,6 +68,9 @@ public class AuctionBuy
 
     public sealed override int GetHashCode()
     {
-        return HashCode.Combine(_id, ID, AuctionTags, Price, RemovedAfter, UserId);
+        return HashCode.Combine(_id.CreationTime, ID, Price, RemovedAfter, UserId);
     }
+
+    public static bool operator ==(AuctionBuy c1, AuctionBuy c2) => c1.Equals(c2);
+    public static bool operator !=(AuctionBuy c1, AuctionBuy c2) => !c1.Equals(c2);
 }

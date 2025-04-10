@@ -9,7 +9,7 @@
 
 <Tooltip tooltip="AuctionProductInfoTooltip">
 	<div class="flex flex-col font-xx-small-recursive p-1 gap-1">
-		<section class="border rounded-sm border-red-500">
+		<section >
 			<h4>Wanted Item</h4>
 			<div class="flex flex-col">
 				<table>
@@ -39,7 +39,7 @@
 				</table>
 			</div>
 		</section>
-		<section class="border rounded-sm border-red-500">
+		<section>
 			<h4>Live Item</h4>
 			<div class="flex flex-col">
 				<table>

@@ -16,7 +16,7 @@ public static partial class TimerBot
 
         // so we dont have to check literally every single possible item later here
         foreach (AuctionsRouteProduct item in liveItems)
-            if (allBuys.Find(e => e.ID == item.ITEM_ID) != null)
+            if (allBuys.Where(e => e.ID == item.ITEM_ID).Count() > 0)
                 similarLive.Add(item);
 
 
@@ -52,7 +52,7 @@ public static partial class TimerBot
                     // check if all the properties are matching
                     if (condition1 && condition2)
                     {
-                        if (MongoBot.EligibleAuctionBuys[buy.UserId].Where(e => e.Key == buy).Count() == 0)
+                        if (!MongoBot.EligibleAuctionBuys[buy.UserId].ContainsKey(buy))
                             MongoBot.EligibleAuctionBuys[buy.UserId].Add(buy, new AuctionSocketMessage(new List<AuctionsRouteProductMinimal>(), buy));
 
                         if (MongoBot.EligibleAuctionBuys[buy.UserId][buy].LiveItems.Where(e => e.uuid == product.uuid).Count() == 0)

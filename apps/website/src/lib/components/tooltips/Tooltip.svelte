@@ -39,8 +39,6 @@
 	};
 
 	onMount(() => {
-		console.log('a');
-
 		window.addEventListener('keypress', keypress);
 		window.addEventListener('mousemove', mousemove);
 

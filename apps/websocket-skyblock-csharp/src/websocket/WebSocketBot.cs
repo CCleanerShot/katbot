@@ -78,13 +78,13 @@ public static partial class WebSocketBot
 
             foreach (var (k, v) in MongoBot.EligibleBazaarBuys)
                 if (k == session.UserId)
-                    foreach (BazaarItem item in v)
-                        message.bazaarBuys.Add(item);
+                    foreach (BazaarSocketMessage item in v)
+                        message.bazaarSocketMessagesBuy.Add(item);
 
             foreach (var (k, v) in MongoBot.EligibleBazaarSells)
                 if (k == session.UserId)
-                    foreach (BazaarItem item in v)
-                        message.bazaarSells.Add(item);
+                    foreach (BazaarSocketMessage item in v)
+                        message.bazaarSocketMessagesSell.Add(item);
 
             connection.Send(Newtonsoft.Json.JsonConvert.SerializeObject(message));
         }

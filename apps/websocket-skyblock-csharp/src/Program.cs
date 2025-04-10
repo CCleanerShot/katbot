@@ -22,6 +22,7 @@ public class Program
     {
         try
         {
+            Client.Timeout = new TimeSpan(0, 5, 0);
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
 

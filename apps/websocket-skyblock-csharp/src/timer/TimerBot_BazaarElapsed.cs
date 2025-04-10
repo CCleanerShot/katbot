@@ -15,64 +15,64 @@ public static partial class TimerBot
 
         // easier to just reset the current listings
         foreach (var (key, value) in MongoBot.EligibleBazaarBuys)
-            MongoBot.EligibleBazaarBuys[key] = new List<BazaarItem>();
+            MongoBot.EligibleBazaarBuys[key] = new List<BazaarSocketMessage>();
         foreach (var (key, value) in MongoBot.EligibleBazaarSells)
-            MongoBot.EligibleBazaarSells[key] = new List<BazaarItem>();
+            MongoBot.EligibleBazaarSells[key] = new List<BazaarSocketMessage>();
 
         foreach (var (key, value) in MongoBot.EligibleBazaarBuys)
         {
-            MongoBot.EligibleBazaarBuys[key] = allBuys.Where(t =>
+            foreach (BazaarItem item in allBuys)
             {
-                if (t.UserId != key)
-                    return false;
+                if (item.UserId != key)
+                    continue;
 
-                if (!liveItems.ContainsKey(t.ID)) // if the market somehow crashed for that item
-                    return false;
+                if (!liveItems.ContainsKey(item.ID)) // if the market somehow crashed for that item
+                    continue;
 
-                switch (t.OrderType)
+                BazaarRouteProduct liveItem = liveItems[item.ID];
+
+                switch (item.OrderType)
                 {
                     case Enums.OrderType.INSTA:
-                        if (t.Price >= liveItems[t.ID].quick_status.buyPrice)
-                            return true;
-                        else
-                            return false;
+                        if (item.Price >= liveItems[item.ID].quick_status.buyPrice)
+                            MongoBot.EligibleBazaarBuys[key].Add(new BazaarSocketMessage(liveItem, item));
+
+                        continue;
                     case Enums.OrderType.ORDER:
-                        if (t.Price >= liveItems[t.ID].sell_summary.First().pricePerUnit)
-                            return true;
-                        else
-                            return false;
-                    default:
-                        throw new NotImplementedException("Implement this");
+                        if (item.Price >= liveItems[item.ID].sell_summary.First().pricePerUnit)
+                            MongoBot.EligibleBazaarBuys[key].Add(new BazaarSocketMessage(liveItem, item));
+
+                        continue;
                 }
-            }).ToList();
+            }
         }
 
         foreach (var (key, value) in MongoBot.EligibleBazaarSells)
         {
-            MongoBot.EligibleBazaarSells[key] = allSells.Where(t =>
+            foreach (BazaarItem item in allSells)
             {
-                if (t.UserId != key)
-                    return false;
+                if (item.UserId != key)
+                    continue;
 
-                if (!liveItems.ContainsKey(t.ID)) // if the market somehow crashed for that item
-                    return false;
+                if (!liveItems.ContainsKey(item.ID)) // if the market somehow crashed for that item
+                    continue;
 
-                switch (t.OrderType)
+                BazaarRouteProduct liveItem = liveItems[item.ID];
+
+                switch (item.OrderType)
                 {
                     case Enums.OrderType.INSTA:
-                        if (t.Price <= liveItems[t.ID].quick_status.sellPrice)
-                            return true;
-                        else
-                            return false;
+                        if (item.Price <= liveItems[item.ID].quick_status.sellPrice)
+                            MongoBot.EligibleBazaarSells[key].Add(new BazaarSocketMessage(liveItem, item));
+
+                        continue;
                     case Enums.OrderType.ORDER:
-                        if (t.Price <= liveItems[t.ID].buy_summary.First().pricePerUnit)
-                            return true;
-                        else
-                            return false;
-                    default:
-                        throw new NotImplementedException("Implement this");
+                        if (item.Price <= liveItems[item.ID].buy_summary.First().pricePerUnit)
+                            MongoBot.EligibleBazaarSells[key].Add(new BazaarSocketMessage(liveItem, item));
+
+                        continue;
                 }
-            }).ToList();
+            }
         }
 
         WebSocketBot.SendBazaarData();

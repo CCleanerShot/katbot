@@ -1,4 +1,5 @@
 import type { AuctionTag } from './mongodb/AuctionTag';
+import type { BazaarItem } from './mongodb/BazaarItem';
 import type { AuctionBuy } from './mongodb/collections/AuctionBuy';
 import type { BazaarBuy } from './mongodb/collections/BazaarBuy';
 import type { BazaarSell } from './mongodb/collections/BazaarSell';
@@ -23,7 +24,39 @@ export type AuctionsRouteProductMinimal = {
 
 export type AuctionSocketMessage = {
 	LiveItems: AuctionsRouteProductMinimal[];
-	BuyItem: AuctionBuy;
+	RequestedItem: AuctionBuy;
+};
+
+export type BazaarRouteProduct = {
+	product_id: string;
+	/** The list of the top buy orders. */
+	buy_summary: BazaarRouteSummaryItem[];
+	/** The list of the top sell orders. */
+	sell_summary: BazaarRouteSummaryItem[];
+	quick_status: BazaarRouteQuickStatus;
+};
+
+export type BazaarRouteSummaryItem = {
+	amount: bigint;
+	pricePerUnit: number;
+	orders: number;
+};
+
+export type BazaarRouteQuickStatus = {
+	productId: string;
+	buyOrders: number;
+	buyPrice: number;
+	buyMovingWeek: bigint;
+	buyVolume: bigint;
+	sellOrders: number;
+	sellPrice: number;
+	sellMovingWeek: bigint;
+	sellVolume: bigint;
+};
+
+export type BazaarSocketMessage = {
+	LiveSummary: BazaarRouteProduct;
+	RequestedItem: BazaarItem;
 };
 
 export enum SocketMessageType {
@@ -35,6 +68,6 @@ export type SocketMessage = {
 	id: number;
 	type: SocketMessageType;
 	auctionSocketMessages: AuctionSocketMessage[];
-	bazaarBuys: BazaarBuy[];
-	bazaarSells: BazaarSell[];
+	bazaarSocketMessagesBuy: BazaarSocketMessage[];
+	bazaarSocketMessagesSell: BazaarSocketMessage[];
 };

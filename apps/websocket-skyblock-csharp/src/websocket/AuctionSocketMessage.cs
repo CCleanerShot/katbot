@@ -1,11 +1,11 @@
 public class AuctionSocketMessage
 {
     public List<AuctionsRouteProductMinimal> LiveItems;
-    public AuctionBuy BuyItem;
+    public AuctionBuy RequestedItem;
 
-    public AuctionSocketMessage(List<AuctionsRouteProductMinimal> _LiveItems, AuctionBuy _BuyItem)
+    public AuctionSocketMessage(List<AuctionsRouteProductMinimal> _LiveItems, AuctionBuy _RequestedItem)
     {
         LiveItems = _LiveItems;
-        BuyItem = _BuyItem;
+        RequestedItem = _RequestedItem;
     }
 }

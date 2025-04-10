@@ -5,8 +5,8 @@ public class SocketMessage
     public int id;
     public SocketMessageType type;
     public List<AuctionSocketMessage> auctionSocketMessages = new List<AuctionSocketMessage>();
-    public List<BazaarItem> bazaarBuys = new List<BazaarItem>();
-    public List<BazaarItem> bazaarSells = new List<BazaarItem>();
+    public List<BazaarSocketMessage> bazaarSocketMessagesBuy = new List<BazaarSocketMessage>();
+    public List<BazaarSocketMessage> bazaarSocketMessagesSell = new List<BazaarSocketMessage>();
 
     public SocketMessage()
     {
