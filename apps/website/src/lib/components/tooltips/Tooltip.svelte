@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
-	import { tooltipState } from '$lib/states/tooltipState.svelte';
+	import { tooltipIsOpened, tooltipState } from '$lib/states/tooltipState.svelte';
 
 	type Props = {
 		children: Snippet<[]>;
@@ -11,6 +11,7 @@
 	let element: HTMLDivElement;
 	let { children, tooltip, className }: Props = $props();
 	let currentState = $derived(tooltipState[tooltip]);
+	let currentTooltip = $derived(tooltipIsOpened);
 	let isFrozen = $state(false);
 
 	const keypress = (ev: KeyboardEvent) => {
@@ -20,7 +21,7 @@
 
 		switch (ev.code) {
 			case 'KeyC':
-				currentState.isOpened = false;
+				currentTooltip.current = "NONE"
 				break;
 			case 'KeyF':
 				isFrozen = !isFrozen;
@@ -51,9 +52,9 @@
 
 <div
 	bind:this={element}
-	class={[!currentState.isOpened ? 'hidden' : '', 'font-small absolute z-50 flex flex-col rounded-sm border-2 bg-white p-0.5', className]}
+	class={[currentTooltip.current !== tooltip ? 'hidden' : '', 'font-small absolute z-50 flex flex-col rounded-sm border-2 bg-white p-0.5', className]}
 >
-	<div class="flex justify-around">
+	<div class="flex justify-around gap-6">
 		<span class="font-x-small-recursive border-b text-center italic"><strong>C</strong> => CLOSE</span>
 		<span class="font-x-small-recursive border-b text-center italic"><strong>F</strong> => FREEZE</span>
 	</div>

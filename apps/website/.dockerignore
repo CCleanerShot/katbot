@@ -2,8 +2,9 @@
 .prettierignore
 .prettierrc
 .svelte-kit
-Dockerfile
+.vscode
 build
+Dockerfile
 e2e
 node-modules
 playwright.config.ts

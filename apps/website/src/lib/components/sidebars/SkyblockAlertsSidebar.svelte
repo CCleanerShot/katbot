@@ -1,17 +1,17 @@
 <script lang="ts">
 	import Sidebar from './Sidebar.svelte';
 	import { fade } from 'svelte/transition';
+	import { utility } from '$lib/utility/utility';
 	import { clientFetch } from '$lib/other/clientFetch';
 	import { type SvelteHTMLElements } from 'svelte/elements';
 	import type { BazaarItem } from '$lib/mongodb/BazaarItem';
 	import type { API_CONTRACTS } from '$lib/other/apiContracts';
 	import { socketState } from '$lib/states/socketState.svelte';
-	import type { AuctionsRouteProductMinimal, BazaarSocketMessage } from '$lib/types';
 	import { sidebarState } from '$lib/states/sidebarState.svelte';
-	import { tooltipState } from '$lib/states/tooltipState.svelte';
-	import { utilityClient } from '$lib/utility/utilityClient.svelte';
 	import { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
-	import { utility } from '$lib/utility/utility';
+	import { utilityClient } from '$lib/utility/utilityClient.svelte';
+	import { tooltipIsOpened, tooltipState } from '$lib/states/tooltipState.svelte';
+	import type { AuctionsRouteProductMinimal, BazaarRouteProduct, BazaarSocketMessage } from '$lib/types';
 
 	type DeleteRoutes = Extract<keyof typeof API_CONTRACTS, `${string}DELETE${string}`>;
 	let hoveredItem: AuctionBuy | undefined = $state();
@@ -56,31 +56,42 @@
 		socketState.socketService?.InitalizeSocket();
 	};
 
-	const onclickMore = (buy: AuctionBuy, product: AuctionsRouteProductMinimal) => {
+	const onclickMoreAuction = (buy: AuctionBuy, product: AuctionsRouteProductMinimal) => {
 		tooltipState['AuctionProductInfoTooltip'].buy = buy;
 		tooltipState['AuctionProductInfoTooltip'].product = product;
-		tooltipState['AuctionProductInfoTooltip'].isOpened = true;
+		tooltipIsOpened.current = 'AuctionProductInfoTooltip';
 	};
 
-	const onmouseover = (buy: AuctionBuy) => {
+	const onclickMoreBazaar = (item: BazaarItem, product: BazaarRouteProduct) => {
+		tooltipState['BazaarProductInfoTooltip'].item = item;
+		tooltipState['BazaarProductInfoTooltip'].product = product;
+		tooltipIsOpened.current = 'BazaarProductInfoTooltip';
+	};
+
+	const onmouseenter = (buy: AuctionBuy) => {
 		hoveredItem = buy;
 		$state.snapshot(hoveredItem);
 	};
 
 	const onmouseleave = (buy: AuctionBuy) => {
-		if(hoveredItem === buy) {
+		if (hoveredItem === buy) {
 			hoveredItem = undefined;
 		}
 	};
 
 	$effect(() => {
 		$state.snapshot(hoveredItem);
-	})
+	});
 </script>
 
 {#snippet title(props: SvelteHTMLElements['h3'])}
 	<div class={['flex items-center justify-between gap-2 p-2', props.class]}>
-		<span class={['text-center font-bold']}>Skyblock Feed</span>
+		<h2 class={['text-center font-bold']}>Skyblock Feed</h2>
+		<span class="font-xxx-small text-center">
+			data is fetched every minute
+			<br />
+			give it time to update!
+		</span>
 		{#if socketService?.retrying}
 			<button class="button relative" disabled>
 				<span>RETRYING ({socketService.retries})</span>
@@ -97,12 +108,13 @@
 {#snippet bazaarTable(items: BazaarSocketMessage[], title: string, action: Extract<keyof typeof actionType, `${string}bazaar${string}`>)}
 	<div class="flex flex-col items-center" out:fade={{ duration: fadeTimer }}>
 		<h5>{title}</h5>
-		<table class="font-x-small-recursive table-variant">
+		<table class="font-x-small-recursive table-right-1">
 			<thead>
 				<tr>
 					<th>Name</th>
 					<th>Requested Price</th>
 					<th>Live Price</th>
+					<th>More</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -111,7 +123,22 @@
 					<tr out:fade={{ duration: fadeTimer }}>
 						<td>{item.RequestedItem.Name}</td>
 						<td class="text-right">{utility.formatNumber(item.RequestedItem.Price)}</td>
-						<td class="text-right">{utility.formatNumber(action === "bazaarBuy" ? Math.floor(item.LiveSummary.buy_summary[0].pricePerUnit) : Math.floor(item.LiveSummary.sell_summary[0].pricePerUnit))}</td>
+						<td class="text-right">
+							{utility.formatNumber(
+								action === 'bazaarBuy'
+									? Math.floor(item.LiveSummary.sell_summary[0].pricePerUnit)
+									: Math.floor(item.LiveSummary.buy_summary[0].pricePerUnit)
+							)}
+						</td>
+						<td
+							class="group/inner relative cursor-pointer text-center hover:font-bold"
+							onclick={() => onclickMoreBazaar(item.RequestedItem, item.LiveSummary)}
+						>
+							<span class="group-hover/inner:invisible">>></span>
+							<span class="invisible absolute inset-0 text-white transition group-hover/inner:visible group-hover/inner:rotate-3">
+								MORE
+							</span>
+						</td>
 						<td class="px-1">
 							<button
 								class="bg-green-500 px-1 transition hover:translate-x-0.5 hover:bg-black hover:text-white"
@@ -134,7 +161,7 @@
 				<h4>Auctions</h4>
 				<div class="flex flex-col items-center">
 					<h5>Wanted Items</h5>
-					<table class="font-xx-small-recursive table-variant">
+					<table class="font-xx-small-recursive table-right-1">
 						<thead>
 							<tr>
 								<th>Name</th>
@@ -145,7 +172,12 @@
 						</thead>
 						<tbody>
 							{#each currentState.auctionSocketMessages as message, index (index)}
-								<tr class="{message.RequestedItem.ID}-{index}" out:fade={{ duration: 100 }} onmouseleave={() => onmouseleave(message.RequestedItem)} onmousemove={() => onmouseover(message.RequestedItem)} >
+								<tr
+									class="{message.RequestedItem.ID}-{index}"
+									out:fade={{ duration: 100 }}
+									onmouseleave={() => onmouseleave(message.RequestedItem)}
+									onmouseenter={() => onmouseenter(message.RequestedItem)}
+								>
 									<td>{message.RequestedItem.Name}</td>
 									<td class="text-right">{utility.formatNumber(message.RequestedItem.Price)}</td>
 									<td>
@@ -184,9 +216,14 @@
 					<tbody>
 						{#each currentState.auctionSocketMessages as message, index (index)}
 							{#each message.LiveItems as liveItem, index2 (index2)}
-								<tr class={[hoveredItem ? AuctionBuy.Equals(hoveredItem, message.RequestedItem) ? "hovered-item" : "" : ""]} out:fade={{ duration: 100 }}>
+								<tr
+									class={[hoveredItem ? (AuctionBuy.Equals(hoveredItem, message.RequestedItem) ? 'hovered-item' : '') : '']}
+									out:fade={{ duration: 100 }}
+								>
 									<td>{message.RequestedItem.Name}</td>
-									<td class="text-right">{utility.formatNumber(Math.max(Number(liveItem.highest_bid_amount), Number(liveItem.starting_bid)))}</td>
+									<td class="text-right"
+										>{utility.formatNumber(Math.max(Number(liveItem.highest_bid_amount), Number(liveItem.starting_bid)))}</td
+									>
 									<td>
 										{#each utilityClient.groupTags(liveItem.AuctionTags.filter( (e) => message.RequestedItem.AuctionTags.find((ee) => ee.Name === e.Name) )) as tags, aIndex}
 											<span class="overflow-x-auto">
@@ -199,7 +236,7 @@
 									</td>
 									<td
 										class="group/inner relative cursor-pointer text-center hover:font-bold"
-										onclick={() => onclickMore(message.RequestedItem, liveItem)}
+										onclick={() => onclickMoreAuction(message.RequestedItem, liveItem)}
 									>
 										<span class="group-hover/inner:invisible">>></span>
 										<span class="invisible absolute inset-0 text-white transition group-hover/inner:visible group-hover/inner:rotate-3">

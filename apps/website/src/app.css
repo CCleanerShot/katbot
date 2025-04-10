@@ -103,33 +103,33 @@ main {
 	background-color: var(--color-secondary);
 }
 
-.table-variant tr:hover .remove-button {
+.table-right-1 tr:hover .remove-button {
 	animation-name: animate-exit-button;
 	animation-duration: 0.25s;
 	animation-iteration-count: 1;
 }
 
-.table-variant tr > *:not(:last-child) {
+.table-right-1 tr > *:not(:last-child) {
 	border: 1px solid black;
 	padding-left: 0.1rem;
 	padding-right: 0.1rem;
 }
 
-.table-variant tr > *:not(:last-child) > select {
+.table-right-1 tr > *:not(:last-child) > select {
 	margin: auto;
 	outline: none;
 	width: 100%;
 }
 
-.table-variant tr > th:not(:last-child) {
+.table-right-1 tr > th:not(:last-child) {
 	background-color: var(--color-primary);
 }
 
-.table-variant tr:has(td):not(:hover) {
+.table-right-1 tr:has(td):not(:hover) {
 	background-color: white;
 }
 
-.table-variant tr:has(td:hover) > *:not(:last-child) {
+.table-right-1 tr:has(td:hover) > *:not(:last-child) {
 	background-color: var(--color-secondary);
 }
 

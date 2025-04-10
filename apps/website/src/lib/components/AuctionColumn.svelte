@@ -61,7 +61,7 @@
 	</div>
 	<div class="flex flex-col items-center">
 		{#if auctionState.BUYS.length > 0}
-			<table class="font-x-small-recursive table-variant">
+			<table class="font-x-small-recursive table-right-1">
 				<thead>
 					<tr>
 						<th>Name</th>
