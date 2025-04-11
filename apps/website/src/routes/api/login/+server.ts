@@ -2,7 +2,7 @@ import { mongoBot } from '$lib/server/mongoBot';
 import { API_CONTRACTS } from '$lib/other/apiContracts';
 import { sessionServer } from '$lib/server/sessionServer';
 import { utilityServer } from '$lib/server/utilityServer';
-import { json, type RequestHandler } from '@sveltejs/kit';
+import { error, json, type RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async (event) => {
 	const { params } = API_CONTRACTS['POST=>/api/login'];

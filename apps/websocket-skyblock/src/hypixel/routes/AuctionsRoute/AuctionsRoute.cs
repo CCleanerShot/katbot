@@ -31,7 +31,7 @@ public class AuctionsRoute
 
         if (MongoBot.AuctionBuysRecentlyUpdated)
         {
-            auctions = await BatchFetch(10);
+            auctions = await BatchFetch(8);
         }
         else
         {

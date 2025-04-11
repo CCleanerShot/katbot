@@ -1,13 +1,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS stage1
 WORKDIR /app
-COPY ./skyblock-bot.csproj .
-RUN dotnet restore "skyblock-bot.csproj"
+COPY ./discord-bot.csproj .
+RUN dotnet restore "discord-bot.csproj"
 COPY . .
-RUN dotnet publish "skyblock-bot.csproj" -c Release -o /publish
+RUN dotnet publish "discord-bot.csproj" -c Release -o /publish
+COPY /assets .
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine
 USER 1000:1000
 WORKDIR /app
+COPY --from=stage1 --chown=1000:1000 /app/assets .
 COPY --from=stage1 --chown=1000:1000 /publish .
-COPY --from=stage1 --chown=1000:1000 /assets .
-ENTRYPOINT [ "dotnet", "skyblock-bot.dll" ]
+ENTRYPOINT [ "dotnet", "discord-bot.dll" ]

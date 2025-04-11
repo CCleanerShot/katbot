@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/apps/discord-bot/skyblock-bot.sln",
+                "${workspaceFolder}/apps/discord-bot/discord-bot.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/apps/discord-bot/skyblock-bot.sln",
+                "${workspaceFolder}/apps/discord-bot/discord-bot.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/apps/discord-bot/skyblock-bot.sln"
+                "${workspaceFolder}/apps/discord-bot/discord-bot.sln"
             ],
             "problemMatcher": "$msCompile"
         }

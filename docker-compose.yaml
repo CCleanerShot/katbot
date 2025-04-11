@@ -13,3 +13,6 @@ services:
     build: ./apps/websocket-skyblock
     env_file:
       - ./apps/websocket-skyblock/.env
+    ports:
+      - "127.0.0.1:3000:3000"
+    

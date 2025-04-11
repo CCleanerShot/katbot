@@ -178,6 +178,7 @@ public class Settings
         MONGODB_C_BAZAAR_ITEMS = Environment.GetEnvironmentVariable("MONGODB_C_BAZAAR_ITEMS");
         MONGODB_C_BAZAAR_SELL = Environment.GetEnvironmentVariable("MONGODB_C_BAZAAR_SELL");
         MONGODB_C_ROLL_STATS = Environment.GetEnvironmentVariable("MONGODB_C_ROLL_STATS");
+        MONGODB_C_SESSIONS = Environment.GetEnvironmentVariable("MONGODB_C_SESSIONS");
         MONGODB_C_STARBOARDS = Environment.GetEnvironmentVariable("MONGODB_C_STARBOARDS");
         MONGODB_C_USERS = Environment.GetEnvironmentVariable("MONGODB_C_USERS");
         MONGODB_D_DISCORD = Environment.GetEnvironmentVariable("MONGODB_D_DISCORD");

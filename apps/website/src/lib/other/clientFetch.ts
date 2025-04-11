@@ -1,5 +1,6 @@
 import { fetchState } from '$lib/states/fetchState.svelte';
 import { toastActions } from '$lib/states/toastsState.svelte';
+import { json } from '@sveltejs/kit';
 import { API_CONTRACTS } from './apiContracts';
 
 type ClientResponse<T extends any> = Omit<Response, 'json'> & JSON<T>;
@@ -15,26 +16,31 @@ export const clientFetch = async <T extends keyof typeof API_CONTRACTS, K extend
 	useToast: boolean = false
 ): Promise<ClientResponse<K>> => {
 	const { method, route } = API_CONTRACTS[request];
-	const url = new URL(route, window.location.origin);
-	const searchParams = new URL(document.location.toString()).searchParams;
+	const requestInit: RequestInit = { headers: { 'Content-Type': 'application/json' }, method };
+	let finalRoute: string = route;
+	let result: Response;
 
 	fetchState.status = 'loading';
 
-	for (const param of searchParams) {
-		url.searchParams.append(param[0], param[1]);
-	}
-
-	let result: Response;
-
 	if (method == 'GET') {
-		for (const [key, value] of Object.entries(params)) {
-			url.searchParams.append(key, value);
+		const kvPairs = Object.entries(params);
+
+		if (kvPairs.length > 0) {
+			finalRoute += '?';
 		}
 
-		result = await fetch(url, { method });
+		for (const [key, value] of kvPairs) {
+			finalRoute += `${key}=${value}&`;
+		}
+
+		if (finalRoute[finalRoute.length - 1] === '&') {
+			finalRoute = finalRoute.slice(0, finalRoute.length - 1);
+		}
 	} else {
-		result = await fetch(url, { method, body: JSON.stringify(params) });
+		requestInit.body = JSON.stringify(params);
 	}
+
+	result = await fetch(finalRoute, requestInit);
 
 	(result as any).JSON = result.json;
 

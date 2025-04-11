@@ -4,6 +4,8 @@ import { utilityServer } from '$lib/server/utilityServer';
 import { LogLevel } from '$lib/enums';
 
 export const handle: Handle = async ({ event, resolve }) => {
+	utilityServer.logServer(LogLevel.NONE, `(${event.request.method}) ${event.url.toString()}`);
+
 	if (!event.url.pathname.includes('api')) {
 		const response = await resolve(event, {});
 		return response;
@@ -16,7 +18,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return response;
 	}
 
-	utilityServer.logServer(LogLevel.NONE, `(${event.request.method}) ${event.url.toString()}`);
 	const token = event.cookies.get('session') ?? null;
 	const discordId = event.cookies.get('discordId') ?? null;
 

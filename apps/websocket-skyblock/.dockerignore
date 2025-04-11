@@ -2,5 +2,5 @@
 bin
 obj
 Dockerfile
-skyblock-bot.sln
+discord-bot.sln
 .vscode
