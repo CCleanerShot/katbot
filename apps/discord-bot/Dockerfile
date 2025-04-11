@@ -6,7 +6,7 @@ COPY . .
 RUN dotnet publish "discord-bot.csproj" -c Release -o /publish
 COPY /assets .
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine
+FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine
 USER 1000:1000
 WORKDIR /app
 COPY --from=stage1 --chown=1000:1000 /app/assets .

@@ -1,6 +1,6 @@
 .env
+.vscode
 bin
 obj
 Dockerfile
-discord-bot.sln
-.vscode
+websocket-skyblock.sln
