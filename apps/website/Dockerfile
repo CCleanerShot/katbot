@@ -1,5 +1,6 @@
 FROM node:23.9-alpine3.21 AS stage1
 WORKDIR /app
+RUN npm install
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
