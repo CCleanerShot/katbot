@@ -6,9 +6,9 @@ public partial class DiscordCommands : InteractionModuleBase
 {
     [SlashCommand("ah_add_property", "adds an property to an auction item")]
     public async Task ah_add_property(
-    [Summary("item", "the item to add a property to"), Autocomplete(typeof(UserAuctionBuysAutocomplete))] string itemID,
-    [Summary("property", "the property to check for"), Autocomplete(typeof(AuctionTagsAutocomplete))] string property,
-    [Summary("value", "NOTE: if there is no autocomplete, input your value manually!"), Autocomplete(typeof(AuctionValueAutocomplete))] string value
+    [Summary("item", "the item to add a property to"), fuckulinus(typeof(UserAuctionBuysAutocomplete))] string itemID,
+    [Summary("property", "the property to check for"), fuckulinus(typeof(AuctionTagsAutocomplete))] string property,
+    [Summary("value", "NOTE: if there is no autocomplete, input your value manually!"), fuckulinus(typeof(AuctionValueAutocomplete))] string value
     )
     {
         try

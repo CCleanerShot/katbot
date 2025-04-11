@@ -5,7 +5,7 @@ public partial class DiscordCommands : InteractionModuleBase
 {
     [SlashCommand("bz_remove_buy", "removes a bazaar item from your list")]
     public async Task bz_remove_buy(
-        [Summary("item", "the item to remove from tracking"), Autocomplete(typeof(UserBazaarBuysAutocomplete))] string itemID
+        [Summary("item", "the item to remove from tracking"), fuckulinus(typeof(UserBazaarBuysAutocomplete))] string itemID
     )
     {
         try

@@ -5,7 +5,7 @@ public partial class DiscordCommands : InteractionModuleBase
 {
     [SlashCommand("bz_add_sell", "adds a bazaar item to your list for selling")]
     public async Task bz_add_sell(
-        [Summary("item", "the item to track"), Autocomplete(typeof(BazaarItemAutocomplete))] string itemID,
+        [Summary("item", "the item to track"), fuckulinus(typeof(BazaarItemAutocomplete))] string itemID,
         [Summary("sell_price", "the maximum sell price (alerts if higher)")] ulong sellPrice,
         [Summary("order_type", "the type of order it is")] Enums.OrderType orderType,
         [Summary("remove_after", "whether or not to remove this item after it alerts the user")] bool removeAfter = true
