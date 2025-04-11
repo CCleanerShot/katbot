@@ -4,7 +4,7 @@
 	import RoutePage from '$lib/components/RoutePage.svelte';
 	import { socketState } from '$lib/states/socketState.svelte';
 	import { WebsocketService } from '$lib/classes/WebsocketService.svelte';
-	import { PUBLIC_PORT_WEBSOCKET } from '$env/static/public';
+	import { PUBLIC_EC2_ADDRESS, PUBLIC_PORT_WEBSOCKET } from '$env/static/public';
 	import SkyblockAlertsSidebar from '$lib/components/sidebars/SkyblockAlertsSidebar.svelte';
 	import AuctionProductInfoTooltip from '$lib/components/tooltips/AuctionProductInfoTooltip.svelte';
 	import BazaarProductInfoTooltip from '$lib/components/tooltips/BazaarProductInfoTooltip.svelte';
@@ -12,7 +12,7 @@
 	const { children } = $props();
 
 	onMount(() => {
-		const url = `wss://${window.location.host}:${PUBLIC_PORT_WEBSOCKET}`;
+		const url = `wss://${PUBLIC_EC2_ADDRESS}:${PUBLIC_PORT_WEBSOCKET}`;
 		socketState.socketService = new WebsocketService(url);
 	});
 </script>
