@@ -8,3 +8,4 @@ Dockerfile
 e2e
 node-modules
 playwright.config.ts
+package-lock.json

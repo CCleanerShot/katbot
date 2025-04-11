@@ -6,7 +6,6 @@ bin
 **/logs/**
 node_modules
 obj
-package-lock.json
 tailwind.config.js
 
 
