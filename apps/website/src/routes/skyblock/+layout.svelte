@@ -4,15 +4,15 @@
 	import RoutePage from '$lib/components/RoutePage.svelte';
 	import { socketState } from '$lib/states/socketState.svelte';
 	import { WebsocketService } from '$lib/classes/WebsocketService.svelte';
-	import SkyblockAlertsSidebar from '$lib/components/sidebars/SkyblockAlertsSidebar.svelte';
 	import { PUBLIC_PORT_WEBSOCKET } from '$env/static/public';
+	import SkyblockAlertsSidebar from '$lib/components/sidebars/SkyblockAlertsSidebar.svelte';
 	import AuctionProductInfoTooltip from '$lib/components/tooltips/AuctionProductInfoTooltip.svelte';
 	import BazaarProductInfoTooltip from '$lib/components/tooltips/BazaarProductInfoTooltip.svelte';
 
 	const { children } = $props();
 
 	onMount(() => {
-		const url = `ws://localhost:${PUBLIC_PORT_WEBSOCKET}`;
+		const url = `ws://${window.location.href}:${PUBLIC_PORT_WEBSOCKET}`;
 		socketState.socketService = new WebsocketService(url);
 	});
 </script>
