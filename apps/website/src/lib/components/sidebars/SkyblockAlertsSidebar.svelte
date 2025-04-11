@@ -99,7 +99,7 @@
 		{:else}
 			<button class="button group relative" disabled={!!socketState.socketService?.socket} {onclick}>
 				<span class="group-hover:invisible">RECONNECT</span>
-				<span class="invisible absolute inset-0 pt-[4px] transition group-hover:visible group-hover:rotate-3">IT'S ON</span>
+				<span class={[socketService?.socket ? "group-hover:visible group-hover:rotate-3" : "" , "invisible absolute inset-0 pt-[4px] transition"]}>IT'S ON</span>
 			</button>
 		{/if}
 	</div>
