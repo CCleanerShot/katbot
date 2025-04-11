@@ -6,7 +6,7 @@
 	import { cacheState } from '$lib/states/cacheState.svelte';
 	import type { API_CONTRACTS } from '$lib/other/apiContracts';
 	import { bazaarState } from '$lib/states/bazaarState.svelte';
-	import AutoComplete from './autocompletes/AutoComplete.svelte';
+	import AutomaticComplete from './autocompletes/AutomaticComplete.svelte';
 
 	type Props = {
 		action: Extract<keyof typeof API_CONTRACTS, `GET${string}/bazaar/${string}`>;
@@ -62,7 +62,7 @@
 	};
 </script>
 
-<div class="flex h-full flex-1 flex-col border-black p-2 not-last:border-r-2">
+<div class="not-last:border-r-2 flex h-full flex-1 flex-col border-black p-2">
 	<div class="flex justify-center gap-2">
 		<button class="button group relative w-28" {onclick}>
 			<span class="group-hover:invisible">{type}</span>
@@ -88,7 +88,7 @@
 					{#each bazaarState[type] as item, index (`${item.ID}-${index}`)}
 						<tr class="group">
 							<td>
-								<AutoComplete
+								<AutomaticComplete
 									bind:array={cacheState['BAZAAR']}
 									bind:value={item.Name}
 									updateKey={'Name'}

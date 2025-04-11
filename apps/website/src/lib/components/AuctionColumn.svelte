@@ -4,7 +4,7 @@
 	import { panelState } from '$lib/states/panelState.svelte';
 	import type { AuctionItem } from '$lib/mongodb/AuctionItem';
 	import { auctionState } from '$lib/states/auctionState.svelte';
-	import AutoComplete from './autocompletes/AutoComplete.svelte';
+	import AutomaticComplete from './autocompletes/AutomaticComplete.svelte';
 	import type { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
 
 	class Item {
@@ -75,24 +75,24 @@
 					{#each auctionState.BUYS as item, index (item.ID + index)}
 						<tr class="group">
 							<td>
-								<AutoComplete
-									afterAction={(input) => (item.ID = cacheState.AUCTIONS.items.find(e => e.Name === input)?.ID ?? "")}
+								<AutomaticComplete
+									afterAction={(input) => (item.ID = cacheState.AUCTIONS.items.find((e) => e.Name === input)?.ID ?? '')}
 									array={cacheState.AUCTIONS.items}
 									bind:value={item.Name}
 									updateObj={item}
 									updateKey={'Name'}
-									inputProps={{ class: 'w-72', placeholder: "Type Here to Add...", type: 'text' }}
+									inputProps={{ class: 'w-72', placeholder: 'Type Here to Add...', type: 'text' }}
 								/>
 							</td>
-							<td><input bind:value={item.Price} class="text-right"  min="0" type="number"/></td>
+							<td><input bind:value={item.Price} class="text-right" min="0" type="number" /></td>
 							<td>
 								<select bind:value={item.RemovedAfter}>
 									<option value={false}>YES</option>
 									<option value={true}>NO</option>
 								</select>
 							</td>
-							<td class="group/inner relative cursor-pointer hover:font-bold text-center" onclick={() => onclickTag(item)}>
-								<span class="group-hover/inner:invisible mx-2">>></span>
+							<td class="group/inner relative cursor-pointer text-center hover:font-bold" onclick={() => onclickTag(item)}>
+								<span class="mx-2 group-hover/inner:invisible">>></span>
 								<span class="invisible absolute inset-0 text-white transition group-hover/inner:visible group-hover/inner:rotate-3">
 									OPEN
 								</span>

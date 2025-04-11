@@ -4,7 +4,7 @@
 	import { cacheState } from '$lib/states/cacheState.svelte';
 	import { panelState } from '$lib/states/panelState.svelte';
 	import type { SvelteHTMLElements } from 'svelte/elements';
-	import AutoComplete from '../autocompletes/AutoComplete.svelte';
+	import AutomaticComplete from '../autocompletes/AutomaticComplete.svelte';
 
 	type Props = {
 		tag: AuctionTag;
@@ -43,7 +43,7 @@
 </script>
 
 <div {...props} class={['button flex w-64', { selected }, props?.class]} onfocusincapture={() => onfocusinEdit(tag)} {onfocusout}>
-	<AutoComplete
+	<AutomaticComplete
 		{afterAction}
 		array={names}
 		bind:updateObj={tag}
@@ -51,7 +51,7 @@
 		inputProps={{ class: 'input flex-[10]', size: 10 }}
 		updateKey={'Name'}
 	/>
-	<AutoComplete
+	<AutomaticComplete
 		array={values}
 		bind:updateObj={tag}
 		bind:value={tag.Value}

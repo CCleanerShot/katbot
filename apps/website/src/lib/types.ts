@@ -1,8 +1,6 @@
 import type { AuctionTag } from './mongodb/AuctionTag';
 import type { BazaarItem } from './mongodb/BazaarItem';
 import type { AuctionBuy } from './mongodb/collections/AuctionBuy';
-import type { BazaarBuy } from './mongodb/collections/BazaarBuy';
-import type { BazaarSell } from './mongodb/collections/BazaarSell';
 
 export type ArrayType = { Name: string; beg: string; mid: string; end: string }[];
 export type BasePageData = { description: string; title: string };
