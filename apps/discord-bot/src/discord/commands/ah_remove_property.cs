@@ -5,9 +5,9 @@ public partial class DiscordCommands : InteractionModuleBase
 {
     [SlashCommand("ah_remove_property", "removes a property from an auction item")]
     public async Task ah_remove_property(
-        [Summary("item", "the item to remove a property from"), fuckulinus(typeof(UserAuctionBuysAutocomplete))] string itemID,
-        [Summary("property", "the property in question"), fuckulinus(typeof(UserAuctionBuyTagsAutocomplete))] string property,
-        [Summary("value", "the value to remove"), fuckulinus(typeof(UserAuctionBuyTagsValueAutocomplete))] string value
+        [Summary("item", "the item to remove a property from"), Autocomplete(typeof(UserAuctionBuysAutocomplete))] string itemID,
+        [Summary("property", "the property in question"), Autocomplete(typeof(UserAuctionBuyTagsAutocomplete))] string property,
+        [Summary("value", "the value to remove"), Autocomplete(typeof(UserAuctionBuyTagsValueAutocomplete))] string value
     )
     {
         try
