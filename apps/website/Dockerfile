@@ -1,6 +1,7 @@
 FROM node:23.9-alpine3.21 AS stage1
 WORKDIR /app
-COPY package.json ./
+RUN npm install
+COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 RUN npm run build && npm prune --production
