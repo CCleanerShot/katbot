@@ -12,7 +12,7 @@
 	const { children } = $props();
 
 	onMount(() => {
-		const url = `ws://${PUBLIC_EC2_ADDRESS}:${PUBLIC_PORT_WEBSOCKET}`;
+		const url = `wss://${PUBLIC_EC2_ADDRESS}:${PUBLIC_PORT_WEBSOCKET}`;
 		socketState.socketService = new WebsocketService(url);
 	});
 </script>
