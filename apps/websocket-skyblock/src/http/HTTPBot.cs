@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 
 public static class HTTPBot
@@ -10,8 +9,17 @@ public static class HTTPBot
 
     public static async Task Load()
     {
+        string PROTOCOL;
+
+        if (Settings.ENVIRONMENT == "development")
+            PROTOCOL = "http";
+        else if (Settings.ENVIRONMENT == "production")
+            PROTOCOL = "https";
+        else
+            throw new NotImplementedException($"Unknown environment setting at {Settings.ENVIRONMENT}");
+
         listener = new HttpListener();
-        listener.Prefixes.Add($"http://127.0.0.1:{Settings.PORT_HTTP}/");
+        listener.Prefixes.Add($"{PROTOCOL}://0.0.0.0:{Settings.PORT_WEBSOCKET}/");
         listener.Start();
 
         Utility.Log(Enums.LogLevel.NONE, "HTTP Listener active.");

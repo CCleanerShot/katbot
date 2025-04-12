@@ -15,4 +15,9 @@ services:
       - ./apps/websocket-skyblock/.env
     ports:
       - "3000:3000"
+    volumes:
+      - type: bind
+        source: ~/certs
+        target: certs
+        read_only: true
     

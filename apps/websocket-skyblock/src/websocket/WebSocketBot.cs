@@ -1,7 +1,9 @@
-using System.Net.Sockets;
 using Fleck;
 using MongoDB.Driver;
 using oslo.crypto.sha2;
+using System.Net;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 
 public static partial class WebSocketBot
 {
@@ -11,13 +13,33 @@ public static partial class WebSocketBot
 
     public static void Load()
     {
-        string url = $"ws://0.0.0.0:{Settings.PORT_WEBSOCKET}";
-        Server = new WebSocketServer(url);
+        if (Settings.ENVIRONMENT == "development")
+        {
+            Server = new WebSocketServer($"ws://0.0.0.0:{Settings.PORT_WEBSOCKET}");
+        }
+        else if (Settings.ENVIRONMENT == "production")
+        {
+            string CERTIFICATE_LOCATION;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                CERTIFICATE_LOCATION = Settings.CERTIFICATE_LOCATION_WINDOWS;
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                CERTIFICATE_LOCATION = Settings.CERTIFICATE_LOCATION_LINUX;
+            else
+                throw new NotImplementedException("Detected application launch in something not Windows/Linux, throwing!");
+
+            Server = new WebSocketServer($"wss://0.0.0.0:{Settings.PORT_WEBSOCKET}");
+            Server.Certificate = new X509Certificate2(CERTIFICATE_LOCATION, new NetworkCredential("", Settings.CERTIFICATE_PASSWORD).SecurePassword);
+        }
+        else
+        {
+            throw new NotImplementedException($"Unknown environment setting at {Settings.ENVIRONMENT}");
+        }
+
         Server.Start(async (ws) =>
         {
-            Utility.Log(Enums.LogLevel.NONE, $"Attempted new ws connection. {ws.ConnectionInfo.ClientIpAddress}");
-
             IDictionary<string, string> Headers = ws.ConnectionInfo.Headers;
+            Utility.Log(Enums.LogLevel.NONE, $"Attempted new ws connection. {ws.ConnectionInfo.ClientIpAddress}");
 
             if (!Headers.ContainsKey("cookie"))
             {

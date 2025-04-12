@@ -3,8 +3,6 @@
 // 2. abrupt program exit
 // the purpose of this is to log the session into /logs
 
-using System.Net;
-using System.Net.Sockets;
 using oslo.binary;
 
 public class Program

@@ -1,3 +1,4 @@
+.dockerignore
 .env
 .vscode
 bin
