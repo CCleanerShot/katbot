@@ -15,6 +15,8 @@ public static partial class WebSocketBot
         Server = new WebSocketServer(url);
         Server.Start(async (ws) =>
         {
+            Utility.Log(Enums.LogLevel.NONE, $"Attempted new ws connection. {ws.ConnectionInfo.ClientIpAddress}");
+
             IDictionary<string, string> Headers = ws.ConnectionInfo.Headers;
 
             if (!Headers.ContainsKey("cookie"))
