@@ -17,8 +17,7 @@ services:
       - "3001:3000"
   nginx-server:
     build: ./apps/nginx-server
-    container_name: ${NGINX_HOST}
     env_file:
       - ./apps/nginx/.env
     ports:
-      - "${NGINX_PORT}:${NGINX_PORT}"
+      - "${NGINX_PORT}:3001"
