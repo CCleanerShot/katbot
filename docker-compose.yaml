@@ -14,4 +14,8 @@ services:
     env_file:
       - ./apps/websocket-skyblock/.env
     ports:
+      - "3001:3001"
+  nginx:
+    build: ./apps/nginx
+    ports:
       - "3000:3000"
