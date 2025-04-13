@@ -16,7 +16,9 @@ services:
     ports:
       - "3001:3001"
   nginx:
-    build: ./apps/nginx
+    build:
+      context: ./apps/nginx
+      dockerfile: ./apps/nginx/Dockerfile
     container_name: ${NGINX_HOST}
     env_file:
       - ./apps/nginx/.env
