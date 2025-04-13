@@ -16,7 +16,8 @@ services:
     ports:
       - "3001:3001"
   nginx:
-    build: ./apps/nginx
+    container_name: nginx
+    image: nginx:1.27-alpine-slim
     network_mode: host
     ports:
       - "3000:80"
