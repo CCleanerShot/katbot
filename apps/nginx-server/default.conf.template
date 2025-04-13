@@ -2,6 +2,6 @@ server {
     listen ${NGINX_PORT};
     server_name ${NGINX_HOST};
     location / {
-        proxy_pass ws://172.17.0.0:3001;
+        proxy_pass http://172.17.0.0:3001;
     }
 }
