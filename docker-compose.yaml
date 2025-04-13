@@ -15,12 +15,10 @@ services:
       - ./apps/websocket-skyblock/.env
     ports:
       - "3001:3000"
-  nginx:
-    build: ./apps/nginx
+  nginx-server:
+    build: ./apps/nginx-server
     container_name: ${NGINX_HOST}
     env_file:
       - ./apps/nginx/.env
-    image: nginx
     ports:
       - "${NGINX_PORT}:${NGINX_PORT}"
-    restart: always
