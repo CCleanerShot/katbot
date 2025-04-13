@@ -4,6 +4,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 import type { Session } from '$lib/mongodb/collections/Session';
 import { MONGODB_SESSION_DAY_LENGTH } from '$env/static/private';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
+import { PUBLIC_DOMAIN } from '$env/static/public';
 
 // session token: https://lucia-auth.com/sessions/cookies/sveltekit
 export const sessionServer = {
@@ -47,6 +48,12 @@ export const sessionServer = {
 			httpOnly: true,
 			sameSite: 'lax',
 			expires: expiresAt,
+			path: '/'
+		});
+	},
+	setDomain: (event: RequestEvent) => {
+		event.cookies.set('domain', PUBLIC_DOMAIN, {
+			sameSite: 'lax',
 			path: '/'
 		});
 	},

@@ -1,23 +1,42 @@
 services:
   discord-bot:
     build: ./apps/discord-bot
+    depends_on:
+      - websocket-skyblock
     env_file:
       - ./apps/discord-bot/.env
+      - .env
+    ports:
+      - "8081:8081"
   website:
     build: ./apps/website
+    depends_on:
+      - reverse-proxy
+      - websocket-skyblock
     env_file:
       - ./apps/website/.env
+      - .env
+    labels:
+      - "traefik.http.routers.website.rule=Host(`${PUBLIC_PREFIX_WEBSITE}.${PUBLIC_DOMAIN}`)"
     ports:
-      - "80:5050"
+      - "5050:5050"
   websocket-skyblock:
     build: ./apps/websocket-skyblock
+    depends_on:
+      - reverse-proxy
     env_file:
       - ./apps/websocket-skyblock/.env
+      - .env
+    labels:
+      - "traefik.http.routers.websocket.rule=Host(`${PUBLIC_PREFIX_WEBSOCKET}.${PUBLIC_DOMAIN}`)"
     ports:
-      - "3001:3000"
-  nginx-server:
-    build: ./apps/nginx-server
-    env_file:
-      - ./apps/nginx/.env
+      - "${PORT_WEBSOCKET}:${PORT_WEBSOCKET}"
+  reverse-proxy:
+    image: traefik:v3.3
+    command: --api.insecure=true --providers.docker
     ports:
-      - "${NGINX_PORT}:3001"
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

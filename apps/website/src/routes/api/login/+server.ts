@@ -38,5 +38,11 @@ export const POST: RequestHandler = async (event) => {
 	sessionServer.setSessionTokenCookie(event, newSession, session.ExpiresAt);
 	sessionServer.setDiscordId(event, foundUser.DiscordId, session.ExpiresAt);
 
+	const cookies = event.cookies.getAll();
+
+	for (const cookie of cookies) {
+		console.log(`${cookie.name}: ${cookie.value}`);
+	}
+
 	return json('');
 };

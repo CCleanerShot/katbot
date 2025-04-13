@@ -1,5 +1,5 @@
+using Enums;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
 /// <summary>
@@ -89,7 +89,24 @@ public static class Utility
             throw new NotImplementedException("Detected application launch in something not Windows/Linux, throwing!");
     }
 
-
+    public static string GetProtocol(ProtocolType type)
+    {
+        switch (type)
+        {
+            case ProtocolType.HTTP:
+                if (Settings.ENVIRONMENT == "production")
+                    return "https";
+                else
+                    return "http";
+            case ProtocolType.WS:
+                if (Settings.ENVIRONMENT == "production")
+                    return "wss";
+                else
+                    return "ws";
+            default:
+                throw new NotImplementedException("Not implemented you dingus.");
+        }
+    }
     /// <summary>
     /// Current way of logging. Will do some other stuff later.
     /// </summary>

@@ -1,3 +1,5 @@
+import { PUBLIC_DOMAIN, PUBLIC_ENVIRONMENT } from '$env/static/public';
+
 export const utility = {
 	capitalize: (input: string): string => {
 		return input[0].toUpperCase() + input.slice(1);
@@ -5,6 +7,22 @@ export const utility = {
 	formatNumber: (input: number | bigint): string => {
 		const results = utility.reverseString(input.toString()).split(/(.{3})/g);
 		return utility.reverseString(results.join(' '));
+	},
+	getProtocol: (type: 'http' | 'ws'): string => {
+		switch (type) {
+			case 'http':
+				if (PUBLIC_ENVIRONMENT === 'production') {
+					return 'https';
+				} else {
+					return 'http';
+				}
+			case 'ws':
+				if (PUBLIC_ENVIRONMENT === 'production') {
+					return 'wss';
+				} else {
+					return 'ws';
+				}
+		}
 	},
 	randomNumber: (min: number, max: number): number => {
 		return min + Math.round(Math.random() * (max - min));

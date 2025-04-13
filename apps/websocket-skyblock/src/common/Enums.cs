@@ -25,6 +25,12 @@ namespace Enums
         ORDER,
     }
 
+    public enum ProtocolType
+    {
+        HTTP,
+        WS,
+    }
+
     public enum SocketMessageType
     {
         AUCTIONS,

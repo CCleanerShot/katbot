@@ -1,4 +1,6 @@
-import { PORT_HTTP, SVELTE_MONGODB_C_AUCTION_BUY } from '$env/static/private';
+import { PORT_HTTP, MONGODB_C_AUCTION_BUY } from '$env/static/private';
+import { PUBLIC_DOMAIN, PUBLIC_PREFIX_WEBSOCKET } from '$env/static/public';
+import { utility } from '$lib/utility/utility';
 import {
 	Collection,
 	type Abortable,
@@ -23,7 +25,7 @@ export class MongoCollection<T extends object = object> {
 		this.Collection = _Collection;
 
 		// "middleware" for the database requests
-		if (this.Collection.collectionName === SVELTE_MONGODB_C_AUCTION_BUY) {
+		if (this.Collection.collectionName === MONGODB_C_AUCTION_BUY) {
 			const oldInsertOne = this.InsertOne;
 			const oldInsertMany = this.InsertMany;
 			const oldUpdateOne = this.UpdateOne;
@@ -54,7 +56,8 @@ export class MongoCollection<T extends object = object> {
 
 		try {
 			if (response?.acknowledged || response === null) {
-				await fetch(`http://localhost:${PORT_HTTP}`);
+				utility.reverseString;
+				await fetch(`${utility.getProtocol('http')}://${PUBLIC_PREFIX_WEBSOCKET}.${PUBLIC_DOMAIN}`);
 			}
 		} catch (err) {
 			// doesn't really matter if the other server is down

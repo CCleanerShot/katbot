@@ -3,7 +3,6 @@ using MongoDB.Driver;
 using oslo.crypto.sha2;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 
 public static partial class WebSocketBot
 {
@@ -13,14 +12,19 @@ public static partial class WebSocketBot
 
     public static void Load()
     {
+
         Server = new WebSocketServer($"ws://0.0.0.0:{Settings.PORT_WEBSOCKET}");
         Server.Start(async (ws) =>
         {
             IDictionary<string, string> Headers = ws.ConnectionInfo.Headers;
             Utility.Log(Enums.LogLevel.NONE, $"Attempted new ws connection. {ws.ConnectionInfo.ClientIpAddress}");
 
+            foreach (var test in ws.ConnectionInfo.Headers)
+                Console.WriteLine($"{test.Key}: {test.Value}");
+
             if (!Headers.ContainsKey("cookie"))
             {
+                Utility.Log(Enums.LogLevel.NONE, $"No cookie on connection {ws.ConnectionInfo.ClientIpAddress}. Closing.");
                 ws.Close();
                 return;
             }
@@ -30,6 +34,7 @@ public static partial class WebSocketBot
 
             if (!kvPairs.ContainsKey("session"))
             {
+                Utility.Log(Enums.LogLevel.NONE, $"No session on connection {ws.ConnectionInfo.ClientIpAddress}. Closing.");
                 ws.Close();
                 return;
             }
@@ -39,6 +44,7 @@ public static partial class WebSocketBot
 
             if (session == null)
             {
+                Utility.Log(Enums.LogLevel.NONE, $"Invalid session on connection {ws.ConnectionInfo.ClientIpAddress}. Closing.");
                 ws.Close();
                 return;
             }

@@ -13,6 +13,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const exceptions = ['/api/login'];
 
+	if (!event.cookies.get('Domain')) {
+		sessionServer.setDomain(event);
+	}
+
 	if (exceptions.includes(event.url.pathname)) {
 		const response = await resolve(event, {});
 		return response;
@@ -32,5 +36,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	const response = await resolve(event, {});
+
 	return response;
 };

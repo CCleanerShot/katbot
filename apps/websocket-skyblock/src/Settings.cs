@@ -4,10 +4,6 @@
 public class Settings
 {
     #region  PRIVATE should not be exposed
-    public static string CERTIFICATE_LOCATION_LINUX = "";
-    public static string CERTIFICATE_LOCATION_WINDOWS = "";
-    public static string CERTIFICATE_PASSWORD = ""; // security issue but i dont really care lol
-    public static string DOCKER = "";
     public static string ENVIRONMENT = "";
     public static string HYPIXEL_API_BASE_URL = "";
     public static string HYPIXEL_BOT_KEY = "";
@@ -68,14 +64,6 @@ public class Settings
             if (lines.Length != 2)
                 throw new Exception("Illegal structure in the .env.");
 
-            else if (lines[0] == "CERTIFICATE_LOCATION_LINUX")
-                CERTIFICATE_LOCATION_LINUX = lines[1];
-            else if (lines[0] == "CERTIFICATE_LOCATION_WINDOWS")
-                CERTIFICATE_LOCATION_WINDOWS = lines[1];
-            else if (lines[0] == "CERTIFICATE_PASSWORD")
-                CERTIFICATE_PASSWORD = lines[1];
-            else if (lines[0] == "DOCKER")
-                DOCKER = lines[1];
             else if (lines[0] == "ENVIRONMENT")
                 ENVIRONMENT = lines[1];
             else if (lines[0] == "HYPIXEL_API_BASE_URL")
@@ -130,10 +118,6 @@ public class Settings
 
         streamReader.Close();
 #else
-    CERTIFICATE_LOCATION_LINUX=Environment.GetEnvironmentVariable("CERTIFICATE_LOCATION_LINUX");
-    CERTIFICATE_LOCATION_WINDOWS=Environment.GetEnvironmentVariable("CERTIFICATE_LOCATION_WINDOWS");
-    CERTIFICATE_PASSWORD=Environment.GetEnvironmentVariable("CERTIFICATE_PASSWORD");
-    DOCKER=Environment.GetEnvironmentVariable("DOCKER");
     ENVIRONMENT=Environment.GetEnvironmentVariable("ENVIRONMENT");
     HYPIXEL_API_BASE_URL=Environment.GetEnvironmentVariable("HYPIXEL_API_BASE_URL");
     HYPIXEL_BOT_KEY=Environment.GetEnvironmentVariable("HYPIXEL_BOT_KEY");

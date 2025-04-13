@@ -1,0 +1,7 @@
+NOTES:
+  - .ENV FILES:
+      - may exist in the following
+        - /root
+        - /root/app/<project>
+  - /apps/website:
+      - .env files here may have redundant environment variables for intellisense
