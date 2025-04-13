@@ -17,5 +17,8 @@ services:
       - "3001:3001"
   nginx:
     build: ./apps/nginx
+    network_mode: host
     ports:
-      - "3000:3000"
+      - "3000:80"
+    volumes:
+      - ./apps/nginx.conf:/etc/nginx/nginx.conf
