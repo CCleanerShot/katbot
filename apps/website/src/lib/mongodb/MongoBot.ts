@@ -18,12 +18,12 @@ import {
 import { Db, MongoClient } from 'mongodb';
 import type { BazaarItem } from './BazaarItem';
 import { MongoCollection } from './MongoCollection';
+import type { Session } from './collections/Session';
+import type { MongoUser } from './collections/MongoUser';
 import type { AuctionBuy } from './collections/AuctionBuy';
 import type { AuctionTags } from './collections/AuctionTags';
 import type { BazaarItemsAll } from './collections/BazaarItemsAll';
 import type { AuctionItemsAll } from './collections/AuctionItemsAll';
-import type { Session } from './collections/Session';
-import type { MongoUser } from './collections/MongoUser';
 
 export class MongoBot {
 	Client: MongoClient;

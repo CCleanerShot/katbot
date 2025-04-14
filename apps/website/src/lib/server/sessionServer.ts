@@ -2,7 +2,7 @@ import { sha256 } from '@oslojs/crypto/sha2';
 import { mongoBot } from '$lib/server/mongoBot';
 import type { RequestEvent } from '@sveltejs/kit';
 import type { Session } from '$lib/mongodb/collections/Session';
-import { MONGODB_SESSION_DAY_LENGTH } from '$env/static/private';
+import { MONGODB_SESSION_DAY_LENGTH, PUBLIC } from '$env/static/private';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
 import { PUBLIC_DOMAIN } from '$env/static/public';
 
@@ -23,7 +23,6 @@ export const sessionServer = {
 	},
 	deleteDiscordId: (event: RequestEvent) => {
 		event.cookies.set('discordId', '', {
-			httpOnly: true,
 			sameSite: 'lax',
 			maxAge: 0,
 			path: '/'
@@ -31,7 +30,6 @@ export const sessionServer = {
 	},
 	deleteSessionTokenCookie: (event: RequestEvent) => {
 		event.cookies.set('session', '', {
-			httpOnly: true,
 			sameSite: 'lax',
 			maxAge: 0,
 			path: '/'
@@ -45,15 +43,15 @@ export const sessionServer = {
 	},
 	setDiscordId: (event: RequestEvent, discordId: bigint, expiresAt: Date) => {
 		event.cookies.set('discordId', discordId.toString(), {
-			httpOnly: true,
-			sameSite: 'lax',
+			sameSite: 'none',
 			expires: expiresAt,
 			path: '/'
 		});
 	},
 	setDomain: (event: RequestEvent) => {
 		event.cookies.set('domain', PUBLIC_DOMAIN, {
-			sameSite: 'lax',
+			sameSite: 'none',
+			expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
 			path: '/'
 		});
 	},
@@ -64,6 +62,9 @@ export const sessionServer = {
 			expires: expiresAt,
 			path: '/'
 		});
+
+		const header = event.request.headers.get('Set-Cookie');
+		event.request.headers.set('Set-Cookie', header + ` session=${token};`);
 	},
 
 	validateSessionToken: async (token: string): Promise<Session | null> => {

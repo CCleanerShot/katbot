@@ -19,9 +19,6 @@ public static partial class WebSocketBot
             IDictionary<string, string> Headers = ws.ConnectionInfo.Headers;
             Utility.Log(Enums.LogLevel.NONE, $"Attempted new ws connection. {ws.ConnectionInfo.ClientIpAddress}");
 
-            foreach (var test in ws.ConnectionInfo.Headers)
-                Console.WriteLine($"{test.Key}: {test.Value}");
-
             if (!Headers.ContainsKey("cookie"))
             {
                 Utility.Log(Enums.LogLevel.NONE, $"No cookie on connection {ws.ConnectionInfo.ClientIpAddress}. Closing.");

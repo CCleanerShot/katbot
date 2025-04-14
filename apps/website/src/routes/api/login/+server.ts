@@ -40,6 +40,8 @@ export const POST: RequestHandler = async (event) => {
 
 	const cookies = event.cookies.getAll();
 
+	console.log('COOKIES:');
+
 	for (const cookie of cookies) {
 		console.log(`${cookie.name}: ${cookie.value}`);
 	}

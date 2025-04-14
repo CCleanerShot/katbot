@@ -1,6 +1,7 @@
 import { utility } from '$lib/utility/utility';
 import { SocketMessageType, type SocketMessage } from '$lib/types';
 import { sidebarState } from '$lib/states/sidebarState.svelte';
+import { PUBLIC_DOMAIN, PUBLIC_PREFIX_WEBSOCKET } from '$env/static/public';
 
 export class WebsocketService {
 	maxRetry: number = 5;
@@ -10,8 +11,8 @@ export class WebsocketService {
 	url: string | URL;
 	protocols?: string | string[];
 
-	constructor(url: string | URL, protocols?: string | string[]) {
-		this.url = url;
+	constructor(protocols?: string | string[]) {
+		this.url = new URL(`${utility.getProtocol('ws')}://${PUBLIC_DOMAIN}/${PUBLIC_PREFIX_WEBSOCKET}`);
 		this.protocols = protocols;
 		this.InitalizeSocket(false);
 	}
@@ -23,6 +24,7 @@ export class WebsocketService {
 			this.retries += 1;
 		}
 
+		const url = new URL(this.url);
 		this.socket = new WebSocket(this.url, this.protocols);
 
 		this.socket.addEventListener('open', (e) => {
