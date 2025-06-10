@@ -6,6 +6,7 @@
 	import { clientFetch } from '$lib/other/clientFetch';
 	import { FormElement } from '$lib/classes/FormElement.svelte';
 	import type { MongoUser } from '$lib/mongodb/collections/MongoUser';
+	import { fly } from 'svelte/transition';
 
 	let username: MongoUser['Username'] = $state('');
 	let password: MongoUser['Password'] = $state('');
@@ -15,6 +16,8 @@
 		new FormElement('password', () => true, 'how did we get here?')
 	]);
 
+	let test = $state(true)
+	
 	onMount(() => {
 		form.Mount();
 
@@ -22,6 +25,13 @@
 			form.Clean();
 		};
 	});
+
+	$effect(() => {
+		setTimeout(() => {
+			test = !test;
+			console.log(test)
+		}, 1000)
+	})
 
 	const onsubmit = async (e: SubmitEvent) => {
 		e.preventDefault();
@@ -53,6 +63,9 @@
 		<button type="submit" class="button mt-1">LOGIN</button>
 	</form>
 </div>
+{#if test}
+	<div transition:fly>test</div>
+{/if}
 
 <style>
 	* {

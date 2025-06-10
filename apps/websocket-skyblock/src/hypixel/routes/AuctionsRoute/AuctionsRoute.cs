@@ -27,22 +27,24 @@ public class AuctionsRoute
         // - when there is a new/modified item in the feed
         // 
         // otherwise, use the Default Fetch
-        List<AuctionsRouteProduct>? auctions;
+        // List<AuctionsRouteProduct>? auctions;
 
-        if (MongoBot.AuctionBuysRecentlyUpdated)
-        {
-            auctions = await BatchFetch(8);
-        }
-        else
-        {
-            auctions = await BatchFetch(100);
-            MongoBot.AuctionBuysRecentlyUpdated = true;
-        }
+        // if (MongoBot.AuctionBuysRecentlyUpdated)
+        // {
+        //     auctions = await BatchFetch(8);
+        // }
+        // else
+        // {
+        //     auctions = await BatchFetch(100);
+        //     MongoBot.AuctionBuysRecentlyUpdated = true;
+        // }
 
-        if (auctions == null)
-            return null;
+        // if (auctions == null)
+        //     return null;
 
-        return auctions;
+        // return auctions;
+
+        return null;
     }
 
     static async Task<List<AuctionsRouteProduct>?> BatchFetch(int pages)

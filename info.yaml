@@ -1,5 +1,5 @@
 NOTES:
-  - .ENV FILES:
+  - .env files:
       - may exist in the following
         - /root
         - /root/app/<project>

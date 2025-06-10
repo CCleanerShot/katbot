@@ -2,7 +2,7 @@ import { sha256 } from '@oslojs/crypto/sha2';
 import { mongoBot } from '$lib/server/mongoBot';
 import type { RequestEvent } from '@sveltejs/kit';
 import type { Session } from '$lib/mongodb/collections/Session';
-import { MONGODB_SESSION_DAY_LENGTH, PUBLIC } from '$env/static/private';
+import { MONGODB_SESSION_DAY_LENGTH } from '$env/static/private';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
 import { PUBLIC_DOMAIN } from '$env/static/public';
 

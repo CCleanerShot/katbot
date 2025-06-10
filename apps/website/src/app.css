@@ -1,13 +1,13 @@
 @import 'tailwindcss';
 
 * {
-	font-size: 24px;
+	font-size: 20px;
 }
 
 :root {
 	--button-padding-x: 0.6rem;
 	--button-padding-y: 0.2rem;
-	--color-primary: #ffccff;
+	--color-primary: #aaaaaa;
 	--color-secondary: #ccffcc;
 	--color-green: oklch(0.723 0.219 149.579);
 	--color-red: oklch(0.637 0.237 25.331);

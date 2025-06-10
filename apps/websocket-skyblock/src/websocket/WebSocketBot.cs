@@ -1,8 +1,6 @@
 using Fleck;
 using MongoDB.Driver;
 using oslo.crypto.sha2;
-using System.Net;
-using System.Runtime.InteropServices;
 
 public static partial class WebSocketBot
 {
@@ -12,7 +10,6 @@ public static partial class WebSocketBot
 
     public static void Load()
     {
-
         Server = new WebSocketServer($"ws://0.0.0.0:{Settings.PORT_WEBSOCKET}");
         Server.Start(async (ws) =>
         {

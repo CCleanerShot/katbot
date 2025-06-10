@@ -17,7 +17,8 @@ services:
       - ./apps/website/.env
       - .env
     labels:
-      - "traefik.http.routers.website.rule=Host(`${PUBLIC_DOMAIN}`)"
+      - "traefik.enable=true"
+      - "traefik.http.routers.website.rule=(Host(`localhost`) && PathPrefix(`/test`))"
     ports:
       - "5050:5050"
   websocket-skyblock:
@@ -28,14 +29,16 @@ services:
       - ./apps/websocket-skyblock/.env
       - .env
     labels:
+      - "traefik.enable=true"
       - "traefik.http.routers.websocket.rule=(Host(`${PUBLIC_DOMAIN}`) && PathPrefix(`/${PUBLIC_PREFIX_WEBSOCKET}`))"
     ports:
       - "${PORT_WEBSOCKET}:${PORT_WEBSOCKET}"
   reverse-proxy:
+    command: --providers.docker --api.insecure=true
     image: traefik:v3.3
-    command: --providers.docker
     ports:
       - "80:80"
+      - "8080:8080"
       - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

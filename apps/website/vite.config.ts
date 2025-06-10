@@ -8,6 +8,16 @@ export default defineConfig({
 	resolve: {
 		preserveSymlinks: true
 	},
+	// // https://stackoverflow.com/questions/68046410/how-to-force-vite-clearing-cache-in-vue3
+	// build: {
+	// 	rollupOptions: {
+	// 		output: {
+	// 			entryFileNames: `[name]` + Math.random() + `.js`,
+	// 			chunkFileNames: `[name]` + Math.random() + `.js`,
+	// 			assetFileNames: `[name]` + Math.random() + `.[ext]`
+	// 		}
+	// 	}
+	// },
 	test: {
 		workspace: [
 			{

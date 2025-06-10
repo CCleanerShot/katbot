@@ -4,7 +4,13 @@ import { utilityServer } from '$lib/server/utilityServer';
 import { LogLevel } from '$lib/enums';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	utilityServer.logServer(LogLevel.NONE, `(${event.request.method}) ${event.url.toString()}`);
+	const url = event.url.toString();
+	utilityServer.logServer(LogLevel.NONE, `(${event.request.method}) ${url.toString()}`);
+
+	// chrome dev tools
+	if (url.toString().includes('.well-known/appspecific/com.chrome.devtools.json')) {
+		return utilityServer.errorNotFound();
+	}
 
 	if (!event.url.pathname.includes('api')) {
 		const response = await resolve(event, {});
