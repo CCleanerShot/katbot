@@ -3,7 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import { utility } from '$lib/utility/utility';
 	import { clientFetch } from '$lib/other/clientFetch';
-	import { type SvelteHTMLElements } from 'svelte/elements';
+	import type { SvelteHTMLElements } from 'svelte/elements';
 	import type { BazaarItem } from '$lib/mongodb/BazaarItem';
 	import type { API_CONTRACTS } from '$lib/other/apiContracts';
 	import { socketState } from '$lib/states/socketState.svelte';
@@ -99,7 +99,12 @@
 		{:else}
 			<button class="button group relative" disabled={!!socketState.socketService?.socket} {onclick}>
 				<span class="group-hover:invisible">RECONNECT</span>
-				<span class={[socketService?.socket ? "group-hover:visible group-hover:rotate-3" : "" , "invisible absolute inset-0 pt-[4px] transition"]}>IT'S ON</span>
+				<span
+					class={[
+						socketService?.socket ? 'group-hover:visible group-hover:rotate-3' : '',
+						'invisible absolute inset-0 pt-[4px] transition'
+					]}>IT'S ON</span
+				>
 			</button>
 		{/if}
 	</div>

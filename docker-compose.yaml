@@ -18,7 +18,7 @@ services:
       - .env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.website.rule=(Host(`localhost`) && PathPrefix(`/test`))"
+      - "traefik.http.routers.website.rule=(Host(`localhost`))"
     ports:
       - "5050:5050"
   websocket-skyblock:

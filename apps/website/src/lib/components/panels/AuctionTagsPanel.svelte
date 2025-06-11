@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Panel from './Panel.svelte';
-	import { type SvelteHTMLElements } from 'svelte/elements';
+	import type { SvelteHTMLElements } from 'svelte/elements';
 	import type { AuctionTag } from '$lib/mongodb/AuctionTag';
 	import { TagType } from '$lib/enums';
 	import AuctionTagsPanelTag from './AuctionTagsPanelTag.svelte';
@@ -30,7 +30,7 @@
 				<AuctionTagsPanelTag bind:tag={tags[index]} />
 			{/each}
 		</div>
-		<button id="add" class="button w-30 mt-2 self-center" onclick={onclickAdd}>ADD</button>
+		<button id="add" class="button mt-2 w-30 self-center" onclick={onclickAdd}>ADD</button>
 	</div>
 </Panel>
 

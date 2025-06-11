@@ -1,5 +1,5 @@
 * {
-	font-size: 1.5rem;
+	font-size: 1rem;
 }
 
 .font-xxx-small {
@@ -19,19 +19,19 @@
 }
 
 .font-large {
-	font-size: 1.5rem;
+	font-size: 1.2rem;
 }
 
 .font-x-large {
+	font-size: 1.5rem;
+}
+
+.font-xx-large {
 	font-size: 2rem;
 }
 
 .font-xx-large {
 	font-size: 2.5rem;
-}
-
-.font-xx-large {
-	font-size: 3rem;
 }
 
 .font-xxx-small-recursive,
@@ -56,43 +56,43 @@
 
 .font-large-recursive,
 .font-large-recursive * {
-	font-size: 1.5rem;
+	font-size: 1.2rem;
 }
 
 .font-x-large-recursive,
 .font-x-large-recursive * {
-	font-size: 2rem;
+	font-size: 1.5rem;
 }
 
 .font-xx-large-recursive,
 .font-xx-large-recursive * {
-	font-size: 2.5rem;
+	font-size: 2rem;
 }
 
 .font-xxx-large-recursive,
 .font-xxx-large-recursive * {
-	font-size: 3rem;
+	font-size: 2.5rem;
 }
 
 @media only screen and (max-width: 48rem) {
 	* {
-		font-size: 1rem;
+		font-size: 0.8rem;
 	}
 
 	.font-xxx-small {
-		font-size: 0.3rem;
+		font-size: 0.4rem;
 	}
 
 	.font-xx-small {
-		font-size: 0.3rem;
+		font-size: 0.5rem;
 	}
 
 	.font-x-small {
-		font-size: 0.35rem;
+		font-size: 0.6rem;
 	}
 
 	.font-small {
-		font-size: 0.4rem;
+		font-size: 0.7rem;
 	}
 
 	.font-large {
@@ -100,39 +100,35 @@
 	}
 
 	.font-x-large {
-		font-size: 1.5rem;
+		font-size: 1.2rem;
 	}
 
 	.font-xx-large {
-		font-size: 1.75rem;
+		font-size: 1.5rem;
 	}
 
 	.font-xx-large {
 		font-size: 2rem;
 	}
 
-	.font-xxx-large {
-		font-size: 2.5rem;
-	}
-
 	.font-xxx-small-recursive,
 	.font-xxx-small-recursive * {
-		font-size: 0.3rem;
+		font-size: 0.4rem;
 	}
 
 	.font-xx-small-recursive,
 	.font-xx-small-recursive * {
-		font-size: 0.3rem;
+		font-size: 0.5rem;
 	}
 
 	.font-x-small-recursive,
 	.font-x-small-recursive * {
-		font-size: 0.35rem;
+		font-size: 0.6rem;
 	}
 
 	.font-small-recursive,
 	.font-small-recursive * {
-		font-size: 0.4rem;
+		font-size: 0.7rem;
 	}
 
 	.font-large-recursive,
@@ -142,16 +138,16 @@
 
 	.font-x-large-recursive,
 	.font-x-large-recursive * {
-		font-size: 1.5rem;
+		font-size: 1.2rem;
 	}
 
 	.font-xx-large-recursive,
 	.font-xx-large-recursive * {
-		font-size: 2rem;
+		font-size: 1.5rem;
 	}
 
 	.font-xxx-large-recursive,
 	.font-xxx-large-recursive * {
-		font-size: 2.5rem;
+		font-size: 2rem;
 	}
 }
