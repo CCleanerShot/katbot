@@ -38,4 +38,4 @@ jobs:
           script: |-
             cd ~/repos/katbot
             git pull
-            ./scripts/start-detach.sh
+            ./scripts/start-detach-linux.sh
