@@ -1,5 +1,6 @@
 import {
 	MONGODB_BASE_URI,
+	MONGODB_BASE_URI_TEST,
 	MONGODB_C_AUCTION_BUY,
 	MONGODB_C_AUCTION_ITEMS,
 	MONGODB_C_AUCTION_TAGS,
@@ -24,6 +25,7 @@ import type { AuctionBuy } from './collections/AuctionBuy';
 import type { AuctionTags } from './collections/AuctionTags';
 import type { BazaarItemsAll } from './collections/BazaarItemsAll';
 import type { AuctionItemsAll } from './collections/AuctionItemsAll';
+import { PUBLIC_ENVIRONMENT } from '$env/static/public';
 
 export class MongoBot {
 	Client: MongoClient;
@@ -43,7 +45,12 @@ export class MongoBot {
 	public MONGODB_C_ROLL_STATS: MongoCollection<BazaarItem>; // TODO: implement
 
 	constructor() {
-		this.Client = new MongoClient(MONGODB_BASE_URI + MONGODB_OPTIONS);
+		if (PUBLIC_ENVIRONMENT === 'development') {
+			this.Client = new MongoClient(MONGODB_BASE_URI_TEST + MONGODB_OPTIONS);
+		} else {
+			this.Client = new MongoClient(MONGODB_BASE_URI + MONGODB_OPTIONS);
+		}
+
 		this.MONGODB_D_DISCORD = this.Client.db(MONGODB_D_DISCORD);
 		this.MONGODB_D_GENERAL = this.Client.db(MONGODB_D_GENERAL);
 		this.MONGODB_D_HYPIXEL = this.Client.db(MONGODB_D_HYPIXEL);

@@ -1,4 +1,4 @@
-# https://www.youtube.com/watch?v=lS2i9uwke1I
+# modifed from https://www.youtube.com/watch?v=lS2i9uwke1I
 
 name: update
 
@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Login to AWS ECR
         uses: aws-actions/amazon-ecr-login@v1
-      - name: Build, push docker image
+      - name: Git pull, rebuild
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: katbot

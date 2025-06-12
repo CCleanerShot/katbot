@@ -8,6 +8,7 @@ public class Settings
     public static string HYPIXEL_API_BASE_URL = "";
     public static string HYPIXEL_BOT_KEY = "";
     public static string MONGODB_BASE_URI = "";
+    public static string MONGODB_BASE_URI_TEST = "";
     public static string MONGODB_C_AUCTION_BUY = "";
     public static string MONGODB_C_AUCTION_ITEMS = "";
     public static string MONGODB_C_AUCTION_TAGS = "";
@@ -72,6 +73,8 @@ public class Settings
                 HYPIXEL_BOT_KEY = lines[1];
             else if (lines[0] == "MONGODB_BASE_URI")
                 MONGODB_BASE_URI = lines[1];
+            else if (lines[0] == "MONGODB_BASE_URI_TEST")
+                MONGODB_BASE_URI_TEST = lines[1];
             else if (lines[0] == "MONGODB_C_AUCTION_BUY")
                 MONGODB_C_AUCTION_BUY = lines[1];
             else if (lines[0] == "MONGODB_C_AUCTION_ITEMS")
@@ -122,6 +125,7 @@ public class Settings
     HYPIXEL_API_BASE_URL=Environment.GetEnvironmentVariable("HYPIXEL_API_BASE_URL");
     HYPIXEL_BOT_KEY=Environment.GetEnvironmentVariable("HYPIXEL_BOT_KEY");
     MONGODB_BASE_URI=Environment.GetEnvironmentVariable("MONGODB_BASE_URI");
+    MONGODB_BASE_URI_TEST=Environment.GetEnvironmentVariable("MONGODB_BASE_URI_TEST");
     MONGODB_C_AUCTION_BUY=Environment.GetEnvironmentVariable("MONGODB_C_AUCTION_BUY");
     MONGODB_C_AUCTION_ITEMS=Environment.GetEnvironmentVariable("MONGODB_C_AUCTION_ITEMS");
     MONGODB_C_AUCTION_TAGS=Environment.GetEnvironmentVariable("MONGODB_C_AUCTION_TAGS");

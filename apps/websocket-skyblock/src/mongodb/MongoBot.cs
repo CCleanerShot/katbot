@@ -37,7 +37,16 @@ public class MongoBot
     {
         try
         {
-            _Uri = Settings.MONGODB_BASE_URI + Settings.MONGODB_OPTIONS;
+            if (Settings.ENVIRONMENT == "development")
+            {
+                _Uri = Settings.MONGODB_BASE_URI_TEST + Settings.MONGODB_OPTIONS;
+            }
+
+            else
+            {
+                _Uri = Settings.MONGODB_BASE_URI + Settings.MONGODB_OPTIONS;
+            }
+
             _Client = new MongoClient(_Uri);
             _DiscordDB = _Client.GetDatabase(Settings.MONGODB_D_DISCORD);
             _GeneralDB = _Client.GetDatabase(Settings.MONGODB_D_GENERAL);

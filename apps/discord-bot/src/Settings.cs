@@ -13,6 +13,7 @@ public class Settings
     public static ulong DISCORD_SEND_CHANNEL_ID = 0;
     public static ulong DISCORD_STARBOARDS_CHANNEL_ID = 0;
     public static string DISCORD_TOKEN = "";
+    public static string ENVIRONMENT = "";
     public static string HYPIXEL_API_BASE_URL = "";
     public static string HYPIXEL_BOT_KEY = "";
     public static string ID_BOT = "";
@@ -21,6 +22,7 @@ public class Settings
     public static string ID_RAMOJUSD = "";
     public static string ID_VOLATILE = "";
     public static string MONGODB_BASE_URI = "";
+    public static string MONGODB_BASE_URI_TEST = "";
     public static string MONGODB_C_AUCTION_BUY = "";
     public static string MONGODB_C_AUCTION_ITEMS = "";
     public static string MONGODB_C_AUCTION_TAGS = "";
@@ -62,7 +64,6 @@ public class Settings
     static void LoadAssets()
     {
         string assetsFolder = Path.GetFullPath("assets");
-
         PATH_OBAMA = $"{assetsFolder}/obama.jpg";
     }
 
@@ -105,6 +106,8 @@ public class Settings
                 DISCORD_STARBOARDS_CHANNEL_ID = UInt64.Parse(lines[1]);
             else if (lines[0] == "DISCORD_TOKEN")
                 DISCORD_TOKEN = lines[1];
+            else if (lines[0] == "ENVIRONMENT")
+                ENVIRONMENT = lines[1];
             else if (lines[0] == "HYPIXEL_API_BASE_URL")
                 HYPIXEL_API_BASE_URL = lines[1];
             else if (lines[0] == "HYPIXEL_BOT_KEY")
@@ -121,6 +124,8 @@ public class Settings
                 ID_VOLATILE = lines[1];
             else if (lines[0] == "MONGODB_BASE_URI")
                 MONGODB_BASE_URI = lines[1];
+            else if (lines[0] == "MONGODB_BASE_URI_TEST")
+                MONGODB_BASE_URI_TEST = lines[1];
             else if (lines[0] == "MONGODB_C_AUCTION_BUY")
                 MONGODB_C_AUCTION_BUY = lines[1];
             else if (lines[0] == "MONGODB_C_AUCTION_ITEMS")
@@ -164,6 +169,7 @@ public class Settings
         DISCORD_SEND_CHANNEL_ID = UInt64.Parse(Environment.GetEnvironmentVariable("DISCORD_SEND_CHANNEL_ID"));
         DISCORD_STARBOARDS_CHANNEL_ID = UInt64.Parse(Environment.GetEnvironmentVariable("DISCORD_STARBOARDS_CHANNEL_ID"));
         DISCORD_TOKEN = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+        ENVIRONMENT = Environment.GetEnvironmentVariable("ENVIRONMENT");
         HYPIXEL_API_BASE_URL = Environment.GetEnvironmentVariable("HYPIXEL_API_BASE_URL");
         HYPIXEL_BOT_KEY = Environment.GetEnvironmentVariable("HYPIXEL_BOT_KEY");
         ID_BOT = Environment.GetEnvironmentVariable("ID_BOT");
@@ -171,6 +177,8 @@ public class Settings
         ID_KELINIMO = Environment.GetEnvironmentVariable("ID_KELINIMO");
         ID_RAMOJUSD = Environment.GetEnvironmentVariable("ID_RAMOJUSD");
         ID_VOLATILE = Environment.GetEnvironmentVariable("ID_VOLATILE");
+        MONGODB_BASE_URI = Environment.GetEnvironmentVariable("MONGODB_BASE_URI");
+        MONGODB_BASE_URI_TEST = Environment.GetEnvironmentVariable("MONGODB_BASE_URI_TEST");
         MONGODB_C_AUCTION_BUY = Environment.GetEnvironmentVariable("MONGODB_C_AUCTION_BUY");
         MONGODB_C_AUCTION_ITEMS = Environment.GetEnvironmentVariable("MONGODB_C_AUCTION_ITEMS");
         MONGODB_C_AUCTION_TAGS = Environment.GetEnvironmentVariable("MONGODB_C_AUCTION_TAGS");
@@ -184,7 +192,6 @@ public class Settings
         MONGODB_D_DISCORD = Environment.GetEnvironmentVariable("MONGODB_D_DISCORD");
         MONGODB_D_HYPIXEL = Environment.GetEnvironmentVariable("MONGODB_D_HYPIXEL");
         MONGODB_D_GENERAL = Environment.GetEnvironmentVariable("MONGODB_D_GENERAL");
-        MONGODB_BASE_URI = Environment.GetEnvironmentVariable("MONGODB_BASE_URI");
         TEST_DISCORD_GUILD_ID = UInt64.Parse(Environment.GetEnvironmentVariable("TEST_DISCORD_GUILD_ID"));
 #endif
     }
