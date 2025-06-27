@@ -1,0 +1,48 @@
+plugins {
+    // Apply the application plugin to add support for building a CLI application in Java.
+    id 'application'
+}
+
+task run_prebuild(type: Exec) {
+    executable 'bash'
+    args 'prebuild.sh'
+}
+
+build {
+    dependsOn run_prebuild
+}
+
+repositories {
+    mavenCentral()
+    maven { url = uri("https://jitpack.io/") } // `mavenCentral()` has no duplicate handling strategy
+    mavenLocal() // ONE OF THESE FOUND DISCORD4J AND I DONT KNOW WHICH ONEEEEEEEEEEEEEEEE
+    google() // ONE OF THESE FOUND DISCORD4J AND I DONT KNOW WHICH ONEEEEEEEEEEEEEEEE
+    // TODO: figure out which one found it
+}
+
+dependencies {
+    implementation libs.guava
+    implementation "com.github.Querz:NBT:6.1"
+    implementation "com.discord4j:discord4j-core:3.2.8"
+    implementation "io.github.cdimascio:dotenv-java:3.2.0"
+
+    testImplementation libs.junit.jupiter
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'org.example.App'
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}

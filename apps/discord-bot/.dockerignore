@@ -1,6 +1,7 @@
 .env
-bin
-obj
-Dockerfile
-discord-bot.sln
+.env.example
 .vscode
+.gradle
+build
+Dockerfile
+gradlew.bat

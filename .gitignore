@@ -1,7 +1,7 @@
 ###############
 # DISCORD-BOT #
 ###############
-.env*
+.env
 bin
 **/logs/**
 node_modules
@@ -18,7 +18,6 @@ node_modules
 !.env.test
 .DS_Store
 .env
-.env.*
 .output
 .svelte-kit
 .netlify
