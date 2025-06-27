@@ -1,4 +1,4 @@
-package org;
+package discordbot;
 
 public class Settings {
 

@@ -1,4 +1,4 @@
-package org;
+package discordbot;
 
 import java.text.MessageFormat;
 import java.time.Instant;
@@ -6,7 +6,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import common.Enums;
+import discordbot.common.Enums;
 
 /**
  * Random class for helper functions
@@ -99,10 +99,10 @@ public class Utility {
 
     /**
      * Spaces out the string so that it is left-leaning on the max spacing.
-     * EXAMPLE: "test" on a maxSpacing of 10 becomes "      test".
+     * EXAMPLE: "test" on a maxSpacing of 10 becomes " test".
      */
     public String SpaceString(String input, int maxSpacing) {
-        return new String(' ', (int) Math.max(maxSpacing - input.Length, 0)) + input;
+        return " ".repeat(Math.max(maxSpacing - input.length(), 0)) + input;
     }
 
 }

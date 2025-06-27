@@ -1,4 +1,4 @@
-package common;
+package discordbot.common;
 
 import java.util.HashMap;
 
