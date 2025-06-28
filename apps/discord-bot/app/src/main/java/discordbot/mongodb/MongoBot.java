@@ -1,13 +1,17 @@
 package discordbot.mongodb;
 
+import discordbot.Main;
 import discordbot.S;
 
 import java.util.HashMap;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+
+import discordbot.common.Enums;
 import discordbot.common.Enums.Settings;
 import discordbot.mongodb.collections.AuctionBuy;
 import discordbot.mongodb.collections.AuctionItemsAll;
@@ -36,8 +40,9 @@ public class MongoBot {
     public static MongoCollection<AuctionBuy> AuctionBuy;
     public static MongoCollection<AuctionItemsAll> AuctionItemsAll;
     public static MongoCollection<AuctionTags> AuctionTags;
-    public static MongoCollection<BazaarItem> BazaarItem;
+    public static MongoCollection<BazaarItem> BazaarBuy;
     public static MongoCollection<BazaarItemsAll> BazaarItemsAll;
+    public static MongoCollection<BazaarItem> BazaarSell;
     public static MongoCollection<MongoUser> MongoUser;
     public static MongoCollection<RollStats> RollStats;
     public static MongoCollection<Session> Session;
@@ -58,29 +63,25 @@ public class MongoBot {
             AuctionBuy = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_AUCTION_BUY), AuctionBuy.class);
             AuctionItemsAll = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_AUCTION_ITEMS), AuctionItemsAll.class);
             AuctionTags = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_AUCTION_TAGS), AuctionTags.class);
+            BazaarBuy = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_BAZAAR_BUY), BazaarItem.class);
             BazaarItemsAll = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_BAZAAR_ITEMS), BazaarItemsAll.class);
+            BazaarSell = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_BAZAAR_SELL), BazaarItem.class);
             MongoUser = _GeneralDB.getCollection(S.Get(Settings.MONGODB_C_USERS), MongoUser.class);
             RollStats = _DiscordDB.getCollection(S.Get(Settings.MONGODB_C_ROLL_STATS), RollStats.class);
             Session = _DiscordDB.getCollection(S.Get(Settings.MONGODB_C_SESSIONS), Session.class);
             Starboards = _DiscordDB.getCollection(S.Get(Settings.MONGODB_C_STARBOARDS), Starboards.class);
 
-            // ArrayList<AuctionBuy> currentAuctionBuy = AuctionBuy.find(e -> true);
-            // ArrayList<AuctionItemsAll> currentAuctionItems = AuctionItemsAll.find(e -> true);
-            // ArrayList<AuctionTags> currentAuctionTags = AuctionTags.find(e -> true);
-            // ArrayList<BazaarItem> currentBazaarBuys = BazaarBuy.find(e -> true);
-            // ArrayList<BazaarItemsAll> currentBazaarItems = BazaarItemsAll.find(e -> true);
-            // ArrayList<BazaarItem> currentSells = BazaarSell.find(e -> true);
+            CachedAuctionBuys = Main.Utility.ToArrayList(AuctionBuy.find());
+            CachedAuctionItems = Main.Utility.ToHashMap(AuctionItemsAll.find(), (item) -> item.ID);
+            CachedAuctionTags = Main.Utility.ToHashMap(AuctionTags.find(), (item) -> item.Name);
+            CachedBazaarBuys = Main.Utility.ToArrayList(BazaarBuy.find());
+            CachedBazaarItems = Main.Utility.ToHashMap(BazaarItemsAll.find(), (item) -> item.ID);
+            CachedBazaarSells = Main.Utility.ToArrayList(BazaarSell.find());
 
-            // // Reset the cache just in case
-            // CachedAuctionBuys = currentAuctionBuy.Aggregate(new ArrayList<AuctionBuy>(), (pV, cV) -> { pV.Add(cV); return pV; });
-            // CachedAuctionItems = currentAuctionItems.Aggregate(new HashMap<String, AuctionItemsAll>(), (pV, cV) -> { pV.Add(cV.ID, cV); return pV; });
-            // CachedAuctionTags = currentAuctionTags.Aggregate(new HashMap<String, AuctionTags>(), (pV, cV) -> { pV.Add(cV.Name, cV); return pV; });
-            // CachedBazaarBuys = currentBazaarBuys.Aggregate(new ArrayList<BazaarItem>(), (pV, cV) -> { pV.Add(cV); return pV; });
-            // CachedBazaarItems = currentBazaarItems.Aggregate(new HashMap<String, BazaarItemsAll>(), (pV, cV) -> { pV.Add(cV.ID, cV); return pV; });
-            // CachedBazaarSells = currentSells.Aggregate(new ArrayList<BazaarItem>(), (pV, cV) -> { pV.Add(cV); return pV; });
-
+            Main.Utility.Log(Enums.LogLevel.NONE, "MongoDB has connected!");
         } catch (Exception e) {
-
+            Main.Utility.Log(Enums.LogLevel.ERROR, MessageFormat.format("MongoDB failed to connect! {0}", e));
+            throw e;
         }
     }
 }

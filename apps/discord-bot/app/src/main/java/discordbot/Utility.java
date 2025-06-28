@@ -1,12 +1,15 @@
 package discordbot;
 
-import java.text.MessageFormat;
+import com.mongodb.client.FindIterable;
+import discordbot.common.Enums;
 import java.time.Instant;
+import java.text.MessageFormat;
 import java.util.Random;
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import discordbot.common.Enums;
+import java.util.function.Function;
 
 /**
  * Random class for helper functions
@@ -103,5 +106,29 @@ public class Utility {
      */
     public String SpaceString(String input, int maxSpacing) {
         return " ".repeat(Math.max(maxSpacing - input.length(), 0)) + input;
+    }
+
+    /**
+     * Helper function to turn a FindIterable to a ArrayList.
+     */
+    public <T extends Object> ArrayList<T> ToArrayList(FindIterable<T> list) {
+        ArrayList<T> arrayList = new ArrayList<T>();
+
+        for (T item : list)
+            arrayList.add(item);
+
+        return arrayList;
+    }
+
+    /**
+     * Helper function to turn a FindIterable to a hashmap with lambda.
+     */
+    public <T extends Object> HashMap<String, T> ToHashMap(FindIterable<T> list, Function<T, String> keyFunction) {
+        HashMap<String, T> hashMap = new HashMap<String, T>();
+
+        for (T item : list)
+            hashMap.put(keyFunction.apply(item), item);
+
+        return hashMap;
     }
 }
