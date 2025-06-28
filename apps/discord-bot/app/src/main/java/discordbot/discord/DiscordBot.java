@@ -1,7 +1,25 @@
 package discordbot.discord;
 
-public class DiscordBot {
+import java.util.EnumSet;
+import discordbot.S;
+import discordbot.common.Enums.Settings;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
+public class DiscordBot {
+    public static void Initialize() {
+        JDA discordClient = JDABuilder.createDefault(S.Get(Settings.DISCORD_TOKEN))
+                .enableIntents(EnumSet.allOf(GatewayIntent.class))
+                .build();
+
+        try {
+            discordClient.awaitReady();
+        } catch (InterruptedException ie) {
+
+        }
+
+    }
 }
 
 // public class DiscordBot {

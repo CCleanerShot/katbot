@@ -1,17 +1,14 @@
 package discordbot.mongodb.collections;
 
-import kotlin.ULong;
-import java.util.ArrayList;
-import org.bson.types.ObjectId;
 import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.types.ObjectId;
 
-public class AuctionBuy {
+import discordbot.common.Enums;
+import kotlin.ULong;
+
+public class BazaarItem {
     @BsonId
     public ObjectId _id;
-    /**
-     * List of AuctionTags that the tracked item should have.
-     */
-    public ArrayList<AuctionBuy> AuctionTags = new ArrayList<AuctionBuy>();
     /**
      * The Hypixel ID of the item.
      */
@@ -21,13 +18,17 @@ public class AuctionBuy {
      */
     public String Name;
     /**
+     * The type of order the watch is for.
+     */
+    public Enums.OrderType OrderType;
+    /**
      * The price to start evaluating the threshold for alerts.
      */
     public ULong Price;
     /**
      * Whether or not to remove the tracked item after successfully found.
      */
-    public Boolean RemovedAfter;
+    public boolean RemovedAfter;
     /**
      * The Discord ID of the user that submitted the tracking item.
      */

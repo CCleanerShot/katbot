@@ -104,5 +104,4 @@ public class Utility {
     public String SpaceString(String input, int maxSpacing) {
         return " ".repeat(Math.max(maxSpacing - input.length(), 0)) + input;
     }
-
 }

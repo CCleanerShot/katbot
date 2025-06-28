@@ -8,5 +8,6 @@ public class Main {
     public static Utility Utility = new Utility();
 
     public static void main(String[] args) {
+        S.Load();
     }
 }
