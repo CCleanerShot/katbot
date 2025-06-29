@@ -3,7 +3,7 @@ package discordbot.discord.events;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.pagination.ReactionPaginationAction;
-import discordbot.S;
+import discordbot.BotSettings;
 import discordbot.common.Enums.Settings;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -37,7 +37,7 @@ public class Starboards extends ListenerAdapter {
     }
 
     void onMessageReactionChanged(GenericMessageReactionEvent event, ReactionCase reactionCase) {
-        if (event.getGuild().getId().toString() == S.Get(Settings.TEST_DISCORD_GUILD_ID))
+        if (event.getGuild().getId().toString() == BotSettings.Get(Settings.TEST_DISCORD_GUILD_ID))
             return;
 
         if (event.getReaction().getEmoji().getName() != Emote)

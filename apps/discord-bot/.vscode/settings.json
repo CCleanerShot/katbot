@@ -1,8 +1,10 @@
 {
+  "editor.rulers": [240],
   "editor.formatOnSave": true,
   "editor.formatOnPaste": false,
   "editor.suggestOnTriggerCharacters": false,
   "explorer.compactFolders": false,
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.format.comments.enabled": false,
+  "java.format.settings.url": "eclipse-formatter.xml",
 }

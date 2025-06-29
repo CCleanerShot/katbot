@@ -7,14 +7,15 @@ import io.github.cdimascio.dotenv.Dotenv;
 /**
  * Short for Settings
  */
-public class S {
+public class BotSettings {
     public static Dotenv dotenv;
 
     public static void Load() {
         dotenv = Dotenv.load();
+
     }
 
     public static String Get(Enums.Settings setting) {
-        return Dictionaries.Settings.get(setting);
+        return dotenv.get(Dictionaries.Settings.get(setting));
     }
 }

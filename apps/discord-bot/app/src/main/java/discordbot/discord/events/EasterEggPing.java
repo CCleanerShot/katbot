@@ -3,7 +3,7 @@ package discordbot.discord.events;
 import java.util.List;
 
 import discordbot.Main;
-import discordbot.S;
+import discordbot.BotSettings;
 import discordbot.common.Enums.Settings;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -19,7 +19,7 @@ public class EasterEggPing extends ListenerAdapter {
         if (chance != 1)
             return;
 
-        if (members.stream().anyMatch(e -> e.getId().toString() == S.Get(Settings.ID_BOT)))
+        if (members.stream().anyMatch(e -> e.getId().toString() == BotSettings.Get(Settings.ID_BOT)))
             return;
 
         event.getChannel().sendMessage("Who ping me?");

@@ -1,7 +1,7 @@
 package discordbot.discord.events;
 
 import discordbot.Main;
-import discordbot.S;
+import discordbot.BotSettings;
 import discordbot.common.Enums.LogLevel;
 import discordbot.common.Enums.Settings;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -13,7 +13,7 @@ public class EasterEggNoStar extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getAuthor().getId().toString() != S.Get(Settings.ID_BOT))
+        if (event.getAuthor().getId().toString() != BotSettings.Get(Settings.ID_BOT))
             return;
 
         if (!event.getMessage().getContentRaw().equals(NOSTAR_MESSAGE))
@@ -31,7 +31,7 @@ public class EasterEggNoStar extends ListenerAdapter {
     @Override
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
 
-        if (event.getMessageAuthorId().toString() != S.Get(Settings.ADMIN_1))
+        if (event.getMessageAuthorId().toString() != BotSettings.Get(Settings.ADMIN_1))
             return;
 
         if (event.getReaction().getEmoji().getName() != "nostar")

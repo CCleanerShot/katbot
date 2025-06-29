@@ -1,42 +1,70 @@
 package discordbot.hypixel.routes.AuctionsRoute;
 
+import com.google.gson.Gson;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import discordbot.BotSettings;
+import discordbot.Main;
+import discordbot.common.Enums.LogLevel;
+import discordbot.common.Enums.Settings;
+
 public class AuctionsRoute {
     public boolean success;
     public int page;
     public int totalPages;
     public int totalAuctions;
     public double lastUpdated;
+    public AuctionsRouteProduct[] auctions;
+
+    public static ArrayList<AuctionsRouteProduct> GetRoute() {
+        return GetRoute(null, 100);
+    }
+
+    public static ArrayList<AuctionsRouteProduct> GetRoute(HashMap<String, Double> CachedItems, int pages) {
+        ArrayList<AuctionsRouteProduct> auctions = new ArrayList<AuctionsRouteProduct>();
+        int i = 0;
+
+        try {
+
+            for (i = 0; i < pages; i++) {
+                // Main.Utility.LogPerformance("Total Start", false);
+
+                String json = new String("");
+                int maxRetry = 3;
+                int currentRetry = 0;
+
+                do {
+                    try {
+                        URI uri = new URI(MessageFormat.format("{0}/skyblock/auctions?page={1}", BotSettings.Get(Settings.HYPIXEL_API_BASE_URL), i));
+                        HttpRequest request = HttpRequest.newBuilder(uri).header("API-Key", BotSettings.Get(Settings.HYPIXEL_BOT_KEY)).build();
+                        json = Main.Client.send(request, BodyHandlers.ofString()).body();
+                        Main.Utility.Log(LogLevel.NONE, json);
+                        AuctionsRouteProduct product = Main.Gson.fromJson(json, AuctionsRouteProduct.class);
+                        // System.out.println(product.);
+                        currentRetry = maxRetry + 1; // exit loop
+                    } catch (Exception e) {
+                        Thread.sleep(100);
+                        currentRetry += 1;
+                        Main.Utility.Log(LogLevel.WARN, MessageFormat.format("Fetch failed! ({0})", e));
+
+                        if (currentRetry >= maxRetry)
+                            throw new Exception(MessageFormat.format("Reached max retry limit! Throwing... {0}", e));
+                    }
+                } while (currentRetry <= maxRetry);
+
+            }
+
+        } catch (Exception err) {
+
+        }
+
+        return auctions;
+    }
 }
-
-// public class AuctionsRoute
-// {
-//     public bool success;
-//     public int page;
-//     public int totalPages;
-//     public int totalAuctions;
-//     public double lastUpdated;
-//     public AuctionsRouteProduct[] auctions = default!;
-
-//     /// <summary>
-//     /// Note: The optional cache is meant to be used on all incoming items, hopefully making subsequent actions easier.
-//     /// </summary>
-//     /// <param name="CachedItems"></param>
-//     /// <returns></returns>
-//     public static async Task<List<AuctionsRouteProduct>?> GetRoute(Dictionary<string, double?>? CachedItems = null, int pages = 100)
-//     {
-//         int i = 0;
-
-//         try
-//         {
-//             List<AuctionsRouteProduct> auctions = new List<AuctionsRouteProduct>();
-
-//             for (i = 0; i < pages; i++)
-//             {
-//                 Program.Utility.LogPerformance("Total Start");
-
-//                 string json = "";
-//                 int maxRetry = 3;
-//                 int currentRetry = 0;
 
 //                 async Task setJson() => json = await Program.Client.GetStringAsync($"{Settings.HYPIXEL_API_BASE_URL}/skyblock/auctions?page={i}");
 

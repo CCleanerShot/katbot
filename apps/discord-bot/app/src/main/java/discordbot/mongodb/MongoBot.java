@@ -1,7 +1,7 @@
 package discordbot.mongodb;
 
 import discordbot.Main;
-import discordbot.S;
+import discordbot.BotSettings;
 
 import java.util.HashMap;
 import java.text.MessageFormat;
@@ -50,26 +50,26 @@ public class MongoBot {
 
     public static void Load() {
         try {
-            if (S.Get(Settings.ENVIRONMENT) == "development")
-                _Uri = S.Get(Settings.MONGODB_BASE_URI_TEST) + S.Get(Settings.MONGODB_OPTIONS);
+            if (BotSettings.Get(Settings.ENVIRONMENT) == "development")
+                _Uri = BotSettings.Get(Settings.MONGODB_BASE_URI_TEST) + BotSettings.Get(Settings.MONGODB_OPTIONS);
             else
-                _Uri = S.Get(Settings.MONGODB_BASE_URI) + S.Get(Settings.MONGODB_OPTIONS);
+                _Uri = BotSettings.Get(Settings.MONGODB_BASE_URI) + BotSettings.Get(Settings.MONGODB_OPTIONS);
 
             _Client = MongoClients.create(_Uri);
-            _DiscordDB = _Client.getDatabase(S.Get(Settings.MONGODB_D_DISCORD));
-            _GeneralDB = _Client.getDatabase(S.Get(Settings.MONGODB_D_GENERAL));
-            _HypixelDB = _Client.getDatabase(S.Get(Settings.MONGODB_D_HYPIXEL));
+            _DiscordDB = _Client.getDatabase(BotSettings.Get(Settings.MONGODB_D_DISCORD));
+            _GeneralDB = _Client.getDatabase(BotSettings.Get(Settings.MONGODB_D_GENERAL));
+            _HypixelDB = _Client.getDatabase(BotSettings.Get(Settings.MONGODB_D_HYPIXEL));
 
-            AuctionBuy = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_AUCTION_BUY), AuctionBuy.class);
-            AuctionItemsAll = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_AUCTION_ITEMS), AuctionItemsAll.class);
-            AuctionTags = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_AUCTION_TAGS), AuctionTags.class);
-            BazaarBuy = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_BAZAAR_BUY), BazaarItem.class);
-            BazaarItemsAll = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_BAZAAR_ITEMS), BazaarItemsAll.class);
-            BazaarSell = _HypixelDB.getCollection(S.Get(Settings.MONGODB_C_BAZAAR_SELL), BazaarItem.class);
-            MongoUser = _GeneralDB.getCollection(S.Get(Settings.MONGODB_C_USERS), MongoUser.class);
-            RollStats = _DiscordDB.getCollection(S.Get(Settings.MONGODB_C_ROLL_STATS), RollStats.class);
-            Session = _DiscordDB.getCollection(S.Get(Settings.MONGODB_C_SESSIONS), Session.class);
-            Starboards = _DiscordDB.getCollection(S.Get(Settings.MONGODB_C_STARBOARDS), Starboards.class);
+            AuctionBuy = _HypixelDB.getCollection(BotSettings.Get(Settings.MONGODB_C_AUCTION_BUY), AuctionBuy.class);
+            AuctionItemsAll = _HypixelDB.getCollection(BotSettings.Get(Settings.MONGODB_C_AUCTION_ITEMS), AuctionItemsAll.class);
+            AuctionTags = _HypixelDB.getCollection(BotSettings.Get(Settings.MONGODB_C_AUCTION_TAGS), AuctionTags.class);
+            BazaarBuy = _HypixelDB.getCollection(BotSettings.Get(Settings.MONGODB_C_BAZAAR_BUY), BazaarItem.class);
+            BazaarItemsAll = _HypixelDB.getCollection(BotSettings.Get(Settings.MONGODB_C_BAZAAR_ITEMS), BazaarItemsAll.class);
+            BazaarSell = _HypixelDB.getCollection(BotSettings.Get(Settings.MONGODB_C_BAZAAR_SELL), BazaarItem.class);
+            MongoUser = _GeneralDB.getCollection(BotSettings.Get(Settings.MONGODB_C_USERS), MongoUser.class);
+            RollStats = _DiscordDB.getCollection(BotSettings.Get(Settings.MONGODB_C_ROLL_STATS), RollStats.class);
+            Session = _DiscordDB.getCollection(BotSettings.Get(Settings.MONGODB_C_SESSIONS), Session.class);
+            Starboards = _DiscordDB.getCollection(BotSettings.Get(Settings.MONGODB_C_STARBOARDS), Starboards.class);
 
             CachedAuctionBuys = Main.Utility.ToArrayList(AuctionBuy.find());
             CachedAuctionItems = Main.Utility.ToHashMap(AuctionItemsAll.find(), (item) -> item.ID);
