@@ -22,6 +22,7 @@ public class Program
             Utility = new Utility();
             Client = new HttpClient();
 
+            Utility.Log(Enums.LogLevel.NONE, "Initializing discord bot program...");
             Settings.Load();
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
@@ -42,6 +43,10 @@ public class Program
     static void SaveSession()
     {
         Utility.Log(Enums.LogLevel.NONE, "Saving log to file...");
+
+        if (!Directory.Exists("logs"))
+            Directory.CreateDirectory("logs");
+
         using StreamWriter writer = new StreamWriter("./logs/" + DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm") + ".txt", true);
         writer.Write(Utility.LogLine);
     }
