@@ -3,12 +3,14 @@ using Discord.Interactions;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using ZstdSharp.Unsafe;
 
 public partial class DiscordCommands : InteractionModuleBase
 {
     [SlashCommand("pet", "pet the kat")]
     public async Task pet([Summary("target", "user to harass")] IUser targetUser)
     {
+        int size = 100;
         byte[] imageBytes;
         string saveLocation = "test2.png";
         string avatar = targetUser.GetAvatarUrl();
@@ -24,11 +26,30 @@ public partial class DiscordCommands : InteractionModuleBase
 
         stream.Close();
 
-
         using (SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(imageBytes))
         {
-            image.Mutate(x => x.Resize(image.Width / 2, image.Height / 2));
+            image.Mutate(x => x.Resize(size, size));
             image.Save(outStream, new PngEncoder());
+        }
+
+        using (SixLabors.ImageSharp.Image<Rgba32> fullImage = new(400, 400))
+        {
+            using (SixLabors.ImageSharp.Image avatarImage = SixLabors.ImageSharp.Image.Load(imageBytes))
+            {
+
+                for (int x = 0; x < size; x++)
+                {
+                    for (int y = 0; y < size; y++)
+                    {
+                        // fullImage[x, y] = avatarImage.;
+
+                    }
+
+                }
+
+                fullImage[0, 0] = Rgba32.ParseHex("#FFFFFF");
+                avatarImage.Save(outStream, new PngEncoder());
+            }
         }
 
         BinaryWriter bw = new BinaryWriter(outStream);
