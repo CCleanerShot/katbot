@@ -21,7 +21,7 @@ public class Program
             Utility = new Utility();
             Client = new HttpClient();
 
-            Utility.Log(Enums.LogLevel.NONE, "Initializing discord bot program...");
+            Utility.Log(Enums.LogLevel.NONE, "Initializing...");
             Settings.Load();
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Add("API-Key", Settings.HYPIXEL_BOT_KEY);
