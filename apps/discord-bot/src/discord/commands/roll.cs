@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Discord;
 using Discord.Interactions;
 using Discord.Rest;
@@ -21,10 +22,19 @@ public partial class DiscordCommands : InteractionModuleBase
             if (channel == null || user1 == null || user2 == null)
                 throw new Exception("One of the values unexpectedly returned null!");
 
-            if (
-                RollMatch.RollMatches.Find(e => e.Users.Select(e => e.Id).Contains(user1.Id)) != null &&
-                RollMatch.RollMatches.Find(e => e.Users.Select(e => e.Id).Contains(user2.Id)) != null
-            )
+            bool found = false;
+            var matchesWithIds = RollMatch.RollMatches.Select(e => e.Users.Select(ee => ee.Id).ToList()).ToList();
+
+            foreach (List<ulong> match in matchesWithIds)
+            {
+                if (match.Contains(user1.Id) && match.Contains(user2.Id))
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found)
             {
                 await RespondAsync($"You guys already have a match >:(");
             }

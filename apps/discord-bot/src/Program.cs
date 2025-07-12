@@ -11,7 +11,6 @@ public class Program
     static async Task Main()
     {
         Console.CancelKeyPress += (sender, e) => SaveSession();
-
         await Run();
     }
 
