@@ -4,7 +4,7 @@ COPY ./discord-bot.csproj .
 RUN dotnet restore "discord-bot.csproj"
 COPY . .
 RUN dotnet publish "discord-bot.csproj" -c Release -o /publish
-COPY /assets .
+COPY /assets /assets
 
 FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine
 # https://github.com/discord-net/Discord.Net/issues/2704 annoying
