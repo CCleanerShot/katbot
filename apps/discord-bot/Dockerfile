@@ -11,6 +11,6 @@ FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine
 RUN apk add --no-cache icu-libs
 USER 1000:1000
 WORKDIR /app
-COPY --from=stage1 --chown=1000:1000 /app/assets /assets
+COPY --from=stage1 --chown=1000:1000 /app/assets ./assets
 COPY --from=stage1 --chown=1000:1000 /publish .
 ENTRYPOINT [ "dotnet", "discord-bot.dll" ]
