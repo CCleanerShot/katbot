@@ -6,11 +6,7 @@ using SixLabors.ImageSharp.Processing;
 
 public partial class DiscordCommands : InteractionModuleBase
 {
-    /// <summary>
-    /// TODO: cache
-    /// </summary>
-    /// <param name="targetUser"></param>
-    /// <returns></returns>
+    // TODO: cache
     [SlashCommand("pet", "pet the kat")]
     public async Task pet([Summary("target", "user to harass")] IUser targetUser)
     {
