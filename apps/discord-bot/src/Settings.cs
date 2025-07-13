@@ -37,6 +37,7 @@ public class Settings
     public static string MONGODB_D_GENERAL = "";
     public static string MONGODB_D_HYPIXEL = "";
     public static string MONGODB_OPTIONS = "";
+    public static string PATH_PET = "";
     public static string PATH_OBAMA = "";
     public static ulong TEST_DISCORD_GUILD_ID = 0;
     #endregion
@@ -65,6 +66,7 @@ public class Settings
     {
         string assetsFolder = Path.GetFullPath("assets");
         PATH_OBAMA = $"{assetsFolder}/obama.jpg";
+        PATH_PET = $"{assetsFolder}/pet.gif";
     }
 
     /// <summary>
