@@ -1,18 +1,18 @@
 using Discord;
 using Discord.Interactions;
-using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using ZstdSharp.Unsafe;
 
 public partial class DiscordCommands : InteractionModuleBase
 {
     [SlashCommand("pet", "pet the kat")]
     public async Task pet([Summary("target", "user to harass")] IUser targetUser)
     {
-        int size = 100;
+        int sizeImage = 128;
+        int sizeFull = 400;
         byte[] imageBytes;
-        string saveLocation = "test2.png";
+        string saveLocation = "test2.gif";
         string avatar = targetUser.GetAvatarUrl();
         var fetch = await Program.Client.GetAsync(avatar);
         var stream = await fetch.Content.ReadAsStreamAsync();
@@ -26,30 +26,36 @@ public partial class DiscordCommands : InteractionModuleBase
 
         stream.Close();
 
-        using (SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(imageBytes))
-        {
-            image.Mutate(x => x.Resize(size, size));
-            image.Save(outStream, new PngEncoder());
-        }
+        //     metadata = image.Frames.RootFrame.Metadata.GetGifMetadata();
+        //     metadata.FrameDelay = frameDelay;
 
-        using (SixLabors.ImageSharp.Image<Rgba32> fullImage = new(400, 400))
+        //     // Add the color image to the gif.
+        //     gif.Frames.AddFrame(image.Frames.RootFrame);
+
+        // gif.SaveAsGif("output.gif");
+
+        using (Image<Rgba32> fullGif = new(sizeFull, sizeFull))
         {
-            using (SixLabors.ImageSharp.Image avatarImage = SixLabors.ImageSharp.Image.Load(imageBytes))
+            for (int frame = 0; frame < 5; frame++)
             {
-
-                for (int x = 0; x < size; x++)
+                int offset = frame * 10;
+                using (Image<Rgba32> frameImage = new(sizeFull, sizeFull))
+                using (Image<Rgba32> avatarImage = SixLabors.ImageSharp.Image.Load<Rgba32>(imageBytes))
                 {
-                    for (int y = 0; y < size; y++)
+                    for (int y = 0; y < sizeImage; y++)
                     {
-                        // fullImage[x, y] = avatarImage.;
-
+                        for (int x = 0; x < sizeImage; x++)
+                        {
+                            frameImage[x + offset, y + offset] = avatarImage[x, y];
+                        }
                     }
 
+                    fullGif.Frames.AddFrame(frameImage.Frames.RootFrame);
                 }
-
-                fullImage[0, 0] = Rgba32.ParseHex("#FFFFFF");
-                avatarImage.Save(outStream, new PngEncoder());
             }
+
+            GifEncoder encoder = new GifEncoder();
+            fullGif.SaveAsPng(outStream);
         }
 
         BinaryWriter bw = new BinaryWriter(outStream);
@@ -63,12 +69,6 @@ public partial class DiscordCommands : InteractionModuleBase
         {
             bw.Close();
         }
-
-        Embed embed = new EmbedBuilder()
-            .WithColor(Color.Blue)
-            .WithTitle("brazillian goes to the store with $1")
-            .WithImageUrl(Settings.PUBLIC_PATH_RAMOJUSD_GIF_URL)
-            .Build();
 
         await RespondAsync("okay");
     }
