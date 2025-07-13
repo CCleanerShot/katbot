@@ -16,15 +16,15 @@ public partial class DiscordCommands : InteractionModuleBase
     {
         try
         {
+            byte[] imageBytes;
             int frameCount = 5;
             int sizeImage = 128;
-            int sizeFull = 180;
-            byte[] imageBytes;
-            string saveLocation = "test2.gif";
+            int sizeFull = 160;
+            string gifName = $"petthe{targetUser.Username}.gif";
             string avatar = targetUser.GetAvatarUrl();
             var fetch = await Program.Client.GetAsync(avatar);
             var stream = await fetch.Content.ReadAsStreamAsync();
-            var outStream = new FileStream(saveLocation, FileMode.Create);
+            var outStream = new FileStream(gifName, FileMode.OpenOrCreate);
             Image<Rgba32> gifImage = SixLabors.ImageSharp.Image.Load<Rgba32>(Settings.PATH_PET);
 
             gifImage.Mutate(x => x.Resize(sizeFull, sizeFull));
@@ -87,15 +87,17 @@ public partial class DiscordCommands : InteractionModuleBase
                                     frameImage[x, y] = gifImage.Frames[frame - 1][x, y];
 
                         frameImage.Frames.RootFrame.Metadata.GetGifMetadata().FrameDelay = 1;
+                        frameImage.Frames.RootFrame.Metadata.GetGifMetadata().DisposalMethod = SixLabors.ImageSharp.Formats.Gif.GifDisposalMethod.RestoreToBackground;
                         fullGif.Frames.AddFrame(frameImage.Frames.RootFrame);
                     }
                 }
 
                 fullGif.Frames.RemoveFrame(0);
-                fullGif.SaveAsPng(outStream);
+                fullGif.SaveAsGif(outStream);
             }
 
-            await RespondWithFileAsync(outStream, $"petthe{targetUser.Username}.gif");
+
+            await RespondWithFileAsync(outStream, gifName);
         }
 
         catch (Exception e)
