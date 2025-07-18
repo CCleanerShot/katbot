@@ -34,11 +34,10 @@ services:
     ports:
       - "${PORT_WEBSOCKET}:${PORT_WEBSOCKET}"
   reverse-proxy:
-    command: --providers.docker --api.insecure=true
+    command: --providers.docker
     image: traefik:v3.3
     ports:
       - "80:80"
-      - "8080:8080"
       - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
