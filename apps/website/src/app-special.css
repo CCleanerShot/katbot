@@ -17,6 +17,10 @@
 	transform: translateY(-50%);
 }
 
+.button.button-thin {
+	border: 3px solid black;
+}
+
 .button-border {
 	border: 1px solid black;
 	text-align: center;

@@ -1,6 +1,10 @@
-import { PUBLIC_DOMAIN, PUBLIC_ENVIRONMENT } from '$env/static/public';
+import { PUBLIC_DISCORD_OAUTH_REDIRECT_URI, PUBLIC_DISCORD_OAUTH_REDIRECT_URI_TEST, PUBLIC_ENVIRONMENT } from '$env/static/public';
 
 export const utility = {
+	betterEntries: <T extends Record<string, any>>(obj: T) => {
+		type Entries<T> = { [K in keyof T]: [K, T[K]] }[keyof T][];
+		return Object.entries(obj) as Entries<T>;
+	},
 	capitalize: (input: string): string => {
 		return input[0].toUpperCase() + input.slice(1);
 	},
@@ -22,6 +26,18 @@ export const utility = {
 				} else {
 					return 'ws';
 				}
+		}
+	},
+	getRedirectUri(provider: 'discord') {
+		switch (provider) {
+			case 'discord':
+				if (PUBLIC_ENVIRONMENT === 'production') {
+					return PUBLIC_DISCORD_OAUTH_REDIRECT_URI;
+				} else {
+					return PUBLIC_DISCORD_OAUTH_REDIRECT_URI_TEST;
+				}
+			default:
+				throw new Error('Unimplemented provider.');
 		}
 	},
 	randomNumber: (min: number, max: number): number => {

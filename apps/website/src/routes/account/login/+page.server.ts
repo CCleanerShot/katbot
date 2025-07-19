@@ -3,6 +3,6 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = (event) => {
 	return {
 		title: 'Login',
-		description: `If you don't know your details, you don't belong here.`
+		description: `Login to use KatBot's site features like stock market tracking for Hypixel items.`
 	};
 };

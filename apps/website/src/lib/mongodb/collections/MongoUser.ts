@@ -1,5 +1,4 @@
 export type MongoUser = {
-	DiscordId: bigint;
-	Password: string;
-	Username: string;
+	AuthorizationId: string;
+	AuthorizationMethod: string;
 };

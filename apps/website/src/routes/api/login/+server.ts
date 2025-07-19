@@ -2,11 +2,12 @@ import { mongoBot } from '$lib/server/mongoBot';
 import { API_CONTRACTS } from '$lib/other/apiContracts';
 import { sessionServer } from '$lib/server/sessionServer';
 import { utilityServer } from '$lib/server/utilityServer';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
+import { json, type RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async (event) => {
 	const { params } = API_CONTRACTS['POST=>/api/login'];
 	const { user } = (await event.request.json()) as typeof params;
+
 	const foundUser = await mongoBot.MONGODB_C_USERS.FindOne({ Username: user.Username, Password: user.Password });
 	const token = event.cookies.get('session') ?? null;
 	let deletedToken = false;

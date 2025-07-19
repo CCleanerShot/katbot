@@ -7,10 +7,12 @@
 :root {
 	--button-padding-x: 0.6rem;
 	--button-padding-y: 0.2rem;
-	--color-primary: #aaaaaa;
-	--color-secondary: #ccffcc;
-	--color-green: oklch(0.723 0.219 149.579);
-	--color-red: oklch(0.637 0.237 25.331);
+	--color-discord-background: #36373e;
+	--color-discord-foreground: #5865f2;
+	--color-green: #00c950;
+	--color-primary: #502929;
+	--color-red: #fb2c36;
+	--color-secondary: #2eac2e;
 	--transition-time-short: 0.1s;
 	--transition-time-medium: 0.25s;
 	--transition-time-long: 0.5s;
@@ -64,13 +66,13 @@ main {
 }
 
 .input {
-	border: 1px solid black;
+	border: 1px solid gray;
 	padding-left: 0.2rem;
 	padding-right: 0.2rem;
 }
 
 .input:focus-within {
-	border: 3px solid black;
+	border: 1px solid black;
 }
 
 .table tr:hover .remove-button {

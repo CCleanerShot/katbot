@@ -6,18 +6,14 @@
 	import { clientFetch } from '$lib/other/clientFetch';
 	import { FormElement } from '$lib/classes/FormElement.svelte';
 	import type { MongoUser } from '$lib/mongodb/collections/MongoUser';
-	import { fly } from 'svelte/transition';
 
 	let username: MongoUser['Username'] = $state('');
 	let password: MongoUser['Password'] = $state('');
 
-	const form = new Form([
-		new FormElement('username', () => true, 'how did we get here?'),
-		new FormElement('password', () => true, 'how did we get here?')
-	]);
+	const eUsername = new FormElement('username', () => ({ success: true }));
+	const ePassword = new FormElement('password', () => ({ success: true }));
+	const form = new Form([eUsername, ePassword]);
 
-	let test = $state(true)
-	
 	onMount(() => {
 		form.Mount();
 
@@ -25,13 +21,6 @@
 			form.Clean();
 		};
 	});
-
-	$effect(() => {
-		setTimeout(() => {
-			test = !test;
-			console.log(test)
-		}, 1000)
-	})
 
 	const onsubmit = async (e: SubmitEvent) => {
 		e.preventDefault();
@@ -50,7 +39,7 @@
 </script>
 
 <div class="flex flex-col items-center gap-2">
-	<h2 class="mt-1">If you don't know your details, you don't belong here.</h2>
+	<h2 class="mt-2">Login via email or <a class="font-bold underline" href="https://discord.com/">Discord</a></h2>
 	<form method="POST" class="flex flex-col items-center gap-1 border-4 border-black bg-white p-1" {onsubmit}>
 		<div>
 			<label for="username">USERNAME</label>
@@ -60,12 +49,9 @@
 			<label for="password">PASSWORD</label>
 			<input bind:value={password} class="input" id="password" name="password" type="password" />
 		</div>
-		<button type="submit" class="button mt-1">LOGIN</button>
+		<button type="submit" class="button mt-1">SUBMIT</button>
 	</form>
 </div>
-{#if test}
-	<div transition:fly>test</div>
-{/if}
 
 <style>
 	* {

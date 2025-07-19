@@ -25,8 +25,11 @@ export const utilityServer = {
 
 		console.log(`${prefix}:`, ...data);
 	},
-	redirectToLogin: (route: { id: any }) => {
-		const redirectUrl = `/login?redirect=${route.id}`;
-		return redirect(307, redirectUrl);
+	redirectToLogin: (route?: { id: any }) => {
+		if (route) {
+			return redirect(307, `/account/login?redirect=${route.id}`);
+		} else {
+			return redirect(307, `/account/login`);
+		}
 	}
 };

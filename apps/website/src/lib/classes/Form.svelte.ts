@@ -6,6 +6,10 @@ export class Form {
 
 	constructor(elements: FormElement[]) {
 		this.elements = elements;
+
+		for (const element of this.elements) {
+			element.form = this;
+		}
 	}
 
 	public Clean() {
