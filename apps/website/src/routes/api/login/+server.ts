@@ -8,7 +8,7 @@ export const POST: RequestHandler = async (event) => {
 	const { params } = API_CONTRACTS['POST=>/api/login'];
 	const { user } = (await event.request.json()) as typeof params;
 
-	const foundUser = await mongoBot.MONGODB_C_USERS.FindOne({ Username: user.Username, Password: user.Password });
+	const foundUser = await mongoBot.MONGODB_C_AUTH_USERS.FindOne({ Username: user.Username, Password: user.Password });
 	const token = event.cookies.get('session') ?? null;
 	let deletedToken = false;
 

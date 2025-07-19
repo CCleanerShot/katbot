@@ -16,8 +16,6 @@ import {
 	type UpdateOptions
 } from 'mongodb';
 
-type Acknowledged = { acknowledged: boolean };
-
 export class MongoCollection<T extends object = object> {
 	Collection: Collection<T>;
 

@@ -57,27 +57,6 @@ export type BazaarSocketMessage = {
 	RequestedItem: BazaarItem;
 };
 
-export type DiscordUserResponse = {
-	id: string;
-	username: string;
-	avatar: string;
-	discriminator: string;
-	public_flags: number;
-	flags: number;
-	banner: any;
-	accent_color: any;
-	global_name: string;
-	avatar_decoration_data: any;
-	collectibles: any;
-	display_name_styles: any;
-	banner_color: any;
-	clan: any;
-	primary_guild: any;
-	mfa_enabled: boolean;
-	locale: string;
-	premium_type: number;
-};
-
 // https://datatracker.ietf.org/doc/html/rfc6749
 export type OAuthAuthorizeQuery = {
 	client_id: string;
@@ -86,16 +65,10 @@ export type OAuthAuthorizeQuery = {
 	scope: string;
 };
 
-export type OAuthAuthorizeQueryDiscord = OAuthAuthorizeQuery & {
-	scope: 'identify';
-};
-
 export type OAuthTokenHeaders = {
 	'Accept-Encoding': 'application/x-www-form-urlencoded';
 	'Content-Type': 'application/x-www-form-urlencoded';
 };
-
-export type OAuthTokenHeadersDiscord = OAuthTokenHeaders;
 
 export type OAuthTokenParams = {
 	client_id: string;
@@ -104,8 +77,6 @@ export type OAuthTokenParams = {
 	grant_type: 'authorization_code';
 	redirect_uri: string;
 };
-
-export type OAuthTokenParamsDiscord = OAuthTokenParams;
 
 export type OAuthTokenResponse = {
 	token_type: 'Bearer';

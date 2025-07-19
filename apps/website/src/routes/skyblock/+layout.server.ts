@@ -18,7 +18,7 @@ export const load: LayoutServerLoad = async (event) => {
 		return utilityServer.redirectToLogin(event.route);
 	}
 
-	const foundUser = await mongoBot.MONGODB_C_USERS.FindOne({ Username: session.Username });
+	const foundUser = await mongoBot.MONGODB_C_AUTH_USERS.FindOne({ Username: session.Username });
 
 	if (foundUser === null) {
 		// TODO: log that forgery was successfully made, as the user couldnt be found, but the session was validated.
