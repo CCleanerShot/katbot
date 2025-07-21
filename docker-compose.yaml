@@ -1,4 +1,13 @@
 services:
+  hlug:
+    build: ./apps/hlug
+    depends_on:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hlug.rule=(Host(`${PUBLIC_DOMAIN}`) && PathPrefix(`/${PUBLIC_PREFIX_HLUG}`))"
+    ports:
+      - "5051:5051"
   discord-bot:
     build: ./apps/discord-bot
     depends_on:

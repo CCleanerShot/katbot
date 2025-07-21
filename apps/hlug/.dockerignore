@@ -1,0 +1,10 @@
+.dockerignore
+.prettierignore
+.prettierrc
+.svelte-kit
+.vscode
+build
+Dockerfile
+e2e
+node-modules
+playwright.config.ts

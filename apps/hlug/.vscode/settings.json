@@ -1,0 +1,19 @@
+{
+  "cssvar.extensions": ["css", "postcss", "svelte"],
+  // "editor.defaultFormatter": "svelte.svelte-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.suggestOnTriggerCharacters": false,
+  "explorer.compactFolders": false,
+  "html.format.indentInnerHtml": true,
+  "html.format.extraLiners": "",
+  // "svelte.plugin.typescript.enable": true,
+  "html-css-class-completion.includeGlobPattern": "src/**/*.{css,html,ts,svelte}",
+  "html-css-class-completion.CSSLanguages": [
+    "css",
+    "sass",
+    "scss"
+  ],
+  "svelte-intellisense.trace.server": "verbose",
+  "tailwindCSS.experimental.configFile": "./src/app.css",
+}
