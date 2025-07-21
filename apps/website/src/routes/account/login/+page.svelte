@@ -4,7 +4,6 @@
 	import { goto } from '$app/navigation';
 	import { Form } from '$lib/classes/Form.svelte';
 	import { FormElement } from '$lib/classes/FormElement.svelte';
-	import type { AuthUserAuthUser$lib/mongodb/collections/AuthUser';
 	import { utilityClient } from '$lib/client/utilityClient.svelte';
 
 	let username = $state('');
@@ -29,7 +28,11 @@
 			return;
 		}
 
-		const response = await utilityClient.fetch('POST=>/api/login', { user: { Username: username, Password: password, Provider: "email" } }, true);
+		const response = await utilityClient.fetch(
+			'POST=>/api/login',
+			{ user: { Username: username, Password: password, Provider: 'email' } },
+			true
+		);
 
 		if (response.ok) {
 			const redirect = page.url.searchParams.get('redirect');

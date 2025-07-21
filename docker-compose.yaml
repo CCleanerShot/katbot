@@ -1,13 +1,4 @@
 services:
-  hlug:
-    build: ./apps/hlug
-    depends_on:
-      - reverse-proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.hlug.rule=(Host(`${PUBLIC_DOMAIN}`) && PathPrefix(`/${PUBLIC_PREFIX_HLUG}`))"
-    ports:
-      - "5051:5051"
   discord-bot:
     build: ./apps/discord-bot
     depends_on:
@@ -17,6 +8,14 @@ services:
       - .env
     ports:
       - "8081:8081"
+  reverse-proxy:
+    command: --providers.docker
+    image: traefik:v3.3
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   website:
     build: ./apps/website
     depends_on:
@@ -42,11 +41,3 @@ services:
       - "traefik.http.routers.websocket.rule=(Host(`${PUBLIC_DOMAIN}`) && PathPrefix(`/${PUBLIC_PREFIX_WEBSOCKET}`))"
     ports:
       - "${PORT_WEBSOCKET}:${PORT_WEBSOCKET}"
-  reverse-proxy:
-    command: --providers.docker
-    image: traefik:v3.3
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
