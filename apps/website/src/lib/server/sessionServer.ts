@@ -1,32 +1,24 @@
 import { sha256 } from '@oslojs/crypto/sha2';
 import { mongoBot } from '$lib/server/mongoBot';
 import type { RequestEvent } from '@sveltejs/kit';
+import { PUBLIC_DOMAIN } from '$env/static/public';
 import type { Session } from '$lib/mongodb/collections/Session';
 import { MONGODB_SESSION_DAY_LENGTH } from '$env/static/private';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
-import { PUBLIC_DOMAIN } from '$env/static/public';
 
 // session token: https://lucia-auth.com/sessions/cookies/sveltekit
 export const sessionServer = {
-	createSession: async (token: string, userId: bigint, username: string) => {
+	createSession: async (token: string, userId: string) => {
 		const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 		const days = Number(MONGODB_SESSION_DAY_LENGTH);
 		const session: Session = {
 			ExpiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * days),
 			ID: sessionId,
-			UserId: userId,
-			Username: username
+			UserId: userId
 		};
 
 		await mongoBot.MONGODB_C_SESSIONS.InsertOne(session);
 		return session;
-	},
-	deleteDiscordId: (event: RequestEvent) => {
-		event.cookies.set('discordId', '', {
-			sameSite: 'lax',
-			maxAge: 0,
-			path: '/'
-		});
 	},
 	deleteSessionTokenCookie: (event: RequestEvent) => {
 		event.cookies.set('session', '', {
@@ -41,13 +33,9 @@ export const sessionServer = {
 		const token = encodeBase32LowerCaseNoPadding(bytes);
 		return token;
 	},
-	setDiscordId: (event: RequestEvent, discordId: bigint, expiresAt: Date) => {
-		event.cookies.set('discordId', discordId.toString(), {
-			sameSite: 'none',
-			expires: expiresAt,
-			path: '/'
-		});
-	},
+	// TODO: not sure what to do yet
+	setDiscordAccessToken: (event: RequestEvent, access_token: string) => {},
+	setDiscordRefreshToken: (event: RequestEvent, refresh_token: string) => {},
 	setDomain: (event: RequestEvent) => {
 		event.cookies.set('domain', PUBLIC_DOMAIN, {
 			sameSite: 'none',

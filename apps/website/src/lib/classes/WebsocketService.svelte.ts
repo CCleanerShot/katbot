@@ -1,4 +1,4 @@
-import { utility } from '$lib/utility/utility';
+import { utility } from '$lib/common/utility';
 import { SocketMessageType, type SocketMessage } from '$lib/types';
 import { sidebarState } from '$lib/states/sidebarState.svelte';
 import { PUBLIC_DOMAIN, PUBLIC_PREFIX_WEBSOCKET } from '$env/static/public';

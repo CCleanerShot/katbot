@@ -1,5 +1,5 @@
 import { mongoBot } from '$lib/server/mongoBot';
-import { API_CONTRACTS } from '$lib/other/apiContracts';
+import { API_CONTRACTS } from '$lib/common/apiContracts';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { utilityServer } from '$lib/server/utilityServer';
 import { BazaarItem } from '$lib/mongodb/BazaarItem';

@@ -2,11 +2,11 @@
 	import { OrderType } from '$lib/enums';
 	import type { BazaarType } from '$lib/types';
 	import { BazaarItem } from '$lib/mongodb/BazaarItem';
-	import { clientFetch } from '$lib/other/clientFetch';
 	import { cacheState } from '$lib/states/cacheState.svelte';
-	import type { API_CONTRACTS } from '$lib/other/apiContracts';
+	import type { API_CONTRACTS } from '$lib/common/apiContractss';
 	import { bazaarState } from '$lib/states/bazaarState.svelte';
 	import AutomaticComplete from './autocompletes/AutomaticComplete.svelte';
+	import { utilityClient } from '$lib/client/utilityClient.svelte';
 
 	type Props = {
 		action: Extract<keyof typeof API_CONTRACTS, `GET${string}/bazaar/${string}`>;
@@ -39,7 +39,7 @@
 	const { action, actionDelete, type }: Props = $props();
 
 	const onclick = async () => {
-		const response = await clientFetch(action, {});
+		const response = await utilityClient.fetch(action, {});
 		const json = await response.JSON();
 		bazaarState[type] = json.data.map((e) => new Item(e));
 	};
@@ -54,7 +54,7 @@
 			return;
 		}
 
-		const response = await clientFetch(actionDelete, { ID: item.ID });
+		const response = await utilityClient.fetch(actionDelete, { ID: item.ID });
 
 		if (response.ok) {
 			bazaarState[type].splice(index, 1);

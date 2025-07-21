@@ -1,12 +1,14 @@
-import type { Routes } from '$lib/other/routes';
+import type { Routes } from '$lib/common/routes';
 import type { BazaarItem } from '$lib/mongodb/BazaarItem';
 import type { BazaarBuy } from '$lib/mongodb/collections/BazaarBuy';
-import type { MongoUser } from '$lib/mongodb/collections/MongoUser';
+import type { AuthUser } from '$lib/mongodb/collections/AuthUser';
 import type { BazaarSell } from '$lib/mongodb/collections/BazaarSell';
 import type { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
 import type { AuctionTags } from '$lib/mongodb/collections/AuctionTags';
 import type { BazaarItemsAll } from '$lib/mongodb/collections/BazaarItemsAll';
 import type { AuctionItemsAll } from '$lib/mongodb/collections/AuctionItemsAll';
+import type { Provider } from '$lib/types';
+import type { AuthProviderDiscord } from '$lib/mongodb/collections/AuthProviderDiscord';
 
 type ApiContract = {
 	method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PUT';
@@ -104,7 +106,7 @@ const POST_API_LOGIN = {
 	method: 'POST',
 	response: '' as string,
 	route: '/api/login',
-	params: { user: {} as Pick<MongoUser, 'Username' | 'Password'> } as const
+	params: { user: {} as Pick<AuthUser, 'Password'> & { Provider: Provider; Username: string } } as const
 } as const satisfies ApiContract;
 
 /** Record of API Contracts that map to their cooresponding routes. For now, all routes use the body as params. The status codes represent the normal response. */

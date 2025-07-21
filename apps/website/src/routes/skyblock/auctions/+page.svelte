@@ -1,12 +1,12 @@
 <script lang="ts">
-	import AuctionColumn from '$lib/components/AuctionColumn.svelte';
 	import { AuctionItem } from '$lib/mongodb/AuctionItem';
-	import { clientFetch } from '$lib/other/clientFetch';
 	import { auctionState } from '$lib/states/auctionState.svelte';
+	import { utilityClient } from '$lib/client/utilityClient.svelte';
+	import AuctionColumn from '$lib/components/AuctionColumn.svelte';
 
 	const onclick = async () => {
 		const items = auctionState.BUYS.map((e) => AuctionItem.ToType(e));
-		const response = await clientFetch('PUT=>/api/auctions/buy', { items: items }, true);
+		const response = await utilityClient.fetch('PUT=>/api/auctions/buy', { items: items }, true);
 	};
 </script>
 

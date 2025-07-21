@@ -3,12 +3,12 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { Form } from '$lib/classes/Form.svelte';
-	import { clientFetch } from '$lib/other/clientFetch';
 	import { FormElement } from '$lib/classes/FormElement.svelte';
-	import type { MongoUser } from '$lib/mongodb/collections/MongoUser';
+	import type { AuthUserAuthUser$lib/mongodb/collections/AuthUser';
+	import { utilityClient } from '$lib/client/utilityClient.svelte';
 
-	let username: MongoUser['Username'] = $state('');
-	let password: MongoUser['Password'] = $state('');
+	let username = $state('');
+	let password = $state('');
 
 	const eUsername = new FormElement('username', () => ({ success: true }));
 	const ePassword = new FormElement('password', () => ({ success: true }));
@@ -29,7 +29,7 @@
 			return;
 		}
 
-		const response = await clientFetch('POST=>/api/login', { user: { Username: username, Password: password } }, true);
+		const response = await utilityClient.fetch('POST=>/api/login', { user: { Username: username, Password: password, Provider: "email" } }, true);
 
 		if (response.ok) {
 			const redirect = page.url.searchParams.get('redirect');

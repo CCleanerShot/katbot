@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { clientFetch } from '$lib/other/clientFetch';
-	import { cacheState } from '$lib/states/cacheState.svelte';
 	import { onMount } from 'svelte';
+	import { cacheState } from '$lib/states/cacheState.svelte';
+	import { utilityClient } from '$lib/client/utilityClient.svelte';
 
 	const { children } = $props();
 
 	onMount(async () => {
-		const response = await clientFetch('GET=>/api/bazaar', {});
+		const response = await utilityClient.fetch('GET=>/api/bazaar', {});
 		cacheState.BAZAAR = (await response.JSON()).data;
 	});
 </script>

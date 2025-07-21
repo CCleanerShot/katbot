@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Tooltip from './Tooltip.svelte';
 	import { tooltipState } from '$lib/states/tooltipState.svelte';
-	import { utilityClient } from '$lib/utility/utilityClient.svelte';
+	import { utilityClient } from '$lib/client/utilityClient.svelte';
 
 	let { buy, product } = $derived(tooltipState['AuctionProductInfoTooltip']);
 

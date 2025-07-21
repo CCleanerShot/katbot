@@ -1,5 +1,5 @@
 import type { AuctionItem } from '$lib/mongodb/AuctionItem';
-import { API_CONTRACTS } from '$lib/other/apiContracts';
+import { API_CONTRACTS } from '$lib/common/apiContracts';
 import { mongoBot } from '$lib/server/mongoBot';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 

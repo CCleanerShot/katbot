@@ -31,5 +31,6 @@ export const utilityServer = {
 		} else {
 			return redirect(307, `/account/login`);
 		}
-	}
+	},
+	verifyProvider() {}
 };

@@ -1,15 +1,14 @@
 <script lang="ts">
 	import Sidebar from './Sidebar.svelte';
 	import { fade } from 'svelte/transition';
-	import { utility } from '$lib/utility/utility';
-	import { clientFetch } from '$lib/other/clientFetch';
+	import { utility } from '$lib/common/utility';
 	import type { SvelteHTMLElements } from 'svelte/elements';
 	import type { BazaarItem } from '$lib/mongodb/BazaarItem';
-	import type { API_CONTRACTS } from '$lib/other/apiContracts';
+	import type { API_CONTRACTS } from '$lib/common/apiContracts';
 	import { socketState } from '$lib/states/socketState.svelte';
 	import { sidebarState } from '$lib/states/sidebarState.svelte';
 	import { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
-	import { utilityClient } from '$lib/utility/utilityClient.svelte';
+	import { utilityClient } from '$lib/client/utilityClient.svelte';
 	import { tooltipIsOpened, tooltipState } from '$lib/states/tooltipState.svelte';
 	import type { AuctionsRouteProductMinimal, BazaarRouteProduct, BazaarSocketMessage } from '$lib/types';
 
@@ -40,7 +39,7 @@
 		let remove = true;
 
 		if (item.RemovedAfter) {
-			const response = await clientFetch(route, { ID: item.ID }, true);
+			const response = await utilityClient.fetch(route, { ID: item.ID }, true);
 
 			if (!response.ok) {
 				remove = false;

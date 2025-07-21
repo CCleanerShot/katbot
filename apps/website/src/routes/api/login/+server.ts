@@ -1,14 +1,16 @@
 import { mongoBot } from '$lib/server/mongoBot';
-import { API_CONTRACTS } from '$lib/other/apiContracts';
+import { API_CONTRACTS } from '$lib/common/apiContracts';
 import { sessionServer } from '$lib/server/sessionServer';
 import { utilityServer } from '$lib/server/utilityServer';
 import { json, type RequestHandler } from '@sveltejs/kit';
+import { discordServer } from '$lib/server/discordServer';
+import { LogLevel } from '$lib/enums';
 
 export const POST: RequestHandler = async (event) => {
 	const { params } = API_CONTRACTS['POST=>/api/login'];
 	const { user } = (await event.request.json()) as typeof params;
+	const { Password, Provider, Username } = user;
 
-	const foundUser = await mongoBot.MONGODB_C_AUTH_USERS.FindOne({ Username: user.Username, Password: user.Password });
 	const token = event.cookies.get('session') ?? null;
 	let deletedToken = false;
 
@@ -16,12 +18,40 @@ export const POST: RequestHandler = async (event) => {
 		const session = await sessionServer.validateSessionToken(token);
 
 		if (session === null) {
-			sessionServer.deleteDiscordId(event);
 			sessionServer.deleteSessionTokenCookie(event);
 		} else {
 			await mongoBot.MONGODB_C_SESSIONS.DeleteOne({ id: session.ID });
 			deletedToken = true;
 		}
+	}
+
+	let foundUser = null;
+
+	// TODO: implement email
+	switch (Provider) {
+		case 'discord':
+			const _user = await mongoBot.MONGODB_C_AUTH_DISCORD.FindOne({ Username });
+
+			if (!_user) {
+				utilityServer.logServer(LogLevel.WARN, 'Could not find discord username when logging in.');
+				return utilityServer.errorInvalidCredentials();
+			}
+
+			foundUser = await mongoBot.MONGODB_C_AUTH_USERS.FindOne({ _id: { $eq: _user._id_AuthUser } });
+
+			// verify that the access the user provided to login is valid
+			const result = await discordServer.getMe(Password);
+
+			if (result.id !== _user.UserId) {
+				utilityServer.logServer(LogLevel.WARN, 'Access token given is invalid/expired!');
+				return utilityServer.errorInvalidCredentials();
+			}
+
+			break;
+		case 'email':
+			break;
+		default:
+			return utilityServer.errorInvalidCredentials();
 	}
 
 	if (foundUser === null) {
@@ -35,17 +65,8 @@ export const POST: RequestHandler = async (event) => {
 	}
 
 	const newSession = sessionServer.generateSessionToken();
-	const session = await sessionServer.createSession(newSession, foundUser.DiscordId, foundUser.Username);
+	const session = await sessionServer.createSession(newSession, foundUser._id.toHexString());
 	sessionServer.setSessionTokenCookie(event, newSession, session.ExpiresAt);
-	sessionServer.setDiscordId(event, foundUser.DiscordId, session.ExpiresAt);
-
-	const cookies = event.cookies.getAll();
-
-	console.log('COOKIES:');
-
-	for (const cookie of cookies) {
-		console.log(`${cookie.name}: ${cookie.value}`);
-	}
 
 	return json('');
 };

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { BazaarType } from '$lib/types';
-	import { clientFetch } from '$lib/other/clientFetch';
 	import { cacheState } from '$lib/states/cacheState.svelte';
 	import { bazaarState } from '$lib/states/bazaarState.svelte';
 	import { toastActions } from '$lib/states/toastsState.svelte';
 	import BazaarColumn from '$lib/components/BazaarColumn.svelte';
 	import { BazaarItem } from '$lib/mongodb/BazaarItem';
+	import { utilityClient } from '$lib/client/utilityClient.svelte';
 
 	const onclick = async () => {
 		let passable = true;
@@ -53,8 +53,8 @@
 		const buys = bazaarState['BUYS'].map((e) => BazaarItem.ToType(e));
 		const sells = bazaarState['SELLS'].map((e) => BazaarItem.ToType(e));
 
-		await clientFetch('PUT=>/api/bazaar/buy', { items: buys });
-		await clientFetch('PUT=>/api/bazaar/sell', { items: sells });
+		await utilityClient.fetch('PUT=>/api/bazaar/buy', { items: buys });
+		await utilityClient.fetch('PUT=>/api/bazaar/sell', { items: sells });
 		toastActions.addToast({ message: 'Success!', type: 'NONE' });
 	};
 </script>

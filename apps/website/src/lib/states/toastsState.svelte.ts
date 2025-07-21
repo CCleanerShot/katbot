@@ -1,5 +1,5 @@
 import type { ToastProps } from '$lib/types';
-import { utility } from '$lib/utility/utility';
+import { utility } from '$lib/common/utility';
 
 export const toastsState = $state([] as ToastProps[]);
 

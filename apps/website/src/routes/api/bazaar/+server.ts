@@ -1,5 +1,5 @@
 import { mongoBot } from '$lib/server/mongoBot';
-import { API_CONTRACTS } from '$lib/other/apiContracts';
+import { API_CONTRACTS } from '$lib/common/apiContracts';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ url }) => {

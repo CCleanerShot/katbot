@@ -1,8 +1,9 @@
-import { utility } from '$lib/utility/utility';
+import { utility } from '$lib/common/utility';
 import { MONGODB_C_AUCTION_BUY } from '$env/static/private';
 import { PUBLIC_DOMAIN, PUBLIC_PREFIX_WEBSOCKET } from '$env/static/public';
 import {
 	Collection,
+	ObjectId,
 	type Abortable,
 	type AnyBulkWriteOperation,
 	type BulkWriteOptions,
@@ -75,9 +76,9 @@ export class MongoCollection<T extends object = object> {
 		return array as T[];
 	}
 
-	async FindOne(filter: Filter<T>, options?: FindOptions & Abortable): Promise<T | null> {
+	async FindOne(filter: Filter<T>, options?: FindOptions & Abortable): Promise<(T & { _id: ObjectId }) | null> {
 		const response = await this.Collection.findOne(filter, options);
-		return response;
+		return response as any as Promise<(T & { _id: ObjectId }) | null>;
 	}
 
 	async UpsertOne(filter: Filter<T>, update: UpdateFilter<T> | Document[], options: FindOneAndUpdateOptions): Promise<T | null> {

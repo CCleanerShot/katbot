@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { clientFetch } from '$lib/other/clientFetch';
 	import { cacheState } from '$lib/states/cacheState.svelte';
 	import { panelState } from '$lib/states/panelState.svelte';
 	import type { AuctionItem } from '$lib/mongodb/AuctionItem';
 	import { auctionState } from '$lib/states/auctionState.svelte';
-	import AutomaticComplete from './autocompletes/AutomaticComplete.svelte';
+	import { utilityClient } from '$lib/client/utilityClient.svelte';
 	import type { AuctionBuy } from '$lib/mongodb/collections/AuctionBuy';
+	import AutomaticComplete from './autocompletes/AutomaticComplete.svelte';
 
 	class Item {
 		AuctionTags: AuctionItem['AuctionTags'] = $state([]);
@@ -31,7 +31,7 @@
 	}
 
 	const onclick = async () => {
-		const response = await clientFetch('GET=>/api/auctions/buy', {}, false);
+		const response = await utilityClient.fetch('GET=>/api/auctions/buy', {}, false);
 		const json = await response.JSON();
 		auctionState.BUYS = json.data.map((e) => new Item(e));
 	};
@@ -46,7 +46,7 @@
 	};
 
 	const onclickDelete = async (item: AuctionBuy, index: number) => {
-		const response = await clientFetch('DELETE=>/api/auctions/buy', { ID: item.ID });
+		const response = await utilityClient.fetch('DELETE=>/api/auctions/buy', { ID: item.ID });
 
 		if (response.ok) {
 			auctionState.BUYS.splice(index, 1);

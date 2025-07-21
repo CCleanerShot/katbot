@@ -2,7 +2,7 @@
 	import { PUBLIC_DISCORD_OAUTH_CLIENT_ID } from '$env/static/public';
 	import discordImage from '$lib/images/discord.png';
 	import type { OAuthAuthorizeQuery } from '$lib/types';
-	import { utility } from '$lib/utility/utility';
+	import { utility } from '$lib/common/utility'
 
 	type Props = {
 		text: string;
@@ -12,6 +12,7 @@
 	let { text, className }: Props = $props();
 
 	const onclick = async () => {
+		// list of valid scopes https://discord.com/developers/docs/topics/oauth2
 		const query: OAuthAuthorizeQuery & { scope: 'identify' } = {
 			client_id: PUBLIC_DISCORD_OAUTH_CLIENT_ID,
 			redirect_uri: utility.getRedirectUri('discord'),
